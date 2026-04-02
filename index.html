@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Countdown</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #ffffff;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #191919; color: #e8e8e8; }
+    .cd-card { border-color: rgba(255,255,255,0.1); background: #222; }
+    .cd-sep, .cd-unit, .cd-target-label, .cd-tick, .cd-progress-label { color: #666; }
+    .cd-bar-bg { background: #333; }
+    .cd-bar-fill { background: #888; }
+    .cd-target-date { color: #bbb; }
+  }
+  .cd-wrap { width: 100%; max-width: 520px; }
+  .cd-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 10px;
+  }
+  .cd-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .cd-main { display: flex; align-items: baseline; gap: 12px; }
+  .cd-block { text-align: center; }
+  .cd-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 42px;
+    font-weight: 500;
+    color: inherit;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    min-width: 3ch;
+    display: inline-block;
+  }
+  .cd-unit { font-size: 12px; color: #999; margin-top: 4px; letter-spacing: 0.06em; }
+  .cd-sep {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    color: #ccc;
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+  .cd-right { text-align: right; min-width: 140px; }
+  .cd-target-label { font-size: 11px; color: #999; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .cd-target-date { font-size: 13px; font-weight: 500; color: #555; }
+  .cd-progress-wrap { margin-top: 1.25rem; }
+  .cd-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 6px;
+  }
+  .cd-bar-bg { height: 3px; background: #f0f0f0; border-radius: 99px; overflow: hidden; }
+  .cd-bar-fill { height: 100%; background: #555; border-radius: 99px; transition: width 1s linear; }
+  .cd-tick { font-size: 11px; color: #bbb; text-align: right; margin-top: 8px; font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+<div class="cd-wrap">
+  <div class="cd-label">countdown</div>
+  <div class="cd-card">
+    <div>
+      <div class="cd-main">
+        <div class="cd-block">
+          <div class="cd-num" id="cd-days">—</div>
+          <div class="cd-unit">days</div>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-block">
+          <div class="cd-num" id="cd-hours">—</div>
+          <div class="cd-unit">hours</div>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-block">
+          <div class="cd-num" id="cd-mins">—</div>
+          <div class="cd-unit">mins</div>
+        </div>
+      </div>
+    </div>
+    <div class="cd-right">
+      <div class="cd-target-label">target</div>
+      <div class="cd-target-date">2027-03-13 22:00</div>
+      <div class="cd-target-label" style="margin-top:8px;">notion formula</div>
+      <div class="cd-target-date" id="cd-notion" style="font-family:'JetBrains Mono',monospace;font-size:12px;">—</div>
+    </div>
+  </div>
+  <div class="cd-progress-wrap">
+    <div class="cd-progress-label">
+      <span>2025-01-01</span>
+      <span>2027-03-13</span>
+    </div>
+    <div class="cd-bar-bg"><div class="cd-bar-fill" id="cd-bar" style="width:0%"></div></div>
+    <div class="cd-tick" id="cd-tick">updating…</div>
+  </div>
+</div>
+<script>
+  const TARGET = new Date("2027-03-13T22:00:00+08:00");
+  const START  = new Date("2025-01-01T00:00:00+08:00");
+
+  function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
+
+  function tick() {
+    const now = new Date();
+    const diffMs = TARGET - now;
+    if (diffMs <= 0) {
+      document.getElementById('cd-days').textContent  = '000';
+      document.getElementById('cd-hours').textContent = '00';
+      document.getElementById('cd-mins').textContent  = '00';
+      document.getElementById('cd-notion').textContent = '0d0h';
+      document.getElementById('cd-tick').textContent  = 'arrived';
+      document.getElementById('cd-bar').style.width   = '100%';
+      return;
+    }
+    const diffHours = Math.floor(diffMs / 3600000);
+    const totalDays = Math.floor(diffHours / 24);
+    const remHours  = diffHours % 24;
+    const remMins   = Math.floor((diffMs % 3600000) / 60000);
+    const remSecs   = Math.floor((diffMs % 60000)   / 1000);
+
+    document.getElementById('cd-days').textContent  = String(totalDays).padStart(3, '0');
+    document.getElementById('cd-hours').textContent = pad(remHours);
+    document.getElementById('cd-mins').textContent  = pad(remMins);
+    document.getElementById('cd-notion').textContent = totalDays + 'd' + remHours + 'h';
+
+    const pct = Math.min(100, Math.max(0, ((now - START) / (TARGET - START)) * 100));
+    document.getElementById('cd-bar').style.width = pct.toFixed(2) + '%';
+    document.getElementById('cd-tick').textContent =
+      '−' + totalDays + 'd ' + pad(remHours) + ':' + pad(remMins) + ':' + pad(remSecs);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
