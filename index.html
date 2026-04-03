@@ -3,17 +3,21 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>万能倒计时</title>
+<title>万能倒计时-OB适配版</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  /* V21 核心优化：删除 padding，确保在 OB iframe 里不溢出 */
   body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 2rem;
+    padding: 10px; /* 留极小边距防止贴死，拒绝溢出 */
     background: transparent;
+    overflow: hidden; /* 禁止出现滚动条 */
   }
+
   .card {
     background: #fff;
     border: 1px solid rgba(0,0,0,0.06);
@@ -22,8 +26,10 @@
     padding: 20px 24px 18px;
     width: 100%;
     max-width: 460px;
-    overflow: hidden;
+    /* 确保卡片内容不超出 */
+    flex-shrink: 0;
   }
+
   .title {
     font-family: "华文楷体", "STKaiti", "KaiTi", serif;
     font-size: 14px;
@@ -33,23 +39,28 @@
   }
   .red  { color: #e03e3e; }
   .blue { color: #2eaadc; }
+
   .body {
     display: flex;
     align-items: flex-end;
     justify-content: center;
     position: relative;
   }
+
+  /* 灰块组居中逻辑 */
   .units { 
     display: flex; 
     gap: 8px; 
     flex-shrink: 0; 
     margin-left: auto; 
   }
+
   .unit  { display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .unit-lbl {
     font-size: 11px; color: #787774; letter-spacing: 0.06em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
+
   .flip { position: relative; perspective: 300px; height: 64px; width: 56px; }
   .flip.wide { width: 76px; }
   .half { position: absolute; left: 0; right: 0; height: 32px; overflow: hidden; background: #f7f6f3; }
@@ -64,6 +75,8 @@
   .flip.wide .half .n { font-size: 26px; }
   .half-top .n { top: 0; }
   .half-bot .n { bottom: 0; }
+
+  /* 翻页动画 */
   .flap { position: absolute; left: 0; right: 0; height: 32px; overflow: hidden; background: #f7f6f3; z-index: 3; }
   .flap-top { top: 0; border-radius: 7px 7px 0 0; transform-origin: bottom center; }
   .flap-bot { bottom: 0; border-radius: 0 0 7px 7px; transform-origin: top center; transform: rotateX(90deg); }
@@ -81,6 +94,7 @@
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   
+  /* 右侧周天区域 */
   .right {
     padding-bottom: 2px;
     flex-shrink: 0;
@@ -93,6 +107,7 @@
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
   }
+
   .right-main {
     display: flex;
     justify-content: space-between; 
@@ -105,7 +120,9 @@
     transform: skewX(-12deg);
     transform-origin: right center;
   }
+  
   .right-main .ltr { font-size: 26px; margin-left: 2px; }
+
   .right-sub {
     font-size: 13px; color: #9a9896; margin-top: 6px;
     font-family: "Times New Roman", Times, serif;
@@ -127,20 +144,20 @@
     </div>
     <div class="right">
       <div class="right-main" id="weeks-val">—</div>
-      <div class="right-sub" id="sub-display">2027.3.13 22:00</div>
+      <div class="right-sub" id="sub-display">加载中...</div>
     </div>
   </div>
 </div>
 <script>
-  // 解析 URL 参数
+  // 1. 解析参数
   const params = new URLSearchParams(window.location.search);
-  const targetDateStr = params.get('date') || "2027-03-13";
-  const targetTimeStr = params.get('time') || "22:00";
-  const targetTitle = params.get('title') || "2027 年 <span class='red'>3.14</span> <span class='blue'>联考</span>";
+  const dStr = params.get('date') || "2027-03-14";
+  const tStr = params.get('time') || "22:00";
+  const titleStr = params.get('title') || "2027 年 <span class='red'>3.14</span> <span class='blue'>联考</span>";
   
-  const TARGET = new Date(`${targetDateStr}T${targetTimeStr}:00+08:00`);
-  document.getElementById('title-display').innerHTML = `🎯 距离 ${targetTitle} 还剩`;
-  document.getElementById('sub-display').textContent = `${targetDateStr.replace(/-/g, '.')} ${targetTimeStr}`;
+  const TARGET = new Date(`${dStr}T${tStr}:00+08:00`);
+  document.getElementById('title-display').innerHTML = `🎯 距离 ${titleStr} 还剩`;
+  document.getElementById('sub-display').textContent = `${dStr.replace(/-/g, '.')} ${tStr}`;
 
   const prev = {};
   function pad(n) { return String(n).padStart(2, '0'); }
@@ -157,12 +174,18 @@
   }
   function tick() {
     const now = new Date(), diff = TARGET - now;
-    if (diff <= 0) { document.getElementById('weeks-val').innerHTML = "已到达目标"; return; }
+    if (diff <= 0) { 
+        document.getElementById('weeks-val').innerHTML = "<span>目标到达</span>"; 
+        return; 
+    }
     const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
     doFlip('d',String(d)); doFlip('h',pad(h)); doFlip('m',pad(m)); doFlip('s',pad(s));
+    
     const w=Math.floor(d/7), rd=d%7;
     const rm=document.getElementById('weeks-val'), rs=document.getElementById('sub-display');
     rm.innerHTML = `<span>${w}<span class="ltr">w</span></span><span>${rd}<span class="ltr">d</span></span>`;
+    
+    // 强制等宽逻辑
     rm.style.width='auto'; rs.style.width='auto';
     const tw = Math.max(rs.scrollWidth, rm.scrollWidth)+'px';
     rm.style.width=tw; rs.style.width=tw;
