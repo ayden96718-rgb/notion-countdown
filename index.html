@@ -76,40 +76,36 @@
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   
-  /* === 右侧强迫症终极治愈区 === */
+  /* === 右侧强迫症终极治愈区 (致敬 Claude 版) === */
   .right {
     padding-bottom: 2px;
     flex-shrink: 0;
     display: flex;
+    flex-direction: column;
     align-items: flex-end; 
-    /* 开启抗模糊结界 */
+    /* 开启抗模糊结界，保持边缘永远清晰 */
     transform: translateZ(0); 
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
   }
-
-  /* 统一歪斜的物理盒子 */
-  .right-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch; /* 强制上下两行绝对等宽 */
-    transform: skewX(-12deg); /* 统一物理掰斜 */
-    transform-origin: right bottom;
-  }
   
   .right-main {
     display: flex;
-    justify-content: space-between; /* 两端死死对齐，中间释放呼吸感 */
+    justify-content: space-between; /* 两端死死吸附，中间释放优美呼吸感 */
     align-items: flex-end;
     font-family: "Times New Roman", Times, serif;
-    font-size: 32px; /* 甜点字号：比原来大，比上一版小 */
-    font-weight: normal; 
+    font-size: 32px; /* 甜点字号 */
+    font-weight: normal; /* 保持原生直线硬挺骨架 */
     color: #6b6a68; 
     line-height: 0.9;
+    
+    /* 核心魔法：直接在当前行进行同轴倾斜 */
+    transform: skewX(-12deg);
+    transform-origin: right center;
   }
   
   .right-main .ltr {
-    font-size: 26px; /* 甜点字号 */
+    font-size: 26px; /* 甜点字母字号 */
     margin-left: 2px;
   }
 
@@ -120,8 +116,12 @@
     font-family: "Times New Roman", Times, serif;
     white-space: nowrap;
     text-align: right;
-    letter-spacing: 0.04em; /* 稳固基座，增加整体宽度 */
-    margin-right: -0.04em; /* 核心细节：抵消字母间距带来的末尾隐形空格，确保绝对右对齐 */
+    letter-spacing: 0.04em; 
+    margin-right: -0.04em; /* 抵消隐形空格，确保右边缘极致贴合 */
+    
+    /* 核心魔法：一模一样的同轴倾斜 */
+    transform: skewX(-12deg);
+    transform-origin: right center;
   }
 </style>
 </head>
@@ -169,10 +169,8 @@
     </div>
     
     <div class="right">
-      <div class="right-wrap">
-        <div class="right-main" id="weeks-val">—</div>
-        <div class="right-sub">2027.3.13 22:00</div>
-      </div>
+      <div class="right-main" id="weeks-val">—</div>
+      <div class="right-sub">2027.3.13 22:00</div>
     </div>
     
   </div>
@@ -220,10 +218,26 @@
     doFlip('s', pad(s));
     const w = Math.floor(d / 7), rd = d % 7;
     
-    // 纯洁输出，自动利用 space-between 分配呼吸感间隙
-    document.getElementById('weeks-val').innerHTML = 
+    // 写入结构，配合 space-between
+    const rightMain = document.getElementById('weeks-val');
+    const rightSub = document.querySelector('.right-sub');
+    
+    rightMain.innerHTML = 
       '<span>' + w + '<span class="ltr">w</span></span>' + 
       '<span>' + rd + '<span class="ltr">d</span></span>';
+      
+    // ======= Claude 外援专家解题落地 =======
+    // 1. 解除之前的宽度限制，测量自然像素宽度
+    rightMain.style.width = 'auto';
+    rightSub.style.width = 'auto';
+    
+    // 2. 量取 sub 的 scrollWidth (为确保万一，取两者最大值)
+    const targetW = Math.max(rightSub.scrollWidth, rightMain.scrollWidth) + 'px';
+    
+    // 3. 强制赋予相同的 px 宽度
+    rightMain.style.width = targetW;
+    rightSub.style.width = targetW;
+    // 宽度相同 + 基准点相同 = 边缘绝对对齐，完结撒花！
   }
   tick();
   setInterval(tick, 1000);
