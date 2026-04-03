@@ -76,38 +76,41 @@
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   
-  /* === 右侧强迫症治愈区 === */
+  /* === 右侧强迫症终极治愈区 === */
   .right {
     padding-bottom: 2px;
     flex-shrink: 0;
     display: flex;
-    flex-direction: column;
     align-items: flex-end; 
-    
-    /* 核心抗模糊结界：开启独立GPU层渲染，死锁抗锯齿 */
-    transform: skewX(-12deg) translateZ(0); 
-    transform-origin: right bottom;
+    /* 开启抗模糊结界 */
+    transform: translateZ(0); 
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 统一歪斜的物理盒子 */
+  .right-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* 核心魔法：强制上下两行绝对等宽 */
+    transform: skewX(-12deg); /* 统一物理掰斜，绝对硬挺的直线 */
+    transform-origin: right bottom;
   }
   
   .right-main {
+    display: flex;
+    justify-content: space-between; /* 核心魔法：4顶左，d顶右，间隙自动均分 */
+    align-items: flex-end;
     font-family: "Times New Roman", Times, serif;
-    font-size: 30px; /* 放大了数字字号 */
-    font-weight: normal; 
+    font-size: 34px; /* 字体加大 */
+    font-weight: normal; /* 不用斜体，保持硬朗直线骨架 */
     color: #6b6a68; 
     line-height: 0.9;
-    
-    /* 宽度保持由底部撑开，利用空间均分不越界 */
-    width: 100%; 
-    display: flex; 
-    justify-content: space-between; 
   }
   
   .right-main .ltr {
-    font-size: 25px; /* 放大了字母字号 */
-    margin-left: 3px; 
+    font-size: 28px; /* 字母加大 */
+    margin-left: 2px;
   }
 
   .right-sub {
@@ -116,7 +119,8 @@
     margin-top: 6px;
     font-family: "Times New Roman", Times, serif;
     white-space: nowrap;
-    letter-spacing: 0.05em; 
+    text-align: right;
+    letter-spacing: 0; /* 绝对清零，防止 d 对齐到隐形空格上 */
   }
 </style>
 </head>
@@ -162,10 +166,14 @@
         <div class="unit-lbl">秒</div>
       </div>
     </div>
+    
     <div class="right">
-      <div class="right-main" id="weeks-val">—</div>
-      <div class="right-sub">2027.3.13 22:00</div>
+      <div class="right-wrap">
+        <div class="right-main" id="weeks-val">—</div>
+        <div class="right-sub">2027.3.13 22:00</div>
+      </div>
     </div>
+    
   </div>
 </div>
 <script>
@@ -211,7 +219,7 @@
     doFlip('s', pad(s));
     const w = Math.floor(d / 7), rd = d % 7;
     
-    // 把 49w 和 1d 拆分成左右两组，配合 space-between 实现两端绝对吸附
+    // 纯洁的 HTML 输出，无任何强行算宽度的流氓 JS
     document.getElementById('weeks-val').innerHTML = 
       '<span>' + w + '<span class="ltr">w</span></span>' + 
       '<span>' + rd + '<span class="ltr">d</span></span>';
