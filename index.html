@@ -76,45 +76,42 @@
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   
-  /* 终极排版真理：在 Flex 容器统一右对齐，统一倾斜父盒子 */
+  /* === 右侧强迫症治愈区 === */
   .right {
     padding-bottom: 2px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* 子元素天然绝对右对齐 */
-    transform: skewX(-12deg); /* 统一倾斜容器，彻底根除内边距错位 */
+    align-items: flex-end; /* 让底部日期决定整体宽度 */
+    transform: skewX(-12deg); /* 统一倾斜父盒子，保证轴线绝对平行 */
     transform-origin: right bottom;
   }
   
   .right-main {
     font-family: "Times New Roman", Times, serif;
-    font-size: 26px; /* 大幅缩小，确保其宽度被底部日期完全包覆 */
-    font-weight: normal; /* 保留硬挺骨架 */
-    color: #6b6a68; /* 调整为深灰色，退居辅助视角 */
+    font-size: 26px; /* 大小适当，退居辅助视角 */
+    font-weight: normal; /* 硬挺骨架 */
+    color: #6b6a68; /* 深灰色，不夺主卡片眼球 */
     line-height: 0.9;
-    white-space: nowrap;
-    /* 不加斜体，靠父级物理掰斜保持硬朗 */
+    
+    /* 核心魔法：强制等宽，两端对齐 */
+    width: 100%; 
+    display: flex; 
+    justify-content: space-between; 
   }
   
   .right-main .ltr {
     font-size: 22px;
-    margin-left: 2px;
-  }
-  
-  .right-main .gap {
-    display: inline-block;
-    width: 4px;
+    margin-left: 3px; /* 微调 49与w、1与d 的内部间距 */
   }
 
   .right-sub {
-    font-size: 13px; /* 稍微撑大底部宽度作为基座 */
+    font-size: 13px; 
     color: #9a9896;
     margin-top: 6px;
     font-family: "Times New Roman", Times, serif;
     white-space: nowrap;
-    letter-spacing: 0.05em; /* 适当拉开字距，确保宽度最宽 */
-    /* 不加斜体，靠父级物理掰斜保持硬朗 */
+    letter-spacing: 0.05em; /* 拉开字距，稳做基座 */
   }
 </style>
 </head>
@@ -209,10 +206,10 @@
     doFlip('s', pad(s));
     const w = Math.floor(d / 7), rd = d % 7;
     
-    // 清理掉所有毒瘤 JS 宽度控制，回归极简 DOM 输出
+    // 把 49w 和 1d 拆分成左右两组，配合 space-between 实现两端绝对吸附
     document.getElementById('weeks-val').innerHTML = 
-      w + '<span class="ltr">w</span><span class="gap"></span>' + 
-      rd + '<span class="ltr">d</span>';
+      '<span>' + w + '<span class="ltr">w</span></span>' + 
+      '<span>' + rd + '<span class="ltr">d</span></span>';
   }
   tick();
   setInterval(tick, 1000);
