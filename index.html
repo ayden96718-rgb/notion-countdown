@@ -3,60 +3,53 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>万能倒计时-终极不拉胯版</title>
+<title>万能倒计时</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  
   body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 0;
-    margin: 0;
+    padding: 2rem;
     background: transparent;
-    overflow: hidden;
   }
-
   .card {
     background: #fff;
     border: 1px solid rgba(0,0,0,0.06);
     box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.05);
     border-radius: 12px;
-    padding: 24px 24px 20px;
-    /* 锁死卡片宽度，保证在 OB 里有底气不被压扁 */
-    width: 480px;
-    flex-shrink: 0;
-    position: relative;
+    padding: 20px 24px 18px;
+    width: 100%;
+    max-width: 460px;
+    overflow: hidden;
   }
-
   .title {
     font-family: "华文楷体", "STKaiti", "KaiTi", serif;
     font-size: 14px;
     color: #787774;
     letter-spacing: 0.06em;
-    margin-bottom: 22px;
+    margin-bottom: 18px;
   }
-  .red { color: #e03e3e; }
+  .red  { color: #e03e3e; }
   .blue { color: #2eaadc; }
-
-  .body-container {
+  .body {
     display: flex;
-    justify-content: center; /* 灰块绝对居中 */
     align-items: flex-end;
-    position: relative; /* 为右侧绝对定位提供基准 */
-    width: 100%;
+    justify-content: center;
+    position: relative;
   }
-
-  /* 灰块组 */
-  .units { display: flex; gap: 8px; flex-shrink: 0; }
-  .unit { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .units { 
+    display: flex; 
+    gap: 8px; 
+    flex-shrink: 0; 
+    margin-left: auto; 
+  }
+  .unit  { display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .unit-lbl {
     font-size: 11px; color: #787774; letter-spacing: 0.06em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
-
-  /* 翻页组件样式不变 */
   .flip { position: relative; perspective: 300px; height: 64px; width: 56px; }
   .flip.wide { width: 76px; }
   .half { position: absolute; left: 0; right: 0; height: 32px; overflow: hidden; background: #f7f6f3; }
@@ -83,25 +76,23 @@
   .flip.wide .flap .n { font-size: 26px; }
   .flap-top .n { top: 0; }
   .flap-bot .n { bottom: 0; }
-  @keyframes goTop { to { transform: rotateX(-90deg); } }
+  @keyframes goTop { to   { transform: rotateX(-90deg); } }
   @keyframes goBot { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   
-  /* === 右侧周天区域：绝对定位，不再挤压灰块 === */
   .right {
-    position: absolute;
-    right: 0;
-    bottom: 2px;
+    padding-bottom: 2px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-end; 
+    margin-left: auto;
+    margin-right: 0; 
     transform: translateZ(0); 
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
   }
-
   .right-main {
     display: flex;
     justify-content: space-between; 
@@ -126,36 +117,36 @@
 </head>
 <body>
 <div class="card">
-  <div id="title-display" class="title">🎯 努力加载中...</div>
-  <div class="body-container">
-    
+  <div id="title-display" class="title">🎯 距离目标还剩</div>
+  <div class="body">
     <div class="units">
       <div class="unit"><div class="flip wide" id="flip-d"><div class="half half-top"><span class="n" id="ht-d">—</span></div><div class="half half-bot"><span class="n" id="hb-d">—</span></div><div class="flap flap-top"><span class="n" id="ft-d">—</span></div><div class="flap flap-bot"><span class="n" id="fb-d">—</span></div></div><div class="unit-lbl">天</div></div>
       <div class="unit"><div class="flip" id="flip-h"><div class="half half-top"><span class="n" id="ht-h">—</span></div><div class="half half-bot"><span class="n" id="hb-h">—</span></div><div class="flap flap-top"><span class="n" id="ft-h">—</span></div><div class="flap flap-bot"><span class="n" id="fb-h">—</span></div></div><div class="unit-lbl">时</div></div>
       <div class="unit"><div class="flip" id="flip-m"><div class="half half-top"><span class="n" id="ht-m">—</span></div><div class="half half-bot"><span class="n" id="hb-m">—</span></div><div class="flap flap-top"><span class="n" id="ft-m">—</span></div><div class="flap flap-bot"><span class="n" id="fb-m">—</span></div></div><div class="unit-lbl">分</div></div>
       <div class="unit"><div class="flip" id="flip-s"><div class="half half-top"><span class="n" id="ht-s">—</span></div><div class="half half-bot"><span class="n" id="hb-s">—</span></div><div class="flap flap-top"><span class="n" id="ft-s">—</span></div><div class="flap flap-bot"><span class="n" id="fb-s">—</span></div></div><div class="unit-lbl">秒</div></div>
     </div>
-    
     <div class="right">
       <div class="right-main" id="weeks-val">—</div>
-      <div class="right-sub" id="sub-display">...</div>
+      <div class="right-sub" id="sub-display">2027.3.13 22:00</div>
     </div>
   </div>
 </div>
 <script>
+  // 解析 URL 参数
   const params = new URLSearchParams(window.location.search);
-  const dStr = params.get('date') || "2027-03-14";
-  const tStr = params.get('time') || "22:00";
-  const titleStr = params.get('title') || "2027 年 <span class='red'>3.14</span> <span class='blue'>联考</span>";
+  const targetDateStr = params.get('date') || "2027-03-13";
+  const targetTimeStr = params.get('time') || "22:00";
+  const targetTitle = params.get('title') || "2027 年 <span class='red'>3.14</span> <span class='blue'>联考</span>";
   
-  const TARGET = new Date(`${dStr}T${tStr}:00+08:00`);
-  document.getElementById('title-display').innerHTML = `🎯 距离 ${titleStr} 还剩`;
-  document.getElementById('sub-display').textContent = `${dStr.replace(/-/g, '.')} ${tStr}`;
+  const TARGET = new Date(`${targetDateStr}T${targetTimeStr}:00+08:00`);
+  document.getElementById('title-display').innerHTML = `🎯 距离 ${targetTitle} 还剩`;
+  document.getElementById('sub-display').textContent = `${targetDateStr.replace(/-/g, '.')} ${targetTimeStr}`;
 
   const prev = {};
   function pad(n) { return String(n).padStart(2, '0'); }
   function doFlip(id, newV) {
-    const oldV = prev[id]; if (oldV === newV) return;
+    const oldV = prev[id];
+    if (oldV === newV) return;
     const ftEl=document.getElementById('ft-'+id), fbEl=document.getElementById('fb-'+id), htEl=document.getElementById('ht-'+id), hbEl=document.getElementById('hb-'+id);
     const ftFlap=ftEl.closest('.flap'), fbFlap=fbEl.closest('.flap');
     htEl.textContent=newV; hbEl.textContent=oldV??newV; ftEl.textContent=oldV??newV; fbEl.textContent=newV;
@@ -166,7 +157,7 @@
   }
   function tick() {
     const now = new Date(), diff = TARGET - now;
-    if (diff <= 0) { document.getElementById('weeks-val').innerHTML = "<span>目标到达</span>"; return; }
+    if (diff <= 0) { document.getElementById('weeks-val').innerHTML = "已到达目标"; return; }
     const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
     doFlip('d',String(d)); doFlip('h',pad(h)); doFlip('m',pad(m)); doFlip('s',pad(s));
     const w=Math.floor(d/7), rd=d%7;
