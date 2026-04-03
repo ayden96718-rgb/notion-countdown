@@ -1,156 +1,204 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Countdown</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>联考倒计时</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #ffffff;
-    color: #1a1a1a;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     min-height: 100vh;
     padding: 2rem;
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
-  @media (prefers-color-scheme: dark) {
-    body { background: #191919; color: #e8e8e8; }
-    .cd-card { border-color: rgba(255,255,255,0.1); background: #222; }
-    .cd-sep, .cd-unit, .cd-target-label, .cd-tick, .cd-progress-label { color: #666; }
-    .cd-bar-bg { background: #333; }
-    .cd-bar-fill { background: #888; }
-    .cd-target-date { color: #bbb; }
-  }
-  .cd-wrap { width: 100%; max-width: 520px; }
-  .cd-label {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #999;
-    margin-bottom: 10px;
-  }
-  .cd-card {
+  .card {
     background: #fff;
-    border: 1px solid #e8e8e8;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.05);
     border-radius: 12px;
-    padding: 1.25rem 1.5rem;
+    padding: 20px 24px 18px;
+    width: 100%;
+    max-width: 460px;
+  }
+  .title {
+    font-family: "华文楷体", "STKaiti", "KaiTi", serif;
+    font-size: 14px;
+    color: #787774;
+    letter-spacing: 0.06em;
+    margin-bottom: 18px;
+  }
+  .red  { color: #e03e3e; }
+  .blue { color: #2eaadc; }
+  .body {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: 1.5rem;
-    flex-wrap: wrap;
+    gap: 12px;
   }
-  .cd-main { display: flex; align-items: baseline; gap: 12px; }
-  .cd-block { text-align: center; }
-  .cd-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 42px;
-    font-weight: 500;
-    color: inherit;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    min-width: 3ch;
-    display: inline-block;
+  .units { display: flex; gap: 8px; }
+  .unit  { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .unit-lbl { font-size: 11px; color: #787774; letter-spacing: 0.06em; }
+
+  /* ── flip card ── */
+  .flip { position: relative; perspective: 300px; height: 64px; width: 56px; }
+  .flip.wide { width: 76px; }
+
+  .half { position: absolute; left: 0; right: 0; height: 32px; overflow: hidden; background: #f7f6f3; }
+  .half-top { top: 0; border-radius: 7px 7px 0 0; border-bottom: 1px solid rgba(0,0,0,0.07); }
+  .half-bot { bottom: 0; border-radius: 0 0 7px 7px; }
+
+  .half .n {
+    position: absolute; width: 100%; height: 64px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300; color: #37352f; font-size: 34px;
   }
-  .cd-unit { font-size: 12px; color: #999; margin-top: 4px; letter-spacing: 0.06em; }
-  .cd-sep {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 32px;
-    color: #ccc;
-    align-self: flex-start;
-    margin-top: 4px;
+  .flip.wide .half .n { font-size: 28px; }
+  .half-top .n { top: 0; }
+  .half-bot .n { bottom: 0; }
+
+  .flap { position: absolute; left: 0; right: 0; height: 32px; overflow: hidden; background: #f7f6f3; z-index: 3; }
+  .flap-top { top: 0; border-radius: 7px 7px 0 0; transform-origin: bottom center; }
+  .flap-bot { bottom: 0; border-radius: 0 0 7px 7px; transform-origin: top center; transform: rotateX(90deg); }
+
+  .flap .n {
+    position: absolute; width: 100%; height: 64px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300; color: #37352f; font-size: 34px;
   }
-  .cd-right { text-align: right; min-width: 140px; }
-  .cd-target-label { font-size: 11px; color: #999; letter-spacing: 0.06em; margin-bottom: 4px; }
-  .cd-target-date { font-size: 13px; font-weight: 500; color: #555; }
-  .cd-progress-wrap { margin-top: 1.25rem; }
-  .cd-progress-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: #999;
-    margin-bottom: 6px;
+  .flip.wide .flap .n { font-size: 28px; }
+  .flap-top .n { top: 0; }
+  .flap-bot .n { bottom: 0; }
+
+  @keyframes goTop { to   { transform: rotateX(-90deg); } }
+  @keyframes goBot { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
+  .flap-top.go { animation: goTop 0.22s ease-in forwards; }
+  .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
+
+  /* ── right ── */
+  .right { text-align: right; padding-bottom: 4px; flex-shrink: 0; }
+  .right-main {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 300; font-style: italic;
+    color: #787774; line-height: 1;
   }
-  .cd-bar-bg { height: 3px; background: #f0f0f0; border-radius: 99px; overflow: hidden; }
-  .cd-bar-fill { height: 100%; background: #555; border-radius: 99px; transition: width 1s linear; }
-  .cd-tick { font-size: 11px; color: #bbb; text-align: right; margin-top: 8px; font-family: 'JetBrains Mono', monospace; }
+  .right-sub {
+    font-size: 10px; color: #b0aeab; margin-top: 5px;
+    letter-spacing: 0.05em; font-family: 'Cormorant Garamond', serif;
+  }
 </style>
 </head>
 <body>
-<div class="cd-wrap">
-  <div class="cd-label">countdown</div>
-  <div class="cd-card">
-    <div>
-      <div class="cd-main">
-        <div class="cd-block">
-          <div class="cd-num" id="cd-days">—</div>
-          <div class="cd-unit">days</div>
+<div class="card">
+  <div class="title">🎯 距离 2027 年 <span class="red">3.14</span> <span class="blue">联考</span> 还剩</div>
+  <div class="body">
+    <div class="units">
+      <div class="unit">
+        <div class="flip wide" id="flip-d">
+          <div class="half half-top"><span class="n" id="ht-d">—</span></div>
+          <div class="half half-bot"><span class="n" id="hb-d">—</span></div>
+          <div class="flap flap-top"><span class="n" id="ft-d">—</span></div>
+          <div class="flap flap-bot"><span class="n" id="fb-d">—</span></div>
         </div>
-        <div class="cd-sep">:</div>
-        <div class="cd-block">
-          <div class="cd-num" id="cd-hours">—</div>
-          <div class="cd-unit">hours</div>
+        <div class="unit-lbl">天</div>
+      </div>
+      <div class="unit">
+        <div class="flip" id="flip-h">
+          <div class="half half-top"><span class="n" id="ht-h">—</span></div>
+          <div class="half half-bot"><span class="n" id="hb-h">—</span></div>
+          <div class="flap flap-top"><span class="n" id="ft-h">—</span></div>
+          <div class="flap flap-bot"><span class="n" id="fb-h">—</span></div>
         </div>
-        <div class="cd-sep">:</div>
-        <div class="cd-block">
-          <div class="cd-num" id="cd-mins">—</div>
-          <div class="cd-unit">mins</div>
+        <div class="unit-lbl">时</div>
+      </div>
+      <div class="unit">
+        <div class="flip" id="flip-m">
+          <div class="half half-top"><span class="n" id="ht-m">—</span></div>
+          <div class="half half-bot"><span class="n" id="hb-m">—</span></div>
+          <div class="flap flap-top"><span class="n" id="ft-m">—</span></div>
+          <div class="flap flap-bot"><span class="n" id="fb-m">—</span></div>
         </div>
+        <div class="unit-lbl">分</div>
+      </div>
+      <div class="unit">
+        <div class="flip" id="flip-s">
+          <div class="half half-top"><span class="n" id="ht-s">—</span></div>
+          <div class="half half-bot"><span class="n" id="hb-s">—</span></div>
+          <div class="flap flap-top"><span class="n" id="ft-s">—</span></div>
+          <div class="flap flap-bot"><span class="n" id="fb-s">—</span></div>
+        </div>
+        <div class="unit-lbl">秒</div>
       </div>
     </div>
-    <div class="cd-right">
-      <div class="cd-target-label">target</div>
-      <div class="cd-target-date">2027-03-13 22:00</div>
-      <div class="cd-target-label" style="margin-top:8px;">notion formula</div>
-      <div class="cd-target-date" id="cd-notion" style="font-family:'JetBrains Mono',monospace;font-size:12px;">—</div>
+    <div class="right">
+      <div class="right-main" id="weeks-val">—</div>
+      <div class="right-sub">2027.3.13 22:00</div>
     </div>
-  </div>
-  <div class="cd-progress-wrap">
-    <div class="cd-progress-label">
-      <span>2025-01-01</span>
-      <span>2027-03-13</span>
-    </div>
-    <div class="cd-bar-bg"><div class="cd-bar-fill" id="cd-bar" style="width:0%"></div></div>
-    <div class="cd-tick" id="cd-tick">updating…</div>
   </div>
 </div>
+
 <script>
   const TARGET = new Date("2027-03-13T22:00:00+08:00");
-  const START  = new Date("2025-01-01T00:00:00+08:00");
+  const prev = {};
 
-  function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function doFlip(id, newV) {
+    const oldV = prev[id];
+    if (oldV === newV) return;
+
+    const ftEl    = document.getElementById('ft-' + id);
+    const fbEl    = document.getElementById('fb-' + id);
+    const htEl    = document.getElementById('ht-' + id);
+    const hbEl    = document.getElementById('hb-' + id);
+    const ftFlap  = ftEl.closest('.flap');
+    const fbFlap  = fbEl.closest('.flap');
+
+    htEl.textContent = newV;
+    hbEl.textContent = oldV ?? newV;
+    ftEl.textContent = oldV ?? newV;
+    fbEl.textContent = newV;
+
+    ftFlap.classList.remove('go');
+    fbFlap.classList.remove('go');
+    void ftFlap.offsetWidth;
+    ftFlap.classList.add('go');
+    fbFlap.classList.add('go');
+
+    setTimeout(() => {
+      hbEl.textContent = newV;
+      ftEl.textContent = newV;
+      ftFlap.classList.remove('go');
+      fbFlap.classList.remove('go');
+    }, 520);
+
+    prev[id] = newV;
+  }
 
   function tick() {
-    const now = new Date();
-    const diffMs = TARGET - now;
-    if (diffMs <= 0) {
-      document.getElementById('cd-days').textContent  = '000';
-      document.getElementById('cd-hours').textContent = '00';
-      document.getElementById('cd-mins').textContent  = '00';
-      document.getElementById('cd-notion').textContent = '0d0h';
-      document.getElementById('cd-tick').textContent  = 'arrived';
-      document.getElementById('cd-bar').style.width   = '100%';
-      return;
-    }
-    const diffHours = Math.floor(diffMs / 3600000);
-    const totalDays = Math.floor(diffHours / 24);
-    const remHours  = diffHours % 24;
-    const remMins   = Math.floor((diffMs % 3600000) / 60000);
-    const remSecs   = Math.floor((diffMs % 60000)   / 1000);
+    const now  = new Date();
+    const diff = TARGET - now;
+    if (diff <= 0) return;
 
-    document.getElementById('cd-days').textContent  = String(totalDays).padStart(3, '0');
-    document.getElementById('cd-hours').textContent = pad(remHours);
-    document.getElementById('cd-mins').textContent  = pad(remMins);
-    document.getElementById('cd-notion').textContent = totalDays + 'd' + remHours + 'h';
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000)  / 60000);
+    const s = Math.floor((diff % 60000)    / 1000);
 
-    const pct = Math.min(100, Math.max(0, ((now - START) / (TARGET - START)) * 100));
-    document.getElementById('cd-bar').style.width = pct.toFixed(2) + '%';
-    document.getElementById('cd-tick').textContent =
-      '−' + totalDays + 'd ' + pad(remHours) + ':' + pad(remMins) + ':' + pad(remSecs);
+    doFlip('d', String(d));
+    doFlip('h', pad(h));
+    doFlip('m', pad(m));
+    doFlip('s', pad(s));
+
+    const w  = Math.floor(d / 7);
+    const rd = d % 7;
+    document.getElementById('weeks-val').textContent = w + 'w ' + rd + 'd';
   }
 
   tick();
