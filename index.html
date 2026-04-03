@@ -76,14 +76,18 @@
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   
-  /* === 右侧强迫症终极治愈区 (致敬 Claude 版) === */
+  /* === 右侧强迫症终极治愈区 === */
   .right {
     padding-bottom: 2px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-end; 
-    /* 开启抗模糊结界，保持边缘永远清晰 */
+    
+    /* 核心魔法：狠狠推到最右侧，拉开和灰块的距离 */
+    margin-left: auto; 
+    
+    /* 开启抗模糊结界 */
     transform: translateZ(0); 
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
@@ -91,21 +95,21 @@
   
   .right-main {
     display: flex;
-    justify-content: space-between; /* 两端死死吸附，中间释放优美呼吸感 */
+    justify-content: space-between; 
     align-items: flex-end;
     font-family: "Times New Roman", Times, serif;
-    font-size: 32px; /* 甜点字号 */
-    font-weight: normal; /* 保持原生直线硬挺骨架 */
+    font-size: 32px; 
+    font-weight: normal; 
     color: #6b6a68; 
     line-height: 0.9;
     
-    /* 核心魔法：直接在当前行进行同轴倾斜 */
+    /* 同轴倾斜 */
     transform: skewX(-12deg);
     transform-origin: right center;
   }
   
   .right-main .ltr {
-    font-size: 26px; /* 甜点字母字号 */
+    font-size: 26px; 
     margin-left: 2px;
   }
 
@@ -116,10 +120,12 @@
     font-family: "Times New Roman", Times, serif;
     white-space: nowrap;
     text-align: right;
-    letter-spacing: 0.04em; 
-    margin-right: -0.04em; /* 抵消隐形空格，确保右边缘极致贴合 */
     
-    /* 核心魔法：一模一样的同轴倾斜 */
+    /* 核心魔法：微调字间距，收紧整体宽度，保留呼吸感 */
+    letter-spacing: 0.02em; 
+    margin-right: -0.02em; 
+    
+    /* 同轴倾斜 */
     transform: skewX(-12deg);
     transform-origin: right center;
   }
@@ -218,7 +224,6 @@
     doFlip('s', pad(s));
     const w = Math.floor(d / 7), rd = d % 7;
     
-    // 写入结构，配合 space-between
     const rightMain = document.getElementById('weeks-val');
     const rightSub = document.querySelector('.right-sub');
     
@@ -226,18 +231,14 @@
       '<span>' + w + '<span class="ltr">w</span></span>' + 
       '<span>' + rd + '<span class="ltr">d</span></span>';
       
-    // ======= Claude 外援专家解题落地 =======
-    // 1. 解除之前的宽度限制，测量自然像素宽度
+    // ======= 强制对齐魔法 =======
     rightMain.style.width = 'auto';
     rightSub.style.width = 'auto';
     
-    // 2. 量取 sub 的 scrollWidth (为确保万一，取两者最大值)
     const targetW = Math.max(rightSub.scrollWidth, rightMain.scrollWidth) + 'px';
     
-    // 3. 强制赋予相同的 px 宽度
     rightMain.style.width = targetW;
     rightSub.style.width = targetW;
-    // 宽度相同 + 基准点相同 = 边缘绝对对齐，完结撒花！
   }
   tick();
   setInterval(tick, 1000);
