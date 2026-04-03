@@ -82,12 +82,9 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    text-align: right;
-    /* 核心修复方案：整体倾斜，确保数学级别绝对右对齐！ */
-    transform: skewX(-12deg);
-    transform-origin: right bottom;
   }
   
+  /* 恢复单行倾斜，统一右对齐，统一旋转轴为 right center */
   .right-main {
     font-family: "Times New Roman", Times, serif;
     font-size: 34px;
@@ -95,16 +92,17 @@
     color: #4a4a4a;
     line-height: 0.9;
     white-space: nowrap;
+    text-align: right;
+    transform: skewX(-12deg);
+    transform-origin: right center;
   }
   
-  /* 专属控制 w 和 d 字母的样式 */
   .right-main .ltr {
     font-size: 31px;
     font-weight: 300;
     margin-left: 5px;
   }
   
-  /* 专属控制 w 和 1 中间的间距 */
   .right-main .gap {
     display: inline-block;
     width: 6px;
@@ -116,7 +114,10 @@
     margin-top: 8px;
     font-family: "Times New Roman", Times, serif;
     white-space: nowrap;
-    letter-spacing: 0; /* 彻底清除幽灵空格的干扰 */
+    letter-spacing: 0; 
+    text-align: right;
+    transform: skewX(-12deg);
+    transform-origin: right center;
   }
 </style>
 </head>
@@ -212,9 +213,24 @@
     const w = Math.floor(d / 7), rd = d % 7;
     
     // 注入 span 标签进行像素级控制
-    document.getElementById('weeks-val').innerHTML = 
+    const rightMain = document.getElementById('weeks-val');
+    rightMain.innerHTML = 
       w + '<span class="ltr">w</span><span class="gap"></span>' + 
       rd + '<span class="ltr">d</span>';
+      
+    // 外援专家级修复逻辑：强制等宽 + 同轴倾斜 = 绝对右对齐
+    const rightSub = document.querySelector('.right-sub');
+    
+    // 1. 先把宽度置为 auto，测量真实的 scrollWidth
+    rightMain.style.width = 'auto';
+    rightSub.style.width = 'auto';
+    
+    // 2. 取两行中最长的那一个（通常是 sub）
+    const targetW = Math.max(rightMain.scrollWidth, rightSub.scrollWidth) + 'px';
+    
+    // 3. 强行赋值像素宽度，让两个盒子尺寸一模一样
+    rightMain.style.width = targetW;
+    rightSub.style.width = targetW;
   }
   tick();
   setInterval(tick, 1000);
