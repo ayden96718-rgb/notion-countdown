@@ -36,10 +36,18 @@
   .body {
     display: flex;
     align-items: flex-end;
-    justify-content: center;
-    gap: 16px;
+    justify-content: center; /* 确保整体重心在中间 */
+    position: relative;
   }
-  .units { display: flex; gap: 8px; flex-shrink: 0; }
+  
+  /* 灰块组：通过 margin-left: auto 配合右侧，实现居中 */
+  .units { 
+    display: flex; 
+    gap: 8px; 
+    flex-shrink: 0; 
+    margin-left: auto; 
+  }
+  
   .unit  { display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .unit-lbl {
     font-size: 11px; color: #787774; letter-spacing: 0.06em;
@@ -76,7 +84,6 @@
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   
-  /* === 右侧强迫症终极治愈区 === */
   .right {
     padding-bottom: 2px;
     flex-shrink: 0;
@@ -84,10 +91,10 @@
     flex-direction: column;
     align-items: flex-end; 
     
-    /* 核心魔法：狠狠推到最右侧，拉开和灰块的距离 */
-    margin-left: auto; 
+    /* 核心魔法：左右共同 auto，实现 units 居中且自己靠右 */
+    margin-left: auto;
+    margin-right: 0; 
     
-    /* 开启抗模糊结界 */
     transform: translateZ(0); 
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
@@ -102,8 +109,6 @@
     font-weight: normal; 
     color: #6b6a68; 
     line-height: 0.9;
-    
-    /* 同轴倾斜 */
     transform: skewX(-12deg);
     transform-origin: right center;
   }
@@ -120,12 +125,8 @@
     font-family: "Times New Roman", Times, serif;
     white-space: nowrap;
     text-align: right;
-    
-    /* 核心魔法：微调字间距，收紧整体宽度，保留呼吸感 */
     letter-spacing: 0.02em; 
     margin-right: -0.02em; 
-    
-    /* 同轴倾斜 */
     transform: skewX(-12deg);
     transform-origin: right center;
   }
@@ -178,7 +179,6 @@
       <div class="right-main" id="weeks-val">—</div>
       <div class="right-sub">2027.3.13 22:00</div>
     </div>
-    
   </div>
 </div>
 <script>
@@ -231,12 +231,9 @@
       '<span>' + w + '<span class="ltr">w</span></span>' + 
       '<span>' + rd + '<span class="ltr">d</span></span>';
       
-    // ======= 强制对齐魔法 =======
     rightMain.style.width = 'auto';
     rightSub.style.width = 'auto';
-    
     const targetW = Math.max(rightSub.scrollWidth, rightMain.scrollWidth) + 'px';
-    
     rightMain.style.width = targetW;
     rightSub.style.width = targetW;
   }
