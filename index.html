@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>联考倒计时</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -23,6 +23,7 @@
     padding: 20px 24px 18px;
     width: 100%;
     max-width: 460px;
+    overflow: hidden;
   }
   .title {
     font-family: "华文楷体", "STKaiti", "KaiTi", serif;
@@ -36,24 +37,20 @@
   .body {
     display: flex;
     align-items: flex-end;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: center;
+    gap: 16px;
   }
-  .units { display: flex; gap: 8px; }
+  .units { display: flex; gap: 8px; flex-shrink: 0; }
   .unit  { display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .unit-lbl {
     font-size: 11px; color: #787774; letter-spacing: 0.06em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
-
-  /* ── flip ── */
   .flip { position: relative; perspective: 300px; height: 64px; width: 56px; }
   .flip.wide { width: 76px; }
-
   .half { position: absolute; left: 0; right: 0; height: 32px; overflow: hidden; background: #f7f6f3; }
   .half-top { top: 0; border-radius: 7px 7px 0 0; border-bottom: 1px solid rgba(0,0,0,0.07); }
   .half-bot { bottom: 0; border-radius: 0 0 7px 7px; }
-
   .half .n {
     position: absolute; width: 100%; height: 64px;
     display: flex; align-items: center; justify-content: center;
@@ -63,11 +60,9 @@
   .flip.wide .half .n { font-size: 26px; }
   .half-top .n { top: 0; }
   .half-bot .n { bottom: 0; }
-
   .flap { position: absolute; left: 0; right: 0; height: 32px; overflow: hidden; background: #f7f6f3; z-index: 3; }
   .flap-top { top: 0; border-radius: 7px 7px 0 0; transform-origin: bottom center; }
   .flap-bot { bottom: 0; border-radius: 0 0 7px 7px; transform-origin: top center; transform: rotateX(90deg); }
-
   .flap .n {
     position: absolute; width: 100%; height: 64px;
     display: flex; align-items: center; justify-content: center;
@@ -77,22 +72,28 @@
   .flip.wide .flap .n { font-size: 26px; }
   .flap-top .n { top: 0; }
   .flap-bot .n { bottom: 0; }
-
   @keyframes goTop { to   { transform: rotateX(-90deg); } }
   @keyframes goBot { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
-
-  /* ── right ── */
-  .right { text-align: right; padding-bottom: 4px; flex-shrink: 0; }
+  .right {
+    padding-bottom: 4px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+  }
   .right-main {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 22px; font-weight: 300; font-style: italic;
-    color: #787774; line-height: 1;
+    font-size: 30px; font-weight: 400; font-style: italic;
+    color: #4a4a4a; line-height: 1; white-space: nowrap;
   }
   .right-sub {
-    font-size: 10px; color: #b0aeab; margin-top: 5px;
-    letter-spacing: 0.05em; font-family: 'Cormorant Garamond', serif;
+    font-size: 11px; color: #9a9896;
+    margin-top: 5px; letter-spacing: 0.04em;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; white-space: nowrap;
   }
 </style>
 </head>
