@@ -84,7 +84,8 @@
     align-items: flex-end;
     text-align: right;
   }
-  /* 终极解法：废除 italic 标签，物理强行掰斜，保留最硬挺的直线 */
+  
+  /* 父级包裹框，修复对齐 */
   .right-main {
     font-family: "Times New Roman", Times, serif;
     font-size: 34px;
@@ -92,10 +93,24 @@
     color: #4a4a4a;
     line-height: 0.9;
     white-space: nowrap;
-    letter-spacing: 0;
     transform: skewX(-12deg);
-    transform-origin: right bottom;
+    transform-origin: right bottom; /* 死死钉住右下角，修正倾斜带来的视差 */
+    padding-right: 2px; /* 微调边缘 */
   }
+  
+  /* 专属控制 w 和 d 字母的样式 */
+  .right-main .ltr {
+    font-size: 31px; /* 字母稍微缩小，视觉减重 */
+    font-weight: 300; /* 调细 */
+    margin-left: 5px; /* 拉开 49和w、1和d 之间的紧凑感 */
+  }
+  
+  /* 专属控制 w 和 1 中间的间距 */
+  .right-main .gap {
+    display: inline-block;
+    width: 6px; /* 缩窄原版空格过宽的问题 */
+  }
+
   .right-sub {
     font-size: 12px;
     color: #9a9896;
@@ -198,7 +213,11 @@
     doFlip('m', pad(m));
     doFlip('s', pad(s));
     const w = Math.floor(d / 7), rd = d % 7;
-    document.getElementById('weeks-val').textContent = w + 'w ' + rd + 'd';
+    
+    // 注入 span 标签进行像素级控制
+    document.getElementById('weeks-val').innerHTML = 
+      w + '<span class="ltr">w</span><span class="gap"></span>' + 
+      rd + '<span class="ltr">d</span>';
   }
   tick();
   setInterval(tick, 1000);
