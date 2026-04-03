@@ -4,7 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>联考倒计时</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -77,23 +76,32 @@
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   .right {
-    padding-bottom: 4px;
+    padding-bottom: 2px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     text-align: right;
   }
+  /* 仅在此处动刀：锁死 Georgia 字体，完美还原截图质感 */
   .right-main {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 30px; font-weight: 400; font-style: italic;
-    color: #4a4a4a; line-height: 1; white-space: nowrap;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 34px;
+    font-weight: normal;
+    font-style: italic;
+    color: #4a4a4a;
+    line-height: 0.9;
+    white-space: nowrap;
+    letter-spacing: 0;
   }
   .right-sub {
-    font-size: 11px; color: #9a9896;
-    margin-top: 5px; letter-spacing: 0.04em;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic; white-space: nowrap;
+    font-size: 12px;
+    color: #9a9896;
+    margin-top: 8px;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-style: italic;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
   }
 </style>
 </head>
