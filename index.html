@@ -3,19 +3,21 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>万能倒计时-OB适配版</title>
+<title>万能倒计时-OB终极适配</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   
-  /* V21 核心优化：删除 padding，确保在 OB iframe 里不溢出 */
   body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 10px; /* 留极小边距防止贴死，拒绝溢出 */
+    /* V22 核心优化：确保内容在 iframe 里垂直水平绝对居中 */
+    height: 100vh;
+    width: 100vw;
+    padding: 0;
+    margin: 0;
     background: transparent;
-    overflow: hidden; /* 禁止出现滚动条 */
+    overflow: hidden;
   }
 
   .card {
@@ -23,10 +25,9 @@
     border: 1px solid rgba(0,0,0,0.06);
     box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.05);
     border-radius: 12px;
-    padding: 20px 24px 18px;
-    width: 100%;
+    padding: 24px 24px 22px; /* 适当增加内部呼吸感 */
+    width: 95%; /* 留一点点边隙，防止 OB 侧边栏挤压 */
     max-width: 460px;
-    /* 确保卡片内容不超出 */
     flex-shrink: 0;
   }
 
@@ -35,9 +36,9 @@
     font-size: 14px;
     color: #787774;
     letter-spacing: 0.06em;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
   }
-  .red  { color: #e03e3e; }
+  .red { color: #e03e3e; }
   .blue { color: #2eaadc; }
 
   .body {
@@ -45,17 +46,12 @@
     align-items: flex-end;
     justify-content: center;
     position: relative;
+    /* 增加一个底部 padding，给 3D 翻页动画留出投影空间，防止切脚 */
+    padding-bottom: 4px;
   }
 
-  /* 灰块组居中逻辑 */
-  .units { 
-    display: flex; 
-    gap: 8px; 
-    flex-shrink: 0; 
-    margin-left: auto; 
-  }
-
-  .unit  { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .units { display: flex; gap: 8px; flex-shrink: 0; margin-left: auto; }
+  .unit { display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .unit-lbl {
     font-size: 11px; color: #787774; letter-spacing: 0.06em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -76,7 +72,6 @@
   .half-top .n { top: 0; }
   .half-bot .n { bottom: 0; }
 
-  /* 翻页动画 */
   .flap { position: absolute; left: 0; right: 0; height: 32px; overflow: hidden; background: #f7f6f3; z-index: 3; }
   .flap-top { top: 0; border-radius: 7px 7px 0 0; transform-origin: bottom center; }
   .flap-bot { bottom: 0; border-radius: 0 0 7px 7px; transform-origin: top center; transform: rotateX(90deg); }
@@ -89,12 +84,11 @@
   .flip.wide .flap .n { font-size: 26px; }
   .flap-top .n { top: 0; }
   .flap-bot .n { bottom: 0; }
-  @keyframes goTop { to   { transform: rotateX(-90deg); } }
+  @keyframes goTop { to { transform: rotateX(-90deg); } }
   @keyframes goBot { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   
-  /* 右侧周天区域 */
   .right {
     padding-bottom: 2px;
     flex-shrink: 0;
@@ -120,9 +114,7 @@
     transform: skewX(-12deg);
     transform-origin: right center;
   }
-  
   .right-main .ltr { font-size: 26px; margin-left: 2px; }
-
   .right-sub {
     font-size: 13px; color: #9a9896; margin-top: 6px;
     font-family: "Times New Roman", Times, serif;
@@ -134,7 +126,7 @@
 </head>
 <body>
 <div class="card">
-  <div id="title-display" class="title">🎯 距离目标还剩</div>
+  <div id="title-display" class="title">🎯 加载中...</div>
   <div class="body">
     <div class="units">
       <div class="unit"><div class="flip wide" id="flip-d"><div class="half half-top"><span class="n" id="ht-d">—</span></div><div class="half half-bot"><span class="n" id="hb-d">—</span></div><div class="flap flap-top"><span class="n" id="ft-d">—</span></div><div class="flap flap-bot"><span class="n" id="fb-d">—</span></div></div><div class="unit-lbl">天</div></div>
@@ -144,12 +136,11 @@
     </div>
     <div class="right">
       <div class="right-main" id="weeks-val">—</div>
-      <div class="right-sub" id="sub-display">加载中...</div>
+      <div class="right-sub" id="sub-display">...</div>
     </div>
   </div>
 </div>
 <script>
-  // 1. 解析参数
   const params = new URLSearchParams(window.location.search);
   const dStr = params.get('date') || "2027-03-14";
   const tStr = params.get('time') || "22:00";
@@ -162,8 +153,7 @@
   const prev = {};
   function pad(n) { return String(n).padStart(2, '0'); }
   function doFlip(id, newV) {
-    const oldV = prev[id];
-    if (oldV === newV) return;
+    const oldV = prev[id]; if (oldV === newV) return;
     const ftEl=document.getElementById('ft-'+id), fbEl=document.getElementById('fb-'+id), htEl=document.getElementById('ht-'+id), hbEl=document.getElementById('hb-'+id);
     const ftFlap=ftEl.closest('.flap'), fbFlap=fbEl.closest('.flap');
     htEl.textContent=newV; hbEl.textContent=oldV??newV; ftEl.textContent=oldV??newV; fbEl.textContent=newV;
@@ -174,18 +164,12 @@
   }
   function tick() {
     const now = new Date(), diff = TARGET - now;
-    if (diff <= 0) { 
-        document.getElementById('weeks-val').innerHTML = "<span>目标到达</span>"; 
-        return; 
-    }
+    if (diff <= 0) { document.getElementById('weeks-val').innerHTML = "<span>目标到达</span>"; return; }
     const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
     doFlip('d',String(d)); doFlip('h',pad(h)); doFlip('m',pad(m)); doFlip('s',pad(s));
-    
     const w=Math.floor(d/7), rd=d%7;
     const rm=document.getElementById('weeks-val'), rs=document.getElementById('sub-display');
     rm.innerHTML = `<span>${w}<span class="ltr">w</span></span><span>${rd}<span class="ltr">d</span></span>`;
-    
-    // 强制等宽逻辑
     rm.style.width='auto'; rs.style.width='auto';
     const tw = Math.max(rs.scrollWidth, rm.scrollWidth)+'px';
     rm.style.width=tw; rs.style.width=tw;
