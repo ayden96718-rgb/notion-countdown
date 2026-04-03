@@ -14,7 +14,6 @@
     min-height: 100vh;
     padding: 2rem;
     background: transparent;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   .card {
     background: #fff;
@@ -42,9 +41,12 @@
   }
   .units { display: flex; gap: 8px; }
   .unit  { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .unit-lbl { font-size: 11px; color: #787774; letter-spacing: 0.06em; }
+  .unit-lbl {
+    font-size: 11px; color: #787774; letter-spacing: 0.06em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
 
-  /* ── flip card ── */
+  /* ── flip ── */
   .flip { position: relative; perspective: 300px; height: 64px; width: 56px; }
   .flip.wide { width: 76px; }
 
@@ -55,10 +57,10 @@
   .half .n {
     position: absolute; width: 100%; height: 64px;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300; color: #37352f; font-size: 34px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 400; color: #37352f; font-size: 30px; letter-spacing: -0.01em;
   }
-  .flip.wide .half .n { font-size: 28px; }
+  .flip.wide .half .n { font-size: 26px; }
   .half-top .n { top: 0; }
   .half-bot .n { bottom: 0; }
 
@@ -69,10 +71,10 @@
   .flap .n {
     position: absolute; width: 100%; height: 64px;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300; color: #37352f; font-size: 34px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 400; color: #37352f; font-size: 30px; letter-spacing: -0.01em;
   }
-  .flip.wide .flap .n { font-size: 28px; }
+  .flip.wide .flap .n { font-size: 26px; }
   .flap-top .n { top: 0; }
   .flap-bot .n { bottom: 0; }
 
@@ -142,65 +144,50 @@
     </div>
   </div>
 </div>
-
 <script>
   const TARGET = new Date("2027-03-13T22:00:00+08:00");
   const prev = {};
-
   function pad(n) { return String(n).padStart(2, '0'); }
-
   function doFlip(id, newV) {
     const oldV = prev[id];
     if (oldV === newV) return;
-
-    const ftEl    = document.getElementById('ft-' + id);
-    const fbEl    = document.getElementById('fb-' + id);
-    const htEl    = document.getElementById('ht-' + id);
-    const hbEl    = document.getElementById('hb-' + id);
-    const ftFlap  = ftEl.closest('.flap');
-    const fbFlap  = fbEl.closest('.flap');
-
+    const ftEl   = document.getElementById('ft-' + id);
+    const fbEl   = document.getElementById('fb-' + id);
+    const htEl   = document.getElementById('ht-' + id);
+    const hbEl   = document.getElementById('hb-' + id);
+    const ftFlap = ftEl.closest('.flap');
+    const fbFlap = fbEl.closest('.flap');
     htEl.textContent = newV;
     hbEl.textContent = oldV ?? newV;
     ftEl.textContent = oldV ?? newV;
     fbEl.textContent = newV;
-
     ftFlap.classList.remove('go');
     fbFlap.classList.remove('go');
     void ftFlap.offsetWidth;
     ftFlap.classList.add('go');
     fbFlap.classList.add('go');
-
     setTimeout(() => {
       hbEl.textContent = newV;
       ftEl.textContent = newV;
       ftFlap.classList.remove('go');
       fbFlap.classList.remove('go');
     }, 520);
-
     prev[id] = newV;
   }
-
   function tick() {
-    const now  = new Date();
-    const diff = TARGET - now;
+    const now = new Date(), diff = TARGET - now;
     if (diff <= 0) return;
-
     const d = Math.floor(diff / 86400000);
     const h = Math.floor((diff % 86400000) / 3600000);
     const m = Math.floor((diff % 3600000)  / 60000);
     const s = Math.floor((diff % 60000)    / 1000);
-
     doFlip('d', String(d));
     doFlip('h', pad(h));
     doFlip('m', pad(m));
     doFlip('s', pad(s));
-
-    const w  = Math.floor(d / 7);
-    const rd = d % 7;
+    const w = Math.floor(d / 7), rd = d % 7;
     document.getElementById('weeks-val').textContent = w + 'w ' + rd + 'd';
   }
-
   tick();
   setInterval(tick, 1000);
 </script>
