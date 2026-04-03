@@ -75,6 +75,7 @@
   @keyframes goBot { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
+  
   .right {
     padding-bottom: 2px;
     flex-shrink: 0;
@@ -83,25 +84,27 @@
     align-items: flex-end;
     text-align: right;
   }
-  /* 仅在此处动刀：锁死 Georgia 字体，完美还原截图质感 */
+  /* 终极解法：废除 italic 标签，物理强行掰斜，保留最硬挺的直线 */
   .right-main {
-    font-family: Georgia, "Times New Roman", Times, serif;
+    font-family: "Times New Roman", Times, serif;
     font-size: 34px;
     font-weight: normal;
-    font-style: italic;
     color: #4a4a4a;
     line-height: 0.9;
     white-space: nowrap;
     letter-spacing: 0;
+    transform: skewX(-12deg);
+    transform-origin: right bottom;
   }
   .right-sub {
     font-size: 12px;
     color: #9a9896;
     margin-top: 8px;
-    font-family: Georgia, "Times New Roman", Times, serif;
-    font-style: italic;
+    font-family: "Times New Roman", Times, serif;
     white-space: nowrap;
     letter-spacing: 0.02em;
+    transform: skewX(-12deg);
+    transform-origin: right top;
   }
 </style>
 </head>
