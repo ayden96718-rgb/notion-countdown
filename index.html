@@ -76,48 +76,45 @@
   .flap-top.go { animation: goTop 0.22s ease-in forwards; }
   .flap-bot.go { animation: goBot 0.22s ease-out 0.22s forwards; }
   
+  /* 终极排版真理：在 Flex 容器统一右对齐，统一倾斜父盒子 */
   .right {
     padding-bottom: 2px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-end; /* 子元素天然绝对右对齐 */
+    transform: skewX(-12deg); /* 统一倾斜容器，彻底根除内边距错位 */
+    transform-origin: right bottom;
   }
   
-  /* 恢复单行倾斜，统一右对齐，统一旋转轴为 right center */
   .right-main {
     font-family: "Times New Roman", Times, serif;
-    font-size: 34px;
-    font-weight: normal;
-    color: #4a4a4a;
+    font-size: 26px; /* 大幅缩小，确保其宽度被底部日期完全包覆 */
+    font-weight: normal; /* 保留硬挺骨架 */
+    color: #6b6a68; /* 调整为深灰色，退居辅助视角 */
     line-height: 0.9;
     white-space: nowrap;
-    text-align: right;
-    transform: skewX(-12deg);
-    transform-origin: right center;
+    /* 不加斜体，靠父级物理掰斜保持硬朗 */
   }
   
   .right-main .ltr {
-    font-size: 31px;
-    font-weight: 300;
-    margin-left: 5px;
+    font-size: 22px;
+    margin-left: 2px;
   }
   
   .right-main .gap {
     display: inline-block;
-    width: 6px;
+    width: 4px;
   }
 
   .right-sub {
-    font-size: 12px;
+    font-size: 13px; /* 稍微撑大底部宽度作为基座 */
     color: #9a9896;
-    margin-top: 8px;
+    margin-top: 6px;
     font-family: "Times New Roman", Times, serif;
     white-space: nowrap;
-    letter-spacing: 0; 
-    text-align: right;
-    transform: skewX(-12deg);
-    transform-origin: right center;
+    letter-spacing: 0.05em; /* 适当拉开字距，确保宽度最宽 */
+    /* 不加斜体，靠父级物理掰斜保持硬朗 */
   }
 </style>
 </head>
@@ -212,25 +209,10 @@
     doFlip('s', pad(s));
     const w = Math.floor(d / 7), rd = d % 7;
     
-    // 注入 span 标签进行像素级控制
-    const rightMain = document.getElementById('weeks-val');
-    rightMain.innerHTML = 
+    // 清理掉所有毒瘤 JS 宽度控制，回归极简 DOM 输出
+    document.getElementById('weeks-val').innerHTML = 
       w + '<span class="ltr">w</span><span class="gap"></span>' + 
       rd + '<span class="ltr">d</span>';
-      
-    // 外援专家级修复逻辑：强制等宽 + 同轴倾斜 = 绝对右对齐
-    const rightSub = document.querySelector('.right-sub');
-    
-    // 1. 先把宽度置为 auto，测量真实的 scrollWidth
-    rightMain.style.width = 'auto';
-    rightSub.style.width = 'auto';
-    
-    // 2. 取两行中最长的那一个（通常是 sub）
-    const targetW = Math.max(rightMain.scrollWidth, rightSub.scrollWidth) + 'px';
-    
-    // 3. 强行赋值像素宽度，让两个盒子尺寸一模一样
-    rightMain.style.width = targetW;
-    rightSub.style.width = targetW;
   }
   tick();
   setInterval(tick, 1000);
