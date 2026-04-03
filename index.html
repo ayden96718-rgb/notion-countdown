@@ -92,24 +92,24 @@
   .right-wrap {
     display: flex;
     flex-direction: column;
-    align-items: stretch; /* 核心魔法：强制上下两行绝对等宽 */
-    transform: skewX(-12deg); /* 统一物理掰斜，绝对硬挺的直线 */
+    align-items: stretch; /* 强制上下两行绝对等宽 */
+    transform: skewX(-12deg); /* 统一物理掰斜 */
     transform-origin: right bottom;
   }
   
   .right-main {
     display: flex;
-    justify-content: space-between; /* 核心魔法：4顶左，d顶右，间隙自动均分 */
+    justify-content: space-between; /* 两端死死对齐，中间释放呼吸感 */
     align-items: flex-end;
     font-family: "Times New Roman", Times, serif;
-    font-size: 34px; /* 字体加大 */
-    font-weight: normal; /* 不用斜体，保持硬朗直线骨架 */
+    font-size: 32px; /* 甜点字号：比原来大，比上一版小 */
+    font-weight: normal; 
     color: #6b6a68; 
     line-height: 0.9;
   }
   
   .right-main .ltr {
-    font-size: 28px; /* 字母加大 */
+    font-size: 26px; /* 甜点字号 */
     margin-left: 2px;
   }
 
@@ -120,7 +120,8 @@
     font-family: "Times New Roman", Times, serif;
     white-space: nowrap;
     text-align: right;
-    letter-spacing: 0; /* 绝对清零，防止 d 对齐到隐形空格上 */
+    letter-spacing: 0.04em; /* 稳固基座，增加整体宽度 */
+    margin-right: -0.04em; /* 核心细节：抵消字母间距带来的末尾隐形空格，确保绝对右对齐 */
   }
 </style>
 </head>
@@ -219,7 +220,7 @@
     doFlip('s', pad(s));
     const w = Math.floor(d / 7), rd = d % 7;
     
-    // 纯洁的 HTML 输出，无任何强行算宽度的流氓 JS
+    // 纯洁输出，自动利用 space-between 分配呼吸感间隙
     document.getElementById('weeks-val').innerHTML = 
       '<span>' + w + '<span class="ltr">w</span></span>' + 
       '<span>' + rd + '<span class="ltr">d</span></span>';
