@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>联考倒计时</title>
+<title>万能倒计时</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -36,18 +36,15 @@
   .body {
     display: flex;
     align-items: flex-end;
-    justify-content: center; /* 确保整体重心在中间 */
+    justify-content: center;
     position: relative;
   }
-  
-  /* 灰块组：通过 margin-left: auto 配合右侧，实现居中 */
   .units { 
     display: flex; 
     gap: 8px; 
     flex-shrink: 0; 
     margin-left: auto; 
   }
-  
   .unit  { display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .unit-lbl {
     font-size: 11px; color: #787774; letter-spacing: 0.06em;
@@ -90,16 +87,12 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end; 
-    
-    /* 核心魔法：左右共同 auto，实现 units 居中且自己靠右 */
     margin-left: auto;
     margin-right: 0; 
-    
     transform: translateZ(0); 
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
   }
-  
   .right-main {
     display: flex;
     justify-content: space-between; 
@@ -112,133 +105,69 @@
     transform: skewX(-12deg);
     transform-origin: right center;
   }
-  
-  .right-main .ltr {
-    font-size: 26px; 
-    margin-left: 2px;
-  }
-
+  .right-main .ltr { font-size: 26px; margin-left: 2px; }
   .right-sub {
-    font-size: 13px; 
-    color: #9a9896;
-    margin-top: 6px;
+    font-size: 13px; color: #9a9896; margin-top: 6px;
     font-family: "Times New Roman", Times, serif;
-    white-space: nowrap;
-    text-align: right;
-    letter-spacing: 0.02em; 
-    margin-right: -0.02em; 
-    transform: skewX(-12deg);
-    transform-origin: right center;
+    white-space: nowrap; text-align: right;
+    letter-spacing: 0.02em; margin-right: -0.02em; 
+    transform: skewX(-12deg); transform-origin: right center;
   }
 </style>
 </head>
 <body>
 <div class="card">
-  <div class="title">🎯 距离 2027 年 <span class="red">3.14</span> <span class="blue">联考</span> 还剩</div>
+  <div id="title-display" class="title">🎯 距离目标还剩</div>
   <div class="body">
     <div class="units">
-      <div class="unit">
-        <div class="flip wide" id="flip-d">
-          <div class="half half-top"><span class="n" id="ht-d">—</span></div>
-          <div class="half half-bot"><span class="n" id="hb-d">—</span></div>
-          <div class="flap flap-top"><span class="n" id="ft-d">—</span></div>
-          <div class="flap flap-bot"><span class="n" id="fb-d">—</span></div>
-        </div>
-        <div class="unit-lbl">天</div>
-      </div>
-      <div class="unit">
-        <div class="flip" id="flip-h">
-          <div class="half half-top"><span class="n" id="ht-h">—</span></div>
-          <div class="half half-bot"><span class="n" id="hb-h">—</span></div>
-          <div class="flap flap-top"><span class="n" id="ft-h">—</span></div>
-          <div class="flap flap-bot"><span class="n" id="fb-h">—</span></div>
-        </div>
-        <div class="unit-lbl">时</div>
-      </div>
-      <div class="unit">
-        <div class="flip" id="flip-m">
-          <div class="half half-top"><span class="n" id="ht-m">—</span></div>
-          <div class="half half-bot"><span class="n" id="hb-m">—</span></div>
-          <div class="flap flap-top"><span class="n" id="ft-m">—</span></div>
-          <div class="flap flap-bot"><span class="n" id="fb-m">—</span></div>
-        </div>
-        <div class="unit-lbl">分</div>
-      </div>
-      <div class="unit">
-        <div class="flip" id="flip-s">
-          <div class="half half-top"><span class="n" id="ht-s">—</span></div>
-          <div class="half half-bot"><span class="n" id="hb-s">—</span></div>
-          <div class="flap flap-top"><span class="n" id="ft-s">—</span></div>
-          <div class="flap flap-bot"><span class="n" id="fb-s">—</span></div>
-        </div>
-        <div class="unit-lbl">秒</div>
-      </div>
+      <div class="unit"><div class="flip wide" id="flip-d"><div class="half half-top"><span class="n" id="ht-d">—</span></div><div class="half half-bot"><span class="n" id="hb-d">—</span></div><div class="flap flap-top"><span class="n" id="ft-d">—</span></div><div class="flap flap-bot"><span class="n" id="fb-d">—</span></div></div><div class="unit-lbl">天</div></div>
+      <div class="unit"><div class="flip" id="flip-h"><div class="half half-top"><span class="n" id="ht-h">—</span></div><div class="half half-bot"><span class="n" id="hb-h">—</span></div><div class="flap flap-top"><span class="n" id="ft-h">—</span></div><div class="flap flap-bot"><span class="n" id="fb-h">—</span></div></div><div class="unit-lbl">时</div></div>
+      <div class="unit"><div class="flip" id="flip-m"><div class="half half-top"><span class="n" id="ht-m">—</span></div><div class="half half-bot"><span class="n" id="hb-m">—</span></div><div class="flap flap-top"><span class="n" id="ft-m">—</span></div><div class="flap flap-bot"><span class="n" id="fb-m">—</span></div></div><div class="unit-lbl">分</div></div>
+      <div class="unit"><div class="flip" id="flip-s"><div class="half half-top"><span class="n" id="ht-s">—</span></div><div class="half half-bot"><span class="n" id="hb-s">—</span></div><div class="flap flap-top"><span class="n" id="ft-s">—</span></div><div class="flap flap-bot"><span class="n" id="fb-s">—</span></div></div><div class="unit-lbl">秒</div></div>
     </div>
-    
     <div class="right">
       <div class="right-main" id="weeks-val">—</div>
-      <div class="right-sub">2027.3.13 22:00</div>
+      <div class="right-sub" id="sub-display">2027.3.13 22:00</div>
     </div>
   </div>
 </div>
 <script>
-  const TARGET = new Date("2027-03-13T22:00:00+08:00");
+  // 解析 URL 参数
+  const params = new URLSearchParams(window.location.search);
+  const targetDateStr = params.get('date') || "2027-03-13";
+  const targetTimeStr = params.get('time') || "22:00";
+  const targetTitle = params.get('title') || "2027 年 <span class='red'>3.14</span> <span class='blue'>联考</span>";
+  
+  const TARGET = new Date(`${targetDateStr}T${targetTimeStr}:00+08:00`);
+  document.getElementById('title-display').innerHTML = `🎯 距离 ${targetTitle} 还剩`;
+  document.getElementById('sub-display').textContent = `${targetDateStr.replace(/-/g, '.')} ${targetTimeStr}`;
+
   const prev = {};
   function pad(n) { return String(n).padStart(2, '0'); }
   function doFlip(id, newV) {
     const oldV = prev[id];
     if (oldV === newV) return;
-    const ftEl   = document.getElementById('ft-' + id);
-    const fbEl   = document.getElementById('fb-' + id);
-    const htEl   = document.getElementById('ht-' + id);
-    const hbEl   = document.getElementById('hb-' + id);
-    const ftFlap = ftEl.closest('.flap');
-    const fbFlap = fbEl.closest('.flap');
-    htEl.textContent = newV;
-    hbEl.textContent = oldV ?? newV;
-    ftEl.textContent = oldV ?? newV;
-    fbEl.textContent = newV;
-    ftFlap.classList.remove('go');
-    fbFlap.classList.remove('go');
-    void ftFlap.offsetWidth;
-    ftFlap.classList.add('go');
-    fbFlap.classList.add('go');
-    setTimeout(() => {
-      hbEl.textContent = newV;
-      ftEl.textContent = newV;
-      ftFlap.classList.remove('go');
-      fbFlap.classList.remove('go');
-    }, 520);
-    prev[id] = newV;
+    const ftEl=document.getElementById('ft-'+id), fbEl=document.getElementById('fb-'+id), htEl=document.getElementById('ht-'+id), hbEl=document.getElementById('hb-'+id);
+    const ftFlap=ftEl.closest('.flap'), fbFlap=fbEl.closest('.flap');
+    htEl.textContent=newV; hbEl.textContent=oldV??newV; ftEl.textContent=oldV??newV; fbEl.textContent=newV;
+    ftFlap.classList.remove('go'); fbFlap.classList.remove('go'); void ftFlap.offsetWidth;
+    ftFlap.classList.add('go'); fbFlap.classList.add('go');
+    setTimeout(()=>{ hbEl.textContent=newV; ftEl.textContent=newV; ftFlap.classList.remove('go'); fbFlap.classList.remove('go'); },520);
+    prev[id]=newV;
   }
   function tick() {
     const now = new Date(), diff = TARGET - now;
-    if (diff <= 0) return;
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000)  / 60000);
-    const s = Math.floor((diff % 60000)    / 1000);
-    doFlip('d', String(d));
-    doFlip('h', pad(h));
-    doFlip('m', pad(m));
-    doFlip('s', pad(s));
-    const w = Math.floor(d / 7), rd = d % 7;
-    
-    const rightMain = document.getElementById('weeks-val');
-    const rightSub = document.querySelector('.right-sub');
-    
-    rightMain.innerHTML = 
-      '<span>' + w + '<span class="ltr">w</span></span>' + 
-      '<span>' + rd + '<span class="ltr">d</span></span>';
-      
-    rightMain.style.width = 'auto';
-    rightSub.style.width = 'auto';
-    const targetW = Math.max(rightSub.scrollWidth, rightMain.scrollWidth) + 'px';
-    rightMain.style.width = targetW;
-    rightSub.style.width = targetW;
+    if (diff <= 0) { document.getElementById('weeks-val').innerHTML = "已到达目标"; return; }
+    const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+    doFlip('d',String(d)); doFlip('h',pad(h)); doFlip('m',pad(m)); doFlip('s',pad(s));
+    const w=Math.floor(d/7), rd=d%7;
+    const rm=document.getElementById('weeks-val'), rs=document.getElementById('sub-display');
+    rm.innerHTML = `<span>${w}<span class="ltr">w</span></span><span>${rd}<span class="ltr">d</span></span>`;
+    rm.style.width='auto'; rs.style.width='auto';
+    const tw = Math.max(rs.scrollWidth, rm.scrollWidth)+'px';
+    rm.style.width=tw; rs.style.width=tw;
   }
-  tick();
-  setInterval(tick, 1000);
+  tick(); setInterval(tick, 1000);
 </script>
 </body>
 </html>
