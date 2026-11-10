@@ -1,0 +1,364 @@
+import { MODES, EXTRA_MODES, modeById } from './modes.js';
+import { generateSession, expression, validateCustom } from './engine.js';
+import { TrainingSession } from './session.js';
+import { timingFor, timeReference, formatTime } from './timing.js';
+import { LocalStore } from './storage.js';
+
+const main = document.querySelector('#main');
+const modal = document.querySelector('#modal');
+const escape = (text) => String(text ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+let local;
+try { local = window.localStorage; } catch { local = { getItem() { throw new Error('Unavailable'); }, setItem() { throw new Error('Unavailable'); } }; }
+const store = new LocalStore(local);
+const saved = store.read('settings', {});
+const settings = {
+  count: Number.isInteger(saved?.count) && saved.count >= 5 && saved.count <= 100 ? saved.count : 10,
+  customCount: saved?.customCount === true,
+  mixedShare: [0.3, 0.5, 0.7].includes(saved?.mixedShare) ? saved.mixedShare : 0.5
+};
+let selected = modeById('3');
+let training = null;
+let latestResult = null;
+let timerHandle;
+let toastHandle;
+let reference;
+let customConfig = store.read('custom', { firstDigits: 2, ops: ['+'], secondType: 'digits', secondDigits: 2, fixed: 11, min: 10, max: 99 });
+try { validateCustom(customConfig); } catch { customConfig = { firstDigits: 2, ops: ['+'], secondType: 'digits', secondDigits: 2, fixed: 11, min: 10, max: 99 }; }
+
+function toast(message) {
+  const node = document.querySelector('#toast');
+  node.textContent = message;
+  node.classList.add('visible');
+  clearTimeout(toastHandle);
+  toastHandle = setTimeout(() => node.classList.remove('visible'), 3600);
+}
+
+function saveSettings() {
+  if (!store.write('settings', settings)) toast('此浏览器无法保存设置；仍可继续练习。');
+}
+function hideToast() { clearTimeout(toastHandle); document.querySelector('#toast').classList.remove('visible'); }
+function setRoute(hash) {
+  hideToast();
+  history.pushState(null, '', `#${hash}`);
+  renderRoute();
+}
+function focusMain() { main.focus({ preventScroll: true }); window.scrollTo(0, 0); }
+function stopTimer() { clearInterval(timerHandle); }
+function activeTraining() { return training && !training.finished; }
+
+function showDialog(html) {
+  if (modal.open) modal.close();
+  modal.innerHTML = html;
+  modal.showModal();
+}
+function closeDialog() { modal.close(); }
+function confirmAction(title, message, action, confirmLabel = '确定') {
+  showDialog(`<h2 id="modal-title">${escape(title)}</h2><p>${escape(message)}</p><div class="dialog-actions"><button class="button" data-action="close-modal" autofocus>继续当前练习</button><button class="button primary" id="confirm-action">${escape(confirmLabel)}</button></div>`);
+  modal.querySelector('#confirm-action').addEventListener('click', () => { closeDialog(); action(); }, { once: true });
+}
+function leaveFor(hash) {
+  if (activeTraining()) confirmAction('离开这组练习？', '本组尚未完成，离开后不会记录这次成绩。', () => { stopTimer(); training = null; setRoute(hash); }, '离开练习');
+  else setRoute(hash);
+}
+
+function modeCard(mode) {
+  return `<button class="mode-card${selected.id === mode.id ? ' selected' : ''}" data-mode="${mode.id}" aria-label="${mode.number ? `第${mode.number}组 ` : ''}${mode.title}${mode.kind === 'flash' ? '，立即开始' : ''}" ${mode.kind === 'flash' ? '' : `aria-pressed="${selected.id === mode.id}"`}>
+    ${mode.number ? `<span class="mode-number">${String(mode.number).padStart(2, '0')}</span>` : ''}<span class="mode-symbol" aria-hidden="true">${mode.symbol}</span><span><strong>${mode.title}</strong><small>${mode.note}</small></span>${mode.kind === 'flash' ? '<span class="mode-arrow" aria-hidden="true">↗</span>' : ''}</button>`;
+}
+
+function panel() {
+  const description = selected.untimed ? '慢慢算，先把方法练熟。没有计时和评级。' : selected.custom ? '按你设置的位数和范围，随机生成加、减、乘算式。' : selected.id === '3' ? '每一道都发生个位进位，重点练习几十几之间的加法。' : selected.id === '4' ? '每一道都需要个位借位，所有结果均为正数。' : selected.mixed ? '两种运算随机混排，一题一答，完成后查看逐题复盘。' : '一次一道算式，完成后回顾答案与每题用时。';
+  const timing = timingFor(selected, settings.count, reference);
+  return `<aside class="practice-panel" aria-label="练习设置"><div class="panel-label">本次练习 / PRACTICE</div><h3>${selected.title}</h3><p class="mode-description">${description}</p><div class="divider"></div>
+    <label class="field-label">每组题量</label><div class="count-options" role="group" aria-label="题量选择">${[10, 15].map(n => `<button data-count="${n}" class="${settings.count === n && !settings.customCount ? 'active' : ''}" aria-pressed="${settings.count === n && !settings.customCount}">${n === 10 ? '快速' : '正常'} ${n}</button>`).join('')}<button data-count="custom" class="${settings.customCount ? 'active' : ''}" aria-pressed="${settings.customCount}">自定义</button></div>
+    ${settings.customCount ? `<div class="custom-count"><label class="quiet" for="custom-count">题数（5～100）</label><input class="field" id="custom-count" type="number" min="5" max="100" step="1" inputmode="numeric" value="${settings.count}"></div>` : ''}
+    <p class="count-note">${selected.untimed ? '自由练习，不计时、不评级。' : timing ? `合格 ${timing.pass}s · 良好 ${timing.good}s · 优秀 ${timing.excellent}s${timing.derived ? '<br>按比例推算，非原应用截图原值' : '<br>整组用时参考，正确率单独记录'}` : '此题型时间门槛待核实，仅记录实际用时。'}</p>
+    ${selected.mixed ? `<label class="field-label" for="mixed-share">加法比例</label><select class="field" id="mixed-share">${[0.3, 0.5, 0.7].map(n => `<option value="${n}"${settings.mixedShare === n ? ' selected' : ''}>约 ${n * 100}% 加法 / ${100 - n * 100}% 减法</option>`).join('')}</select><p class="count-note">本站默认各半，可调整；顺序始终随机。</p>` : ''}
+    ${selected.custom ? '<button class="text-button" data-action="custom-builder">调整出题规则 →</button>' : ''}
+    <button class="button primary wide" data-action="start">开始练习 <span aria-hidden="true">→</span></button>
+    <div class="panel-secondary"><button class="text-button" data-action="export-questions">导出题目 ↗</button><a class="text-button" href="#history">练习记录 ↗</a></div><p class="panel-tip">第1、2组点击卡片直接开始，固定10个数字，不受题量设置影响。</p></aside>`;
+}
+
+function renderHome() {
+  stopTimer();
+  main.innerHTML = `<section class="hero"><div><div class="eyebrow">DAILY MENTAL WORKOUT</div><h1>把反应，<span class="hero-title-tail">练成直觉。</span></h1><p>从十个数字开始，在每一次进位中找到节奏。</p></div><div class="hero-art" aria-hidden="true"><div class="art-card">7</div><div class="art-card">+ 8</div></div></section>
+    <div class="home-layout"><section class="training-section" aria-labelledby="training-title"><div class="section-label"><h2 id="training-title">你的十组训练</h2><span>01 — 10 · 由浅入深</span></div><div class="training-grid">${MODES.map(modeCard).join('')}</div>
+    <details class="more"><summary>更多练习 · 乘法与自定义 <span aria-hidden="true">＋</span></summary><div class="training-grid">${EXTRA_MODES.map(modeCard).join('')}</div><p class="pending-note">凑整百、多数相加、扩展除法与估算等模式待补充原规则。估算 ±5% 和分数转百分数 ±3% 的误差定义未确认，暂不开放判分。</p></details></section>${panel()}</div>`;
+}
+
+function validCount() {
+  const input = document.querySelector('#custom-count');
+  if (input) {
+    const value = Number(input.value);
+    if (!input.value.trim() || !Number.isInteger(value) || value < 5 || value > 100) {
+      input.focus(); toast('请输入5～100的整数题量'); return false;
+    }
+    settings.count = value;
+    saveSettings();
+  }
+  return true;
+}
+
+function start(mode = selected) {
+  if (mode.kind !== 'flash' && !validCount()) return;
+  hideToast();
+  if (mode.kind !== 'flash') selected = mode;
+  try {
+    const spec = generateSession(mode.id, settings.count, { mixedShare: settings.mixedShare, custom: customConfig });
+    training = new TrainingSession(spec, { untimed: mode.untimed });
+    latestResult = null;
+    history.pushState(null, '', '#train');
+    renderTraining();
+    focusMain();
+    if (training.phase === 'answer') focusAnswer();
+  } catch (error) { toast(error.message); }
+}
+
+function thresholds(mode, count) {
+  if (mode.untimed) return '<div class="thresholds">不计时，按自己的节奏练习。</div>';
+  const timing = timingFor(mode, count, reference);
+  if (!timing) return mode.kind === 'flash' ? '' : '<div class="thresholds">记录用时 · 此题型时间门槛待核实</div>';
+  return `<div class="thresholds">合格 <strong>${timing.pass}s</strong>　良好 <strong>${timing.good}s</strong>　优秀 <strong>${timing.excellent}s</strong>${timing.derived ? '<span class="threshold-note">按比例推算，非原应用截图原值</span>' : ''}</div>`;
+}
+
+function keypad() {
+  const negative = training.spec.kind === 'quiz' && training.spec.questions.some(q => q.answer < 0);
+  return `<div class="keypad" role="group" aria-label="数字键盘"><button class="utility" data-key="clear" aria-label="清空答案">清空</button><button class="utility" data-key="backspace" aria-label="退格">⌫ 退格</button><button class="utility" data-key="${negative ? 'sign' : '.'}" aria-label="${negative ? '切换正负号' : '输入小数点'}">${negative ? '±' : '小数点'}</button>${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button data-key="${n}" aria-label="数字${n}">${n}</button>`).join('')}<button data-key="." aria-label="小数点">.</button><button data-key="0" aria-label="数字0">0</button><button class="confirm" data-action="submit">确定 ↵</button></div>`;
+}
+
+function answerArea() {
+  return `<form id="answer-form" autocomplete="off"><label class="answer-label" for="answer">${training.spec.kind === 'flash' ? '所有数字已结束，请填写最终答案' : '你的答案'}</label><input id="answer" class="answer-input" type="text" inputmode="none" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="14" placeholder="输入答案" aria-describedby="answer-error"><div id="answer-error" class="answer-error" role="status"></div><button type="submit" hidden tabindex="-1">提交答案</button></form>${keypad()}<div class="keypad-caption">支持触屏与实体键盘 · Enter 确定 · Backspace 退格</div>`;
+}
+
+function renderTraining() {
+  stopTimer();
+  const mode = modeById(training.spec.modeId);
+  const flash = training.spec.kind === 'flash';
+  const cards = training.phase === 'cards';
+  const index = flash ? Math.min(training.index + 1, training.spec.cards.length) : training.records.length + 1;
+  const total = flash ? training.spec.cards.length : training.spec.count;
+  const progress = flash ? training.index / total : training.records.length / total;
+  main.innerHTML = `<section class="training" aria-labelledby="training-name"><div class="training-top"><button class="back-button" data-action="leave">← 返回首页</button><h1 id="training-name">${mode.title}</h1><span class="quiet">${mode.number ? `第 ${String(mode.number).padStart(2, '0')} 组` : '拓展练习'}</span></div>
+    <div class="session-card"><div class="session-meta"><div class="progress-text">${cards ? '数卡' : flash ? '最终作答' : '题目'} <strong>${index}</strong> / ${total}</div>${mode.untimed ? '<span>自由练习</span>' : `<span class="timer" aria-label="累计用时">◷ <span id="timer">${formatTime(training.elapsed())}</span></span>`}</div><div class="progress-track" role="progressbar" aria-label="练习进度" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${cards ? training.index : flash ? total : training.records.length}"><div class="progress-fill" style="width:${progress * 100}%"></div></div>
+    ${cards ? `<div class="flash-area"><span class="flash-stage">${mode.id === '2' ? training.index === 0 ? '先记住这个起始数' : `减去第 ${training.index} 个数字` : `记住并加上第 ${training.index + 1} 个数字`}</span><button class="flash-card" data-action="next-card" aria-label="当前数字${training.spec.cards[training.index]}，点击查看下一张"><span id="flash-digit">${training.spec.cards[training.index]}</span><span class="flash-tag">${training.index === total - 1 ? '点击，填写最终答案' : '点击卡片，继续 →'}</span></button><p class="flash-instruction">${mode.hint}</p></div>` : `${flash ? '<div class="equation">最后的结果是？</div>' : `<div class="equation" aria-label="${escape(expression(training.current))} 等于多少">${escape(expression(training.current))} =</div>`}${thresholds(mode, training.spec.count)}${answerArea()}`}
+    </div><div class="training-bottom"><p>${mode.untimed ? '不记录用时。' : '从首题显示计至最后一次提交，切到后台仍继续计时。'}${mode.id === '7' ? '奇数可用 .5 作答。' : ''}</p><button class="text-button" data-action="restart">↻ 重新开始</button></div></section>`;
+  if (!mode.untimed) timerHandle = setInterval(() => {
+    const timer = document.querySelector('#timer');
+    if (timer && training) timer.textContent = formatTime(training.elapsed());
+  }, 100);
+  if (!cards) focusAnswer();
+}
+
+function focusAnswer() { document.querySelector('#answer')?.focus({ preventScroll: true }); }
+function nextCard() {
+  if (!training?.nextCard()) return;
+  renderTraining();
+  if (training.phase === 'cards') document.querySelector('.flash-card')?.focus({ preventScroll: true });
+}
+function keyInput(key) {
+  const input = document.querySelector('#answer');
+  if (!input || !activeTraining()) return;
+  if (key === 'clear') input.value = '';
+  else if (key === 'backspace') input.value = input.value.slice(0, -1);
+  else if (key === 'sign') input.value = input.value.startsWith('-') ? input.value.slice(1) : `-${input.value}`;
+  else if (key === '.') {
+    if (!input.value.includes('.')) input.value = input.value === '' || input.value === '-' ? `${input.value}0.` : `${input.value}.`;
+  } else if (input.value.length < 14) input.value += key;
+  document.querySelector('#answer-error').textContent = '';
+  focusAnswer();
+}
+
+function submit() {
+  const input = document.querySelector('#answer');
+  if (!input || !activeTraining()) return;
+  const record = training.submit(input.value);
+  if (!record) { document.querySelector('#answer-error').textContent = '请输入完整的数字答案'; focusAnswer(); return; }
+  if (training.finished) complete();
+  else renderTraining();
+}
+
+function complete() {
+  stopTimer();
+  latestResult = {
+    id: crypto.randomUUID(), date: new Date().toISOString(), modeId: training.spec.modeId,
+    spec: training.spec, records: training.records, summary: training.summary(),
+    untimed: training.untimed, timing: timingFor(modeById(training.spec.modeId), training.spec.count, reference)
+  };
+  const savedOK = store.add(latestResult);
+  history.replaceState(null, '', '#result');
+  renderResult(latestResult, training.spec.kind !== 'flash');
+  focusMain();
+  if (!savedOK) toast('成绩已展示，但此浏览器无法保存历史；可以手动导出。');
+}
+
+function resultStats(result) {
+  const { summary, timing, untimed } = result;
+  const timeLabel = untimed ? '' : timeReference(summary.totalMs, timing);
+  return `<div class="result-stats"><div><strong class="correct">${summary.correct}</strong><span>答对</span></div><div><strong class="${summary.wrong ? 'wrong' : ''}">${summary.wrong}</strong><span>答错</span></div>${untimed ? '' : `<div><strong>${formatTime(summary.totalMs)}</strong><span>整组用时</span></div>`}</div>${timeLabel ? `<p class="result-note">${timeLabel} · 仅作速度参考，正确率单独记录。${timing.derived ? '<br>时间门槛按比例推算，非原应用截图原值。' : ''}</p>` : ''}`;
+}
+
+function renderResult(result, popup = false) {
+  stopTimer();
+  if (!result) { setRoute('home'); return; }
+  const mode = modeById(result.modeId);
+  const flash = result.spec?.kind === 'flash';
+  const correctCount = result.summary.correct;
+  let review;
+  if (flash) {
+    const correct = result.records[0]?.correct;
+    review = `<h2>按顺序回顾</h2>${result.spec.start ? `<div class="flash-start">起始数 <strong>${result.spec.start}</strong> · 依次减去下列数字</div>` : ''}<div class="digit-review">${result.spec.digits.map((n, i) => `<div><strong>${n}</strong><small>第 ${i + 1} 个</small></div>`).join('')}</div><p class="notice ${correct ? 'correct' : 'wrong'}">${correct ? '✓ 答对了' : '× 答错了'} · 你的答案 ${escape(result.records[0]?.entered)} · 正确答案 <strong>${result.spec.answer}</strong>${result.modeId === '2' ? `<br>逐步验算：本组发生 ${result.spec.borrows} 次个位借位 / 10 次减法` : ''}</p>`;
+  } else {
+    review = `<div class="section-label"><h2>逐题复盘</h2><span>${result.summary.total} 道题</span></div><div class="review-table-wrap"><table class="review-table"><thead><tr><th scope="col">题目</th><th scope="col">正确答案</th><th scope="col">你的答案</th>${result.untimed ? '' : '<th scope="col">用时</th>'}</tr></thead><tbody>${result.records.map((q, i) => `<tr><td><span class="review-index">${i + 1}</span>${escape(expression(q))}</td><td>${q.answer}</td><td class="${q.correct ? 'correct' : 'wrong'}">${escape(q.entered)} ${q.correct ? '✓' : '×'}</td>${result.untimed ? '' : `<td>${(q.elapsedMs / 1000).toFixed(1)}s</td>`}</tr>`).join('')}</tbody></table></div>`;
+  }
+  main.innerHTML = `<section class="training"><div class="result-header"><div><div class="eyebrow">PRACTICE COMPLETE</div><h1>${flash ? '这一组，完成了。' : '练习完成。'}</h1></div><span class="quiet">${escape(mode?.title ?? '练习记录')}</span></div><div class="result-hero"><div class="result-kicker">${flash ? '最终心算结果' : '本次正确率'}</div><h2>${flash ? result.spec.answer : `${Math.round(correctCount / result.summary.total * 100)}%`}</h2>${resultStats(result)}${result.untimed ? '<p class="result-note">自由练习 · 不计时、不评级</p>' : ''}</div>${review}<div class="result-actions"><button class="button primary" data-action="retry-result">再练一组 →</button><button class="button" data-action="home">返回首页</button><button class="text-button" data-action="export-result">导出本次记录 ↗</button></div></section>`;
+  if (popup) showDialog(`<h2 id="modal-title">练习结果</h2><p>${escape(mode?.title ?? '')} · 共 ${result.summary.total} 道题</p>${resultStats(result)}<div class="dialog-actions"><button class="button" data-action="modal-home">返回首页</button><button class="button primary" data-action="close-modal" autofocus>查看逐题复盘</button></div>`);
+}
+
+function renderHistory() {
+  stopTimer();
+  const records = store.history();
+  main.innerHTML = `<section class="training"><div class="eyebrow">YOUR PRACTICE LOG</div><h1>每一次练习，都算数。</h1><p class="quiet" style="margin-top:12px">仅保存最近100组，存于此浏览器。不同设备之间不会自动同步。</p>${records.length ? `<div class="history-list">${records.map(r => `<button class="history-item" data-record="${escape(r.id)}"><span><strong>${escape(modeById(r.modeId)?.title ?? '练习记录')}</strong><small>${escape(new Date(r.date).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }))}</small></span><span class="score">${r.summary.correct} / ${r.summary.total} <span aria-hidden="true">↗</span><small>${r.untimed ? '自由练习 · 不计时' : formatTime(r.summary.totalMs)}</small></span></button>`).join('')}</div><div class="history-toolbar"><button class="button" data-action="export-history">导出全部记录</button><button class="button danger subtle" data-action="clear-history">清空本机记录</button></div>` : '<div class="empty-state"><h2>第一条记录，等你来写。</h2><p>完成一组练习，就能在这里回看答案。</p><button class="button primary" data-action="home">开始练习 →</button></div>'}</section>`;
+}
+
+function download(filename, content, type) {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function exportQuestions() {
+  if (!validCount()) return;
+  const spec = generateSession(selected.id, settings.count, { mixedShare: settings.mixedShare, custom: customConfig });
+  const lines = [`速算 · ${selected.title}`, `${spec.count}题 / 答案见末页`, ''];
+  spec.questions.forEach((q, i) => lines.push(`${i + 1}. ${expression(q)} = ______`));
+  lines.push('\n\n—— 参考答案 ——');
+  spec.questions.forEach((q, i) => lines.push(`${i + 1}. ${q.answer}`));
+  download(`速算-${selected.title}-${spec.count}题.txt`, '\uFEFF' + lines.join('\n'), 'text/plain;charset=utf-8');
+  toast('已生成一套新题；不会提前揭示下一次练习的题目。');
+}
+
+function showCustomBuilder() {
+  const c = customConfig;
+  const digits = (name, value) => `<select name="${name}" class="field">${[1, 2, 3, 4].map(n => `<option value="${n}"${value === n ? ' selected' : ''}>${n}位数</option>`).join('')}</select>`;
+  showDialog(`<h2 id="modal-title">自定义练习</h2><p>本站支持加、减、乘运算。减法保留你设定的两数范围，可能出现负数答案。</p><form id="builder-form"><div class="form-grid"><label>首数位数${digits('firstDigits', c.firstDigits)}</label><label>后数类型<select class="field" name="secondType"><option value="digits"${c.secondType === 'digits' ? ' selected' : ''}>随机位数</option><option value="fixed"${c.secondType === 'fixed' ? ' selected' : ''}>固定数字</option><option value="range"${c.secondType === 'range' ? ' selected' : ''}>随机范围</option></select></label><div class="form-full"><span class="field-label">运算符（可多选）</span><div class="checkbox-row">${['+', '-', '*'].map(op => `<label><input type="checkbox" name="ops" value="${op}"${c.ops.includes(op) ? ' checked' : ''}>${{ '+': '加 ＋', '-': '减 −', '*': '乘 ×' }[op]}</label>`).join('')}</div></div><label class="form-full" data-builder="digits">后数位数${digits('secondDigits', c.secondDigits)}</label><label class="form-full" data-builder="fixed">固定数字<input class="field" name="fixed" type="number" min="1" max="9999" step="1" value="${c.fixed}"></label><label data-builder="range">范围下限<input class="field" name="min" type="number" min="1" max="9999" step="1" value="${c.min}"></label><label data-builder="range">范围上限<input class="field" name="max" type="number" min="1" max="9999" step="1" value="${c.max}"></label></div><div class="form-error" id="builder-error" role="status"></div><p>无已核实的时间门槛；规则保存在此浏览器。</p><div class="dialog-actions"><button type="button" class="button" data-action="close-modal">取消</button><button type="submit" class="button primary">保存规则</button></div></form>`);
+  const form = document.querySelector('#builder-form');
+  const update = () => form.querySelectorAll('[data-builder]').forEach(node => {
+    const visible = node.dataset.builder === form.elements.secondType.value;
+    node.hidden = !visible; node.querySelectorAll('input, select').forEach(input => input.disabled = !visible);
+  });
+  form.elements.secondType.addEventListener('change', update); update();
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const config = { firstDigits: Number(data.get('firstDigits')), ops: data.getAll('ops'), secondType: data.get('secondType'), secondDigits: Number(data.get('secondDigits') ?? c.secondDigits), fixed: Number(data.get('fixed') ?? c.fixed), min: Number(data.get('min') ?? c.min), max: Number(data.get('max') ?? c.max) };
+    try {
+      validateCustom(config); customConfig = config; store.write('custom', config); selected = modeById('custom'); closeDialog(); renderHome(); toast('已保存，可以开始自定义练习。');
+    } catch (error) { document.querySelector('#builder-error').textContent = error.message; }
+  });
+}
+
+function help() {
+  showDialog(`<h2 id="modal-title">一间随身心算练习室</h2><p><strong>连续心算：</strong>第1、2组点击首页入口即开始，逐张点卡换数字，全部结束后只答一次。第2组先记起始数，再依次相减。</p><p><strong>逐题作答：</strong>其他题型先选题量，再开始。数字键盘或实体键盘均可输入；第7组允许奇数，用 .5 表示半整数。</p><p><strong>计时：</strong>首题显示至最后提交，包括后台和离开页面前的等待。第6、7组完全不计时。参考时间与正确率分别显示，尚未设定错题对等级的影响。</p><p><strong>安装与离线：</strong>iPhone/iPad Safari 点“分享 → 添加到主屏幕”。首次联网打开并完成缓存后可离线练习；清除浏览器数据会删除成绩。</p><p><strong>隐私：</strong>免费，无广告、账号或云端同步。最近100组成绩只存在当前浏览器，可以在练习记录页导出。</p><div class="dialog-actions"><button class="button primary" data-action="close-modal" autofocus>知道了</button></div>`);
+}
+
+function renderRoute() {
+  if (!reference) return;
+  const route = location.hash.slice(1) || 'home';
+  document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', route === a.dataset.nav || route === 'result' && a.dataset.nav === 'history' || route === 'train' && a.dataset.nav === 'home'));
+  if (route === 'history') renderHistory();
+  else if (route === 'train' && training && !training.finished) renderTraining();
+  else if (route === 'result' && latestResult) renderResult(latestResult);
+  else { history.replaceState(null, '', '#home'); renderHome(); }
+}
+
+document.addEventListener('click', e => {
+  const modeButton = e.target.closest('[data-mode]');
+  if (modeButton) {
+    const mode = modeById(modeButton.dataset.mode);
+    if (mode.kind === 'flash') start(mode);
+    else if (mode.custom) showCustomBuilder();
+    else { if (!validCount()) return; selected = mode; const open = document.querySelector('details.more')?.open; renderHome(); if (open) document.querySelector('details.more').open = true; }
+    return;
+  }
+  const count = e.target.closest('[data-count]');
+  if (count) { settings.customCount = count.dataset.count === 'custom'; if (!settings.customCount) settings.count = Number(count.dataset.count); saveSettings(); const open = document.querySelector('details.more')?.open; renderHome(); if (open) document.querySelector('details.more').open = true; return; }
+  const key = e.target.closest('[data-key]');
+  if (key) { keyInput(key.dataset.key); return; }
+  const record = e.target.closest('[data-record]');
+  if (record) { latestResult = store.history().find(r => r.id === record.dataset.record); setRoute('result'); focusMain(); return; }
+  const nav = e.target.closest('a[href^="#"]');
+  if (nav && nav.getAttribute('href') !== '#main') { e.preventDefault(); leaveFor(nav.hash.slice(1)); return; }
+  const action = e.target.closest('[data-action]')?.dataset.action;
+  if (!action) return;
+  if (action === 'start') start();
+  else if (action === 'next-card') nextCard();
+  else if (action === 'submit') submit();
+  else if (action === 'help') help();
+  else if (action === 'leave') leaveFor('home');
+  else if (action === 'home') setRoute('home');
+  else if (action === 'close-modal') { closeDialog(); if (activeTraining()) focusAnswer(); }
+  else if (action === 'modal-home') { closeDialog(); setRoute('home'); }
+  else if (action === 'restart') confirmAction('重新开始这组练习？', '本次未完成的答案将丢弃，重新生成一组新题。', () => start(modeById(training.spec.modeId)), '重新开始');
+  else if (action === 'retry-result') { const mode = modeById(latestResult.modeId); if (mode) { settings.count = latestResult.spec.count; if (latestResult.spec.options?.custom) customConfig = latestResult.spec.options.custom; if (latestResult.spec.options?.mixedShare) settings.mixedShare = latestResult.spec.options.mixedShare; start(mode); } }
+  else if (action === 'export-questions') exportQuestions();
+  else if (action === 'export-result') download('速算-本次记录.json', JSON.stringify(latestResult, null, 2), 'application/json');
+  else if (action === 'export-history') download('速算-练习记录.json', JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), records: store.history() }, null, 2), 'application/json');
+  else if (action === 'clear-history') confirmAction('清空此浏览器的记录？', '将删除本机全部练习记录。建议先导出备份，此操作无法撤销。', () => { if (store.clear()) { renderHistory(); toast('本机记录已清空'); } else toast('无法清除本机存储'); }, '清空记录');
+  else if (action === 'custom-builder') showCustomBuilder();
+});
+
+document.addEventListener('change', e => {
+  if (e.target.id === 'mixed-share') { settings.mixedShare = Number(e.target.value); saveSettings(); }
+  else if (e.target.id === 'custom-count' && validCount()) {
+    const timing = timingFor(selected, settings.count, reference);
+    const note = document.querySelector('.count-note');
+    if (note && timing) note.innerHTML = `合格 ${timing.pass}s · 良好 ${timing.good}s · 优秀 ${timing.excellent}s<br>${timing.derived ? '按比例推算，非原应用截图原值' : '整组用时参考，正确率单独记录'}`;
+  }
+});
+document.addEventListener('submit', e => { if (e.target.id === 'answer-form') { e.preventDefault(); submit(); } });
+document.addEventListener('input', e => { if (e.target.id === 'answer') document.querySelector('#answer-error').textContent = ''; });
+document.addEventListener('keydown', e => {
+  if (modal.open || !activeTraining() || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (training.phase === 'cards' && [' ', 'Enter', 'ArrowRight'].includes(e.key)) { e.preventDefault(); nextCard(); return; }
+  if (training.phase !== 'answer') return;
+  if (e.key === 'Enter') { e.preventDefault(); submit(); }
+  else if (e.target.id !== 'answer' && /^\d$/.test(e.key)) { e.preventDefault(); keyInput(e.key); }
+  else if (e.target.id !== 'answer' && e.key === '.') { e.preventDefault(); keyInput('.'); }
+  else if (e.target.id !== 'answer' && e.key === 'Backspace') { e.preventDefault(); keyInput('backspace'); }
+});
+window.addEventListener('hashchange', () => {
+  if (activeTraining() && location.hash !== '#train') {
+    const destination = location.hash.slice(1) || 'home';
+    history.replaceState(null, '', '#train');
+    leaveFor(destination);
+  } else renderRoute();
+});
+window.addEventListener('beforeunload', e => { if (activeTraining()) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('online', updateOfflineStatus);
+window.addEventListener('offline', updateOfflineStatus);
+async function updateOfflineStatus() {
+  const node = document.querySelector('#offline-status');
+  const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-f026978996d7`);
+  node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
+}
+
+try {
+  const response = await fetch('./data/timing-reference.json');
+  if (!response.ok) throw new Error('计时资料加载失败');
+  reference = await response.json();
+  renderRoute();
+  if (!store.available) toast('浏览器存储不可用，仍可练习；成绩请手动导出。');
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    navigator.serviceWorker.register('./sw.js').then(registration => {
+      const check = () => updateOfflineStatus();
+      if (registration.active) check();
+      registration.addEventListener('updatefound', () => {
+        registration.installing?.addEventListener('statechange', check);
+      });
+      navigator.serviceWorker.addEventListener('controllerchange', check);
+    }).catch(() => { document.querySelector('#offline-status').textContent = '离线缓存未启用 · 联网练习可用'; });
+  }
+} catch {
+  main.innerHTML = '<section class="empty-state"><h1>练习室暂时没有打开。</h1><p>请联网后刷新。如在本地使用，请先运行 npm run dev，再打开显示的地址。</p><button class="button primary" id="reload">重新加载</button></section>';
+  document.querySelector('#reload').addEventListener('click', () => location.reload());
+}

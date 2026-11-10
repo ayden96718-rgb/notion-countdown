@@ -1,0 +1,134 @@
+{
+  "method": "Deterministic seeds 0..999 for flash subtraction; 4 seeds × every count 5..100 for groups 3–5.",
+  "groups": {
+    "2": {
+      "sampledSets": 1000,
+      "minBorrows": 8,
+      "maxBorrows": 9,
+      "averageBorrows": 8.168,
+      "distinctStartingNumbers": 16,
+      "minimumAnswer": 2,
+      "maximumStartingNumber": 97,
+      "example": {
+        "modeId": "2",
+        "seed": 20261110,
+        "count": 10,
+        "kind": "flash",
+        "start": 91,
+        "digits": [
+          9,
+          9,
+          7,
+          9,
+          6,
+          7,
+          8,
+          3,
+          6,
+          8
+        ],
+        "borrows": 8,
+        "answer": 19,
+        "steps": [
+          {
+            "before": 91,
+            "digit": 9,
+            "borrowed": true,
+            "after": 82
+          },
+          {
+            "before": 82,
+            "digit": 9,
+            "borrowed": true,
+            "after": 73
+          },
+          {
+            "before": 73,
+            "digit": 7,
+            "borrowed": true,
+            "after": 66
+          },
+          {
+            "before": 66,
+            "digit": 9,
+            "borrowed": true,
+            "after": 57
+          },
+          {
+            "before": 57,
+            "digit": 6,
+            "borrowed": false,
+            "after": 51
+          },
+          {
+            "before": 51,
+            "digit": 7,
+            "borrowed": true,
+            "after": 44
+          },
+          {
+            "before": 44,
+            "digit": 8,
+            "borrowed": true,
+            "after": 36
+          },
+          {
+            "before": 36,
+            "digit": 3,
+            "borrowed": false,
+            "after": 33
+          },
+          {
+            "before": 33,
+            "digit": 6,
+            "borrowed": true,
+            "after": 27
+          },
+          {
+            "before": 27,
+            "digit": 8,
+            "borrowed": true,
+            "after": 19
+          }
+        ],
+        "cards": [
+          91,
+          9,
+          9,
+          7,
+          9,
+          6,
+          7,
+          8,
+          3,
+          6,
+          8
+        ]
+      }
+    },
+    "3": {
+      "sampledQuestions": 20160,
+      "additionQuestions": 20160,
+      "subtractionQuestions": 0,
+      "carryViolations": 0,
+      "borrowViolations": 0,
+      "teenCapViolations": 0
+    },
+    "4": {
+      "sampledQuestions": 20160,
+      "additionQuestions": 0,
+      "subtractionQuestions": 20160,
+      "carryViolations": 0,
+      "borrowViolations": 0,
+      "teenCapViolations": 0
+    },
+    "5": {
+      "sampledQuestions": 20160,
+      "additionQuestions": 10176,
+      "subtractionQuestions": 9984,
+      "carryViolations": 0,
+      "borrowViolations": 0,
+      "teenCapViolations": 0
+    }
+  }
+}

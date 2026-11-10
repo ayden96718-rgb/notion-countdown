@@ -1,0 +1,12 @@
+# Local caches / platform files
+.DS_Store
+Thumbs.db
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.browser-cache/
+artifacts/

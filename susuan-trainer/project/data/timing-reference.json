@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "source": "User-supplied 行测小助手 screenshots in this conversation",
+  "provenance": "image-evidenced; missing groups intentionally absent",
+  "timings": [
+    {
+      "id": "two-digit-add-sub",
+      "label": "两位数加减（参考第三～五组）",
+      "count": 10,
+      "pass_s": 28,
+      "good_s": 22,
+      "excellent_s": 18,
+      "image": "04-two-digit-15-questions.png;05-two-digit-10-questions.png"
+    },
+    {
+      "id": "two-digit-add-sub",
+      "label": "两位数加减（15题）",
+      "count": 15,
+      "pass_s": 42,
+      "good_s": 33,
+      "excellent_s": 27,
+      "image": "04-two-digit-15-questions.png"
+    },
+    {
+      "id": "three-digit-addition",
+      "label": "三位数加法",
+      "count": 10,
+      "pass_s": 40,
+      "good_s": 32,
+      "excellent_s": 26,
+      "image": "08-three-digit-addition.png"
+    },
+    {
+      "id": "three-digit-subtraction",
+      "label": "三位数减法",
+      "count": 10,
+      "pass_s": 38,
+      "good_s": 30,
+      "excellent_s": 24,
+      "image": "07-three-digit-subtraction.png"
+    },
+    {
+      "id": "three-digit-mixed-user-assigned",
+      "label": "第十组：三位数加减混合（用户指定计时参考）",
+      "count": 10,
+      "pass_s": 42,
+      "good_s": 34,
+      "excellent_s": 28,
+      "image": "27-mixed-add-sub-timing-10q.png",
+      "source_note": "User explicitly assigns these screenshot timings to group 10; shown example is 1588-695 with a four-digit first operand. Preserve group 10 three-digit operand rule.",
+      "timing_status": "user-confirmed-from-reference-screenshot",
+      "question_count_extended": "15/custom threshold may be proportionally derived, not screenshot-verified"
+    },
+    {
+      "id": "three-minus-two",
+      "label": "三位数减两位数",
+      "count": 10,
+      "pass_s": 42,
+      "good_s": 34,
+      "excellent_s": 28,
+      "image": "11-three-minus-two.png"
+    },
+    {
+      "id": "two-by-one-multiply",
+      "label": "两位数乘一位数",
+      "count": 10,
+      "pass_s": 38,
+      "good_s": 30,
+      "excellent_s": 24,
+      "image": "10-two-by-one-multiplication.png"
+    },
+    {
+      "id": "three-by-one-multiply",
+      "label": "三位数乘一位数",
+      "count": 10,
+      "pass_s": 60,
+      "good_s": 50,
+      "excellent_s": 40,
+      "image": "09-three-by-one-multiplication.png"
+    },
+    {
+      "id": "two-by-11",
+      "label": "两位数乘11",
+      "count": 10,
+      "pass_s": 38,
+      "good_s": 30,
+      "excellent_s": 24,
+      "image": "12-multiply-11.png"
+    },
+    {
+      "id": "two-by-15",
+      "label": "两位数乘15",
+      "count": 10,
+      "pass_s": 38,
+      "good_s": 30,
+      "excellent_s": 24,
+      "image": "14-multiply-15.png"
+    },
+    {
+      "id": "two-by-two-multiply",
+      "label": "两位数乘两位数",
+      "count": 10,
+      "pass_s": 90,
+      "good_s": 75,
+      "excellent_s": 60,
+      "image": "15-two-by-two-multiplication.png"
+    },
+    {
+      "id": "three-by-one-divide",
+      "label": "三位数除一位数",
+      "count": 10,
+      "pass_s": 38,
+      "good_s": 30,
+      "excellent_s": 24,
+      "image": "16-three-by-one-division.png"
+    },
+    {
+      "id": "three-by-two-divide",
+      "label": "三位数除两位数",
+      "count": 10,
+      "pass_s": 90,
+      "good_s": 75,
+      "excellent_s": 60,
+      "image": "17-three-by-two-division.png"
+    },
+    {
+      "id": "five-by-three-divide",
+      "label": "五位数除三位数",
+      "count": 10,
+      "pass_s": 90,
+      "good_s": 75,
+      "excellent_s": 60,
+      "image": "19-five-by-three-division.png"
+    },
+    {
+      "id": "fraction-to-percent",
+      "label": "分数转百分数",
+      "count": 10,
+      "pass_s": 90,
+      "good_s": 75,
+      "excellent_s": 60,
+      "tolerance_label": "±3% (original screenshot, formula pending)",
+      "image": "20-fraction-to-percent.png"
+    },
+    {
+      "id": "multiplication-estimation",
+      "label": "乘法估算",
+      "count": 10,
+      "pass_s": 48,
+      "good_s": 40,
+      "excellent_s": 32,
+      "tolerance_label": "±5% (original screenshot, formula pending)",
+      "image": "18-multiplication-estimation.png"
+    }
+  ]
+}

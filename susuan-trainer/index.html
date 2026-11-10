@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#eaf4e8">
+    <meta name="description" content="十组定制速算练习。连续心算、强制进借位、倍增减半与三位数训练，免费离线使用。">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>速算 · 个人心算练习室</title>
+    <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="速算首页"><span class="brand-mark" aria-hidden="true">s<span>+</span></span><span>速算<span class="brand-caption">个人心算练习室</span></span></a>
+      <nav aria-label="主导航"><a href="#home" data-nav="home">开始练习</a><a href="#history" data-nav="history">练习记录</a><button class="icon-button" type="button" data-action="help" aria-label="使用帮助">?</button></nav>
+    </header>
+    <main id="main" tabindex="-1"><div class="loading">正在准备练习室…</div></main>
+    <footer class="site-footer"><span>每天一点，让心算更轻松。</span><span id="offline-status">本机计算 · 成绩仅存于此设备</span></footer>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <dialog id="modal" aria-labelledby="modal-title"></dialog>
+    <noscript><p class="notice">本练习室需要启用 JavaScript，所有计算在你的设备上完成。</p></noscript>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

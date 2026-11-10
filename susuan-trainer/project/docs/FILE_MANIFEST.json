@@ -1,0 +1,362 @@
+{
+  ".github/workflows/pages.yml": {
+    "size_bytes": 812,
+    "sha256": "9ddf9dc59bf2d0b3e0a10be96364f0778d866b5042b327c2c51a9fc179746084"
+  },
+  ".gitignore": {
+    "size_bytes": 144,
+    "sha256": "f82279b5e413e5d66fb14d3ab64a81e1d264268e6c0f28bef1806995b1d9c90c"
+  },
+  "AGENTS.md": {
+    "size_bytes": 2182,
+    "sha256": "4fe7c1afb5d56667d340e0499e77d32ab382ae05746fe4f061d171e62d8f13e4"
+  },
+  "README.md": {
+    "size_bytes": 4641,
+    "sha256": "a3f0859479ba6775b174792435f150f3e2ac1c189a80fb549ddc73914bcc82f3"
+  },
+  "data/timing-reference.json": {
+    "size_bytes": 4249,
+    "sha256": "1db8acbf083cb989d858cd74aaad2faec4d7f647387e262f6ecee78558e6bc12"
+  },
+  "docs/ACCEPTANCE_TESTS.md": {
+    "size_bytes": 5477,
+    "sha256": "41d3cabef22d3b5e253705b260e8006e90ba25c354138c09f5baf8601d71e9c5"
+  },
+  "docs/CHANGELOG.md": {
+    "size_bytes": 1629,
+    "sha256": "56fe4df71edbd03825ca65a19573be2c60a21763660c9bd054ec907e61e7970f"
+  },
+  "docs/CODEX_HANDOFF.md": {
+    "size_bytes": 4831,
+    "sha256": "b0c57e77d93f7c886227f5a315def20ca60c7dff9a5e5f416a0a9e4e14682239"
+  },
+  "docs/DEPLOYMENT.md": {
+    "size_bytes": 3290,
+    "sha256": "8d529796cf631915b88698fac71d97f613316ca7528c7311d51892a259695b83"
+  },
+  "docs/IMPLEMENTATION_REPORT.md": {
+    "size_bytes": 7390,
+    "sha256": "5aa79081ffb865472a82f2de33a11c66c3f2e7528f438a6a530c970887fe80bf"
+  },
+  "docs/SCREENSHOT_INDEX.md": {
+    "size_bytes": 8353,
+    "sha256": "01f653cdeb2264b23d91334f273c2f2667af73d3a7de23e76c798c5990332d73"
+  },
+  "docs/evidence/algorithm-audit.json": {
+    "size_bytes": 2809,
+    "sha256": "b3b98fd35e8931f37843c824718369fb059be3290ea7905d2e0adab9f3047aec"
+  },
+  "docs/evidence/browser-results.json": {
+    "size_bytes": 2005,
+    "sha256": "400033dfbd66e1755cb82094a21ec1ef0082f70676a57cf45a96f1ca7df39bba"
+  },
+  "docs/evidence/desktop-home.png": {
+    "size_bytes": 130466,
+    "sha256": "924299dc8a971b62ebf49f5df81565880e2c1ba3b9a1c8f4d48a6629cc9c32e9"
+  },
+  "docs/evidence/flash-click-replay.json": {
+    "size_bytes": 2337,
+    "sha256": "e3f5bfcb01ed98b58b4d0351145b5cf0bbb3bd8c9e13a7ae2bb112c18ee46466"
+  },
+  "docs/evidence/group-1-flash.png": {
+    "size_bytes": 49718,
+    "sha256": "9e101561ca360fbed8a1cc8c37d7438882b60bb503fc67fd33aeeae3b6842004"
+  },
+  "docs/evidence/group-1-result.png": {
+    "size_bytes": 59119,
+    "sha256": "ebeddf57a22325b38da35e600f0aebca06d5fc12ea60e470796c0f2dc6833206"
+  },
+  "docs/evidence/group-10-timing.png": {
+    "size_bytes": 65751,
+    "sha256": "dfbaada48a481610f0a9d8603403371240acac1a0d52f5388b5a3a711f69bcea"
+  },
+  "docs/evidence/group-2-flash.png": {
+    "size_bytes": 50985,
+    "sha256": "20585d2ec9b421801495ff62b31d611b47538922002947b5911ab161dfd90f0a"
+  },
+  "docs/evidence/group-2-result.png": {
+    "size_bytes": 68762,
+    "sha256": "1fe38e5eee2b9e835b48eb34fc41ef986732e232f5c5d8d6fa45d24e5559db1a"
+  },
+  "docs/evidence/group-3-review.png": {
+    "size_bytes": 80706,
+    "sha256": "c60000302d2d07610036669fa15dca8dd4c83526a5a93dded8091657539ec667"
+  },
+  "docs/evidence/group-6-untimed.png": {
+    "size_bytes": 58936,
+    "sha256": "f25c2d2274c866af3d41e7ccfd6b6795a0871ef6293f9b1acf953e23c506f916"
+  },
+  "docs/evidence/group-7-untimed.png": {
+    "size_bytes": 59234,
+    "sha256": "637adf7683c0f0a7529844fa37aa8b093129b04a1643ac51d2cecc9da7962a0f"
+  },
+  "docs/evidence/group-8-timing.png": {
+    "size_bytes": 67144,
+    "sha256": "de57934beaccaef47e6ca379a9939b8ecea09e6dddc3718e93693a994bf6476e"
+  },
+  "docs/evidence/group-9-timing.png": {
+    "size_bytes": 67010,
+    "sha256": "0ff3e00715ce2c9c1663933638a545fc1eb88a03bc0069f4b4c187502d4163d9"
+  },
+  "docs/evidence/offline-result.png": {
+    "size_bytes": 81148,
+    "sha256": "5a8224fa33d339d702b746582d9a23ce768191383c93272e7f4dcb881076dcdd"
+  },
+  "docs/evidence/phone-home.png": {
+    "size_bytes": 112452,
+    "sha256": "9701f66d20bf3906e2fe0bc003568bcec51b05ec03cc09869a7f9ff9e531f634"
+  },
+  "docs/evidence/phone-training.png": {
+    "size_bytes": 48804,
+    "sha256": "6f4905a598b6b742add40a6a9109787d62a606a9a6cc30b30d16c50fe2d132e0"
+  },
+  "docs/evidence/small-phone-home.png": {
+    "size_bytes": 102591,
+    "sha256": "6b9bcd50a705c222b6e5216acb13f035cebc7769d8e5653c1836b17a53e95df5"
+  },
+  "docs/evidence/small-phone-training.png": {
+    "size_bytes": 46740,
+    "sha256": "00e1224f828c18e04054559be2c7b29e08c3343aeaf0ea6b2f2ac010ae2b8064"
+  },
+  "docs/evidence/tablet-home.png": {
+    "size_bytes": 122093,
+    "sha256": "87e4c0f6313ab38049478dc54ecf3fff67401cd58caf547075e330fa2083d4db"
+  },
+  "docs/evidence/tablet-training.png": {
+    "size_bytes": 57350,
+    "sha256": "dcf762db6458ff512dc0f200c825969f9aaea93572d4a85615b1b046fc496460"
+  },
+  "docs/evidence/unit-test-results.txt": {
+    "size_bytes": 2159,
+    "sha256": "1498ca8f7580e8a6255aa289f79c9f620d13a109e250f0f987990762bfd03d14"
+  },
+  "docs/evidence/webkit-phone-home.png": {
+    "size_bytes": 130311,
+    "sha256": "1e140e1f6dbf1af60b1cb6ad092661b89e6a3357d0879e16c63b577e6d6ed332"
+  },
+  "docs/evidence/webkit-phone-result.png": {
+    "size_bytes": 63467,
+    "sha256": "5121f4175f151fa42938b87122bed0db10e965f02c0b041787b2dd8d844453ef"
+  },
+  "docs/evidence/webkit-tablet-home.png": {
+    "size_bytes": 141698,
+    "sha256": "2e7c3b67b43174d8b8e4681ffbc56a19564c61c7228c2e49ac34e186b3701057"
+  },
+  "docs/evidence/webkit-tablet-result.png": {
+    "size_bytes": 79632,
+    "sha256": "23447fbdec625175988e9dbc523303788d4766b68ff95d76fa2ea4f7eed9b156"
+  },
+  "docs/requirements.md": {
+    "size_bytes": 30808,
+    "sha256": "189abd4a8622bb06a832fad12fcb8bd251b6c2c47a5a296f75f9681e69cf1370"
+  },
+  "docs/screenshots/00-overview.jpg": {
+    "size_bytes": 342403,
+    "sha256": "de0a817e35dccdd1c61c8334d35ca7563a1db9079cdfa0ca08dbc5100386f24c"
+  },
+  "docs/screenshots/01-flash-modes.png": {
+    "size_bytes": 122946,
+    "sha256": "7f33f859a6f3888aa8fe421c37b28f3cdac29a4be1e2d0b718174f94431f6cfc"
+  },
+  "docs/screenshots/02-flash-card.png": {
+    "size_bytes": 11127,
+    "sha256": "2a96457334a1e02d5951c42223ca6543bca52d4e79a9919dcbde9caf0a1414dd"
+  },
+  "docs/screenshots/03-question-count-popup.png": {
+    "size_bytes": 122105,
+    "sha256": "cab90051e63ddc0a26a87267108b165400d6f3120643d65e48c8ac2b90b01393"
+  },
+  "docs/screenshots/04-two-digit-15-questions.png": {
+    "size_bytes": 111811,
+    "sha256": "a9bb032deccf1c938c0fc3545cfc5fff286119b5222541fa2a6a4d7d36a4fb4f"
+  },
+  "docs/screenshots/05-two-digit-10-questions.png": {
+    "size_bytes": 109648,
+    "sha256": "e2128e86c0039bcae0c2adfa75fc5decb90e30f96f8408ff6804b3005e215095"
+  },
+  "docs/screenshots/06-reference-feature-menu.png": {
+    "size_bytes": 125460,
+    "sha256": "2883486d7912b42968a6faeca016a5b4b4827af76a99b6bd4eb24b87c00d164b"
+  },
+  "docs/screenshots/07-three-digit-subtraction.png": {
+    "size_bytes": 66059,
+    "sha256": "d98a4ab6d2cefe2b1396dea0774bcca8b5abd992d0b13b263f07d8bd0c135c69"
+  },
+  "docs/screenshots/08-three-digit-addition.png": {
+    "size_bytes": 62153,
+    "sha256": "9571847696cc3e5e6a2cd010189f9f91301087019d6a34723f8102384d386739"
+  },
+  "docs/screenshots/09-three-by-one-multiplication.png": {
+    "size_bytes": 63885,
+    "sha256": "d2eda4b4e1f14a6486415918a8b24824e0520b52e51388bbab25efcff7fa62c5"
+  },
+  "docs/screenshots/10-two-by-one-multiplication.png": {
+    "size_bytes": 62448,
+    "sha256": "8bee47bc662a01a2cfc3e2b0121af7e7695118031333f83fd2794920fff88f7c"
+  },
+  "docs/screenshots/11-three-minus-two.png": {
+    "size_bytes": 61306,
+    "sha256": "5ffebfa3952c33d0e7e650291929c7ebdf85a2544f22073e8bcc72d4f737ca18"
+  },
+  "docs/screenshots/12-multiply-11.png": {
+    "size_bytes": 60651,
+    "sha256": "d981c15fc6de631b79adf8e4dfd0e880678b566fee23774cbe605c06c1a2e6b8"
+  },
+  "docs/screenshots/13-two-by-one-variant.png": {
+    "size_bytes": 59915,
+    "sha256": "1a716129bf7311ced2c3feba7588ee34a27695c0ab75b38b2b1838f1dacd7bda"
+  },
+  "docs/screenshots/14-multiply-15.png": {
+    "size_bytes": 60087,
+    "sha256": "aa41fa17512c86cc9968453d367b86114223ac3ca5b3f37e50071658389bee1f"
+  },
+  "docs/screenshots/15-two-by-two-multiplication.png": {
+    "size_bytes": 64000,
+    "sha256": "11ec73f93bad30e2b08b41c8f3077758e35bd6fccf5e2058364486ac4202afac"
+  },
+  "docs/screenshots/16-three-by-one-division.png": {
+    "size_bytes": 61348,
+    "sha256": "5c3a45e5e94613204dac38132fe4eac7cb5085716528f35d8fe1179be2e2b4d3"
+  },
+  "docs/screenshots/17-three-by-two-division.png": {
+    "size_bytes": 63496,
+    "sha256": "4f858eab4b508066a87e5d35be821456d33c9bac8904cd32b7c5f3a0452bebc3"
+  },
+  "docs/screenshots/18-multiplication-estimation.png": {
+    "size_bytes": 70926,
+    "sha256": "4d4bcfdd69c49af72100be4dabb867b84e2d5d69113e8f9b31a23df296478095"
+  },
+  "docs/screenshots/19-five-by-three-division.png": {
+    "size_bytes": 62402,
+    "sha256": "19a4c3e98e8a302c61f718b68c6ecf76e5bbed9fffae1de7e82d02fc2b3a7b70"
+  },
+  "docs/screenshots/20-fraction-to-percent.png": {
+    "size_bytes": 75784,
+    "sha256": "31adaa2caf56ba01494962d3eef220d4e988a9b90a529e4c6600d9bb7ace5476"
+  },
+  "docs/screenshots/21-custom-builder.png": {
+    "size_bytes": 95796,
+    "sha256": "cb9d43d37cf4e9275b3b7206a7b56dccb7b01e24b2ac475f22155d1dea8a53c4"
+  },
+  "docs/screenshots/22-numeric-keyboard-detail.png": {
+    "size_bytes": 46813,
+    "sha256": "7ab4cfb5d9faadf91b114f3ceb9a8e5dc1ea2d78e68e4aef0d869701315f7c8c"
+  },
+  "docs/screenshots/23-flash-result-summary.png": {
+    "size_bytes": 81376,
+    "sha256": "9da75118bda03a11ae6c609ae72ed20fff4bbf15ce1e505560bfd94b3483ca3e"
+  },
+  "docs/screenshots/24-quiz-result-dialog.png": {
+    "size_bytes": 143879,
+    "sha256": "131e48e27057d7edef9d4b05a6e3cc785a73c8360441944aa1c75424760f994b"
+  },
+  "docs/screenshots/25-quiz-answer-review.png": {
+    "size_bytes": 162560,
+    "sha256": "0116715e50d64270f5a807d0adca09b1e36e60960a920a179e4e8152940afe87"
+  },
+  "docs/screenshots/26-main-menu-random-order.png": {
+    "size_bytes": 125473,
+    "sha256": "3e196d01a28ee66dab8003810e645c027e797e96327e2d9f4011f9c9563c4d12"
+  },
+  "docs/screenshots/27-mixed-add-sub-timing-10q.png": {
+    "size_bytes": 115739,
+    "sha256": "8b395d0c24e623e5480d6d9d52a3fa8155203e467608aed551844ae1c7aae995"
+  },
+  "docs/timing-standards.md": {
+    "size_bytes": 4258,
+    "sha256": "f65573d049e05d13347de7ad20140714428810606af6c6238ecb0af4f6c6f9c3"
+  },
+  "icons/apple-touch-icon.png": {
+    "size_bytes": 557,
+    "sha256": "c956ab98f254ce671df7733373bd7f38aa1299a556150c54a33f9e1e642c5f95"
+  },
+  "icons/icon-192.png": {
+    "size_bytes": 577,
+    "sha256": "ae5d88b41ac4ac9dc706a7319d572c71eb76e0fa1edeecb4a31747dde31cf1b6"
+  },
+  "icons/icon-512.png": {
+    "size_bytes": 1783,
+    "sha256": "4ec6d62131243d7b5386957d9d83a7ae3e050493e916fa90dc743b9ca4522923"
+  },
+  "icons/icon.svg": {
+    "size_bytes": 457,
+    "sha256": "80eb63a57ee6a384ed5a7d1bb0b55192da9c4304f080854bcc649202037fd165"
+  },
+  "index.html": {
+    "size_bytes": 1962,
+    "sha256": "8f435e6852e916efb078d3863e9fbb32e241c8f080fe8d21dd9e8492ba66194c"
+  },
+  "manifest.webmanifest": {
+    "size_bytes": 639,
+    "sha256": "e699e144028b321044b5cb88d22c8f1d6e554bba8a4c0dc74a85366b97a9cf17"
+  },
+  "package.json": {
+    "size_bytes": 455,
+    "sha256": "686aa06a7a7ea15ed95727835bdd3004498ca4f033f151310fcb2443bfca8a8e"
+  },
+  "scripts/audit.mjs": {
+    "size_bytes": 1816,
+    "sha256": "35ef4c8a6f771231ee588929598cac548c9f62a82593aba3339c98dbb0c14305"
+  },
+  "scripts/build.mjs": {
+    "size_bytes": 1550,
+    "sha256": "1189730a126c926639f705f7aa052dd556aad757a05d287797be099e12b08264"
+  },
+  "scripts/manifest.mjs": {
+    "size_bytes": 1177,
+    "sha256": "5f70af4a4dc215e0cab88b96975b2acde2136ce501fc57baa899e97a8b29d5da"
+  },
+  "scripts/prepare-pages-folder.mjs": {
+    "size_bytes": 2138,
+    "sha256": "be5936d0027ea16c88efad342ba66e544c67a476cabd9cee2593213d254ce7d6"
+  },
+  "scripts/serve.mjs": {
+    "size_bytes": 1774,
+    "sha256": "465c01d9d8bb8fff37b08c17eb8c5d25e6e4dab5295977e642b91ce925f19d1f"
+  },
+  "src/app.js": {
+    "size_bytes": 33175,
+    "sha256": "f59afc4db0607b115ac0450adeb9992dee759197c2733800b95057f97a9e66c2"
+  },
+  "src/engine.js": {
+    "size_bytes": 7649,
+    "sha256": "056374697a39333c046f0e8019f9c03b212c9d09e619a7ea12684b2c64196280"
+  },
+  "src/modes.js": {
+    "size_bytes": 2829,
+    "sha256": "1e6ab1ef1f8bfc2f26a6f6271e66695092bf435219691b524ee68edef69d7984"
+  },
+  "src/session.js": {
+    "size_bytes": 2064,
+    "sha256": "9d4ed03df84c3a6a684d7b8a1f38ee6a655462ca73e45e2f8201b625fa20a4fb"
+  },
+  "src/storage.js": {
+    "size_bytes": 1026,
+    "sha256": "73f96fe8e33693e2f29206a433468dbe3c4c0932a34e8198e6e71866b604c113"
+  },
+  "src/timing.js": {
+    "size_bytes": 1257,
+    "sha256": "f9d291ae5d06726c7f08df6d31c2d6e4fbf64c97f471ad46f08c714cb136ce48"
+  },
+  "styles.css": {
+    "size_bytes": 20715,
+    "sha256": "286bd2773847a19cfadf5b4d7f0944a15b3a8adc9695574eee90fb4814415ffd"
+  },
+  "sw.js": {
+    "size_bytes": 1646,
+    "sha256": "5346b5a3493ea61c1ce1696f607e3b9e000fe066be798381667eee0540fdeaaf"
+  },
+  "tests/browser_test.py": {
+    "size_bytes": 18006,
+    "sha256": "a6b947801a1fedb0d87b5272f575e065d47eb72fde311a7504e18f55b0e4a0d8"
+  },
+  "tests/engine.test.mjs": {
+    "size_bytes": 9192,
+    "sha256": "cf055c0bf42cc5e0fa8cc67f50e3ddf04b348d82f87b0bdf0fcb9bdbe1822cd2"
+  },
+  "tests/session.test.mjs": {
+    "size_bytes": 3929,
+    "sha256": "289d6128bd17ca2b81b475ee9154d1cec5b1127d810933c9ad028052832c2336"
+  }
+}

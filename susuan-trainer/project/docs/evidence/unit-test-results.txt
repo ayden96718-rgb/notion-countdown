@@ -1,0 +1,30 @@
+
+> susuan-trainer@1.0.0 test
+> node --test --test-isolation=none tests/*.test.mjs
+
+✔ all ten original group numbers, names, direct flash modes and untimed exceptions remain intact (6.756114ms)
+✔ 2,000 addition flash sets have ten nonzero digits, a clear large-digit majority and variety (42.939068ms)
+✔ given subtraction demonstration really has 8 borrows and answer 14 (0.37646ms)
+✔ 1,000 subtraction sets have dynamic positive starts ≤99, 10 subtrahends and high actual borrowing (1746.114537ms)
+✔ group 3: 18,000+ samples across every supported count satisfy forced carry/borrow and easy-addition caps (37.468461ms)
+✔ group 4: 18,000+ samples across every supported count satisfy forced carry/borrow and easy-addition caps (41.138514ms)
+✔ group 5: 18,000+ samples across every supported count satisfy forced carry/borrow and easy-addition caps (45.234698ms)
+✔ mixed operation shares are configurable; generated order is reproducible but not fixed alternating/blocked (4.855083ms)
+✔ groups 6 and 7 include two-digit inputs, and odd ÷2 answers use exact halves (8.474615ms)
+✔ three-digit groups never copy four-digit screenshot operand; carry/borrow is not artificially forced (12.556897ms)
+✔ timings use exact evidence per count; only unverified quantities are labelled derived (1.239211ms)
+✔ only clearly supported additional modes are live and use their own screenshot timings (0.74628ms)
+✔ custom builder respects first digits, second fixed/range and multiple operators including negatives (36.122832ms)
+✔ flash workflow cannot submit before last card; subtraction has exactly 11 cards (13.190209ms)
+✔ quiz statistics, actual per-question durations and total agree, including wrong answers (5.108968ms)
+✔ untimed groups do not even call a clock; all time fields stay null including results (3.367645ms)
+✔ decimal and signed input validates full string instead of truncating (0.206101ms)
+✔ local records are idempotent, bounded to 100, and unavailable storage does not break practice (16.834491ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2099.308884
