@@ -1,6 +1,6 @@
 {
   "url": "https://ayden96718-rgb.github.io/notion-countdown/susuan-trainer/",
-  "verified_at_utc": "2026-11-10T20:51:34.532835+00:00",
+  "verified_at_utc": "2026-11-10T21:13:09.773486+00:00",
   "status": "passed",
   "tls_verification": "enabled, configured system CA bundle",
   "checks": [
@@ -54,8 +54,8 @@
     {
       "path": "src/app.js",
       "status": 200,
-      "sha256": "7de19f3d896b50a1be5d170ee10d59bcf0d2ab6434c11f49307001b88a75aec2",
-      "bytes": 35250
+      "sha256": "0a02714871a97fc27adb31e23f1332999fa97519fffb5b945ec4df12e8f3be89",
+      "bytes": 36040
     },
     {
       "path": "src/engine.js",
@@ -96,11 +96,11 @@
     {
       "path": "sw.js",
       "status": 200,
-      "sha256": "4c0e276f5becb842dabc1d1dd65aaa81c3d5cdf5d1218dcb31b08857ae3aac22",
+      "sha256": "142631949f72118e0146719fdc805d86b987ffe8d4a80dd964df6cf2143ecccb",
       "bytes": 1641
     }
   ],
   "original_homepage_blob": "1881683bbb6ba7665c3cb78bef9097a1a296a1b4",
-  "browser_runtime_evidence": "browser-results.json: 15 local Chromium/WebKit checks against identical build assets",
+  "browser_runtime_evidence": "browser-results.json: 16 local Chromium/WebKit checks against identical build assets",
   "cloud_live_browser_limitation": "Cloud Chromium does not trust the environment proxy CA. No trust-store changes or certificate-validation disabling used."
 }

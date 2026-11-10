@@ -36,8 +36,8 @@
     "sha256": "8d529796cf631915b88698fac71d97f613316ca7528c7311d51892a259695b83"
   },
   "docs/IMPLEMENTATION_REPORT.md": {
-    "size_bytes": 11407,
-    "sha256": "ac96928a51b3b83d8c156ecb357ec84176cfb1f2af9fca97c28c1b25a218609e"
+    "size_bytes": 11557,
+    "sha256": "2ede37057ad66a300bcba2e00d8cf339c13548d66f70a2a289844325d8b2ae1a"
   },
   "docs/SCREENSHOT_INDEX.md": {
     "size_bytes": 9244,
@@ -165,7 +165,7 @@
   },
   "docs/evidence/published-results.json": {
     "size_bytes": 3382,
-    "sha256": "01b18cac8c5185a2ae2cc537565ad8e6eb5b4caa76d8a5fc37f2372d58524db9"
+    "sha256": "97bd79c54a37dbd90025d062e0551c30fefb1c13f078dcba47e540d15c2d5f24"
   },
   "docs/evidence/small-phone-home.png": {
     "size_bytes": 85865,
@@ -212,8 +212,8 @@
     "sha256": "d82ad7764d4d49a8e55dd22aaec56b89ed156db0e009f80bdc137ab290156db8"
   },
   "docs/requirements.md": {
-    "size_bytes": 34527,
-    "sha256": "a34d157d20b2c7966f3499e8ad332f234a323826cd940aa0ceb506b075e07e36"
+    "size_bytes": 34536,
+    "sha256": "98274f9220e4286b3a9b2f998ba53752632cb61be3f78a063b37c128134cc319"
   },
   "docs/screenshots/00-overview.jpg": {
     "size_bytes": 342403,
