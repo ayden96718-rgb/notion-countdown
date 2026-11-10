@@ -2,57 +2,67 @@
   {
     "check": "desktop: ten correctly numbered main entries, original green UI",
     "status": "passed",
-    "seconds": 0.97
+    "seconds": 0.33
+  },
+  {
+    "check": "current practice: direct dropdown/grid selection, remembered on reload, custom count retained",
+    "status": "passed",
+    "seconds": 0.42
   },
   {
     "check": "group 1: real clicks through ten cards, final-only answer and sequence review",
     "status": "passed",
-    "seconds": 2.98
+    "seconds": 1.01
   },
   {
     "check": "group 2: eleven real cards, dynamic positive subtraction and actual borrow review",
     "status": "passed",
-    "seconds": 5.38
+    "seconds": 1.09
   },
   {
     "check": "groups 3–5: touch keyboard, blank rejection, 10/15 answers, constraints and exact review totals",
     "status": "passed",
-    "seconds": 6.05
+    "seconds": 3.85
   },
   {
     "check": "groups 6/7: no clock in training/results/history; odd ÷2 accepted as .5",
     "status": "passed",
-    "seconds": 4.18
+    "seconds": 30.88
   },
   {
     "check": "groups 8–10: distinct 10-question timing evidence, three-digit operands, derived 15-question label",
     "status": "passed",
-    "seconds": 4.34
+    "seconds": 2.29
+  },
+  {
+    "check": "six new screenshot modes: visible arithmetic, decimal touch input, 5%/3% relative grading, wrong answers and full review",
+    "status": "passed",
+    "seconds": 8.6
   },
   {
     "check": "navigation/restart confirmation preserves unfinished answers; custom count rejects 4 and accepts 7",
     "status": "passed",
-    "seconds": 1.66
+    "seconds": 1.05
   },
   {
     "check": "custom range validation, negative answers via ±, question export and persistent history export/review",
     "status": "passed",
-    "seconds": 7.06
+    "seconds": 1.35
   },
   {
     "check": "390px phone, 820px tablet and 320px small phone: no horizontal overflow, ≥44px touch keys",
     "status": "passed",
-    "seconds": 2.68
+    "seconds": 1.66
   },
   {
     "check": "Pages project subpath: installed service worker reloads and completes a full quiz offline",
     "status": "passed",
-    "seconds": 3.94
+    "seconds": 3.75
   },
   {
     "check": "blocked localStorage: practice and results still work, export remains available",
     "status": "passed",
-    "seconds": 9.82
+    "seconds": 1.0
   },
   {
     "check": "zero uncaught browser JavaScript errors during all Chromium flows",
@@ -62,6 +72,6 @@
   {
     "check": "WebKit phone/tablet: decimal touch input, full results, direct flash card flow",
     "status": "passed",
-    "seconds": 12.77
+    "seconds": 23.75
   }
 ]

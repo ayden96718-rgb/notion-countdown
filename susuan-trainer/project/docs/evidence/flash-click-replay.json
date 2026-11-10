@@ -2,13 +2,13 @@
   {
     "group": "1",
     "card": 1,
-    "visible": 6,
+    "visible": 8,
     "action": "click whole card"
   },
   {
     "group": "1",
     "card": 2,
-    "visible": 8,
+    "visible": 7,
     "action": "click whole card"
   },
   {
@@ -20,84 +20,84 @@
   {
     "group": "1",
     "card": 4,
-    "visible": 7,
+    "visible": 9,
     "action": "click whole card"
   },
   {
     "group": "1",
     "card": 5,
-    "visible": 4,
+    "visible": 9,
     "action": "click whole card"
   },
   {
     "group": "1",
     "card": 6,
-    "visible": 8,
+    "visible": 6,
     "action": "click whole card"
   },
   {
     "group": "1",
     "card": 7,
-    "visible": 8,
+    "visible": 6,
     "action": "click whole card"
   },
   {
     "group": "1",
     "card": 8,
-    "visible": 6,
+    "visible": 8,
     "action": "click whole card"
   },
   {
     "group": "1",
     "card": 9,
-    "visible": 6,
+    "visible": 8,
     "action": "click whole card"
   },
   {
     "group": "1",
     "card": 10,
-    "visible": 7,
+    "visible": 9,
     "action": "click whole card"
   },
   {
     "group": "1",
-    "expectedAnswer": 69,
+    "expectedAnswer": 79,
     "correct": true,
     "cards": [
-      6,
       8,
-      9,
       7,
-      4,
-      8,
-      8,
+      9,
+      9,
+      9,
       6,
       6,
-      7
+      8,
+      8,
+      9
     ]
   },
   {
     "group": "2",
     "card": 1,
-    "visible": 81,
+    "visible": 84,
     "action": "click whole card"
   },
   {
     "group": "2",
     "card": 2,
-    "visible": 7,
+    "visible": 9,
     "action": "click whole card"
   },
   {
     "group": "2",
     "card": 3,
-    "visible": 6,
+    "visible": 8,
     "action": "click whole card"
   },
   {
     "group": "2",
     "card": 4,
-    "visible": 9,
+    "visible": 6,
     "action": "click whole card"
   },
   {
@@ -109,37 +109,37 @@
   {
     "group": "2",
     "card": 6,
-    "visible": 7,
+    "visible": 9,
     "action": "click whole card"
   },
   {
     "group": "2",
     "card": 7,
-    "visible": 9,
+    "visible": 6,
     "action": "click whole card"
   },
   {
     "group": "2",
     "card": 8,
-    "visible": 8,
-    "action": "click whole card"
-  },
-  {
-    "group": "2",
-    "card": 9,
-    "visible": 7,
-    "action": "click whole card"
-  },
-  {
-    "group": "2",
-    "card": 10,
     "visible": 9,
     "action": "click whole card"
   },
   {
     "group": "2",
+    "card": 9,
+    "visible": 8,
+    "action": "click whole card"
+  },
+  {
+    "group": "2",
+    "card": 10,
+    "visible": 8,
+    "action": "click whole card"
+  },
+  {
+    "group": "2",
     "card": 11,
-    "visible": 4,
+    "visible": 6,
     "action": "click whole card"
   },
   {
@@ -147,17 +147,17 @@
     "expectedAnswer": 8,
     "correct": true,
     "cards": [
-      81,
-      7,
-      6,
-      9,
-      7,
-      7,
+      84,
       9,
       8,
+      6,
       7,
       9,
-      4
+      6,
+      9,
+      8,
+      8,
+      6
     ]
   }
 ]

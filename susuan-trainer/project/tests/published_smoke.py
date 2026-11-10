@@ -43,7 +43,7 @@ result = {
     'url': URL, 'verified_at_utc': datetime.now(timezone.utc).isoformat(),
     'status': 'passed', 'tls_verification': 'enabled, configured system CA bundle',
     'checks': checks, 'assets': assets, 'original_homepage_blob': blob,
-    'browser_runtime_evidence': 'browser-results.json: 13 local Chromium/WebKit checks against identical build assets',
+    'browser_runtime_evidence': f"browser-results.json: {len(json.loads((ROOT/'docs/evidence/browser-results.json').read_text()))} local Chromium/WebKit checks against identical build assets",
     'cloud_live_browser_limitation': 'Cloud Chromium does not trust the environment proxy CA. No trust-store changes or certificate-validation disabling used.'
 }
 (ROOT/'docs/evidence/published-results.json').write_text(json.dumps(result, ensure_ascii=False, indent=2)+'\n')

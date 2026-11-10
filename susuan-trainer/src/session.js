@@ -5,6 +5,14 @@ export function parseAnswer(raw) {
   return Number.isFinite(value) && Math.abs(value) <= 1e12 ? value : null;
 }
 
+export function isCorrectAnswer(value, question) {
+  if (!Number.isFinite(value) || !Number.isFinite(question.answer)) return false;
+  if (!question.relativeTolerance) return value === question.answer;
+  const allowance = Math.abs(question.answer) * question.relativeTolerance;
+  const roundingSlack = Number.EPSILON * Math.max(1, Math.abs(value), Math.abs(question.answer)) * 8;
+  return Math.abs(value - question.answer) <= allowance + roundingSlack;
+}
+
 export class TrainingSession {
   constructor(spec, { untimed = false, now = () => performance.now() } = {}) {
     this.spec = spec;
@@ -32,7 +40,7 @@ export class TrainingSession {
     if (value === null) return null;
     const stamp = this.untimed ? null : this.now();
     const q = this.current;
-    const record = { ...q, entered: String(raw), value, correct: value === q.answer, elapsedMs: this.untimed ? null : Math.max(0, stamp - this.lastAt) };
+    const record = { ...q, entered: String(raw), value, correct: isCorrectAnswer(value, q), elapsedMs: this.untimed ? null : Math.max(0, stamp - this.lastAt) };
     this.records.push(record);
     this.lastAt = stamp;
     const expectedCount = this.spec.kind === 'flash' ? 1 : this.spec.count;

@@ -166,10 +166,11 @@ test('timings use exact evidence per count; only unverified quantities are label
 });
 
 test('only clearly supported additional modes are live and use their own screenshot timings', () => {
-  for (const mode of EXTRA_MODES.filter(m => !m.custom)) {
+  for (const mode of EXTRA_MODES.filter(m => !m.custom && m.kind !== 'multi')) {
     for (const q of generateSession(mode.id, 10, { seed: 22 }).questions) {
       assert.ok(q.a >= 10 ** (mode.digits[0] - 1) && q.a < 10 ** mode.digits[0]);
-      assert.equal(q.answer, mode.op === '*' ? q.a * q.b : q.a - q.b);
+      const expected = mode.op === '*' ? q.a * q.b : mode.op === '/' ? q.a / q.b * (mode.percent ? 100 : 1) : q.a - q.b;
+      assert.equal(q.exactAnswer ?? q.answer, expected);
       if (mode.fixed) assert.equal(q.b, mode.fixed);
     }
     assert.equal(timingFor(mode, 10, reference).derived, false);

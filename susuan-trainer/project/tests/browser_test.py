@@ -8,6 +8,7 @@ import os
 import re
 from pathlib import Path
 from time import monotonic
+from decimal import Decimal, ROUND_HALF_UP
 from playwright.sync_api import sync_playwright, expect
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -144,10 +145,27 @@ with sync_playwright() as p:
     page.wait_for_selector('[data-mode="1"]')
 
     def home_check():
-        assert page.locator('.training-section > .training-grid [data-mode]').count() == 10
+        assert page.locator('.training-section > .training-grid [data-core="true"]').count() == 10
         assert '闪电心算' not in page.locator('.training-section > .training-grid').inner_text()
+        assert len(page.locator('.training-grid').evaluate('(node) => getComputedStyle(node).gridTemplateColumns').split()) == 3
         page.screenshot(path=str(EVIDENCE / 'desktop-home.png'), full_page=True)
     check('desktop: ten correctly numbered main entries, original green UI', home_check)
+
+    def change_current_mode():
+        page.locator('#current-mode').select_option('8')
+        expect(page.locator('[data-mode="8"]')).to_have_attribute('aria-pressed', 'true')
+        page.reload()
+        expect(page.locator('#current-mode')).to_have_value('8')
+        page.locator('[data-mode="4"]').click()
+        expect(page.locator('#current-mode')).to_have_value('4')
+        expect(page.locator('[data-mode="8"]')).to_have_attribute('aria-pressed', 'false')
+        page.locator('[data-count="custom"]').click()
+        page.locator('#custom-count').fill('12')
+        page.locator('#current-mode').select_option('9')
+        expect(page.locator('#current-mode')).to_have_value('9')
+        expect(page.locator('#custom-count')).to_have_value('12')
+        page.locator('[data-count="10"]').click()
+    check('current practice: direct dropdown/grid selection, remembered on reload, custom count retained', change_current_mode)
     check('group 1: real clicks through ten cards, final-only answer and sequence review', lambda: flash_flow(page, '1'))
     check('group 2: eleven real cards, dynamic positive subtraction and actual borrow review', lambda: flash_flow(page, '2'))
 
@@ -206,7 +224,52 @@ with sync_playwright() as p:
         assert '63s' in page.locator('.thresholds').inner_text()
     check('groups 8–10: distinct 10-question timing evidence, three-digit operands, derived 15-question label', three_digit)
 
+    def screenshot_modes():
+        expected_names = ['many-addition', 'three-by-one-divide', 'three-by-two-divide', 'five-by-three-divide', 'fraction-to-percent', 'multiplication-estimation']
+        home(page)
+        assert page.locator('[data-mode]').count() == 23
+        for mode_id in expected_names:
+            home(page); start(page, mode_id)
+            for i in range(10):
+                text = page.locator('.equation').inner_text()
+                nums = [int(n) for n in re.findall(r'\d+', text)]
+                if mode_id == 'many-addition':
+                    assert len(nums) == 4
+                    value = sum(nums)
+                    entry = str(value + int(i == 0))
+                elif mode_id == 'fraction-to-percent':
+                    assert text.endswith('%')
+                    assert '相对误差±3%' in page.locator('.answer-rule').inner_text()
+                    value = nums[0] / nums[1] * 100
+                    entry = str(round(value / 100 if i == 0 else value * 1.01, 4))
+                elif mode_id == 'multiplication-estimation':
+                    assert '相对误差±5%' in page.locator('.answer-rule').inner_text()
+                    value = nums[0] * nums[1]
+                    entry = str(round(value * (1.10 if i == 0 else 1.02), 2))
+                else:
+                    assert '四舍五入到2位小数' in page.locator('.answer-rule').inner_text()
+                    value = (Decimal(nums[0]) / Decimal(nums[1])).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                    entry = str(value + int(i == 0))
+                if i == 0:
+                    page.screenshot(path=str(EVIDENCE / f'new-{mode_id}-training.png'), full_page=True)
+                answer(page, entry, touch=mode_id in ('fraction-to-percent', 'three-by-two-divide'))
+            page.locator('[data-action="close-modal"]').click()
+            result = history(page)[0]
+            assert result['summary']['correct'] == 9, (mode_id, result['summary'])
+            assert result['summary']['wrong'] == 1
+            expect(page.locator('.review-table tbody tr')).to_have_count(10)
+            assert abs(sum(row['elapsedMs'] for row in result['records']) - result['summary']['totalMs']) < .01
+            if mode_id == 'fraction-to-percent':
+                assert result['records'][0]['unit'] == '%'
+                assert result['records'][0]['relativeTolerance'] == .03
+                assert '%' in page.locator('.review-table tbody tr').first.inner_text()
+            elif mode_id == 'multiplication-estimation':
+                assert result['records'][0]['relativeTolerance'] == .05
+            page.screenshot(path=str(EVIDENCE / f'new-{mode_id}-review.png'), full_page=True)
+    check('six new screenshot modes: visible arithmetic, decimal touch input, 5%/3% relative grading, wrong answers and full review', screenshot_modes)
+
     def navigation_and_count():
+        home(page); start(page, '10', 15)
         page.locator('[data-action="leave"]').click()
         expect(page.locator('dialog[open]')).to_be_visible()
         page.locator('[data-action="close-modal"]').click()
@@ -229,7 +292,6 @@ with sync_playwright() as p:
 
     def custom_and_exports():
         home(page)
-        page.locator('details.more').evaluate('(element) => element.open = true')
         page.locator('[data-mode="custom"]').click()
         form = page.locator('#builder-form')
         form.locator('[name="firstDigits"]').select_option('1')
@@ -276,7 +338,8 @@ with sync_playwright() as p:
             page.evaluate('window.scrollTo(0, 0)')
             page.screenshot(path=str(EVIDENCE / f'{name}-home.png'), full_page=True)
             assert not page.evaluate('document.documentElement.scrollWidth > innerWidth'), name
-            assert page.locator('.training-section > .training-grid [data-mode]').count() == 10
+            assert page.locator('.training-section > .training-grid [data-core="true"]').count() == 10
+            assert len(page.locator('.training-grid').evaluate('(node) => getComputedStyle(node).gridTemplateColumns').split()) == 3
             start(page, '7', 10)
             page.screenshot(path=str(EVIDENCE / f'{name}-training.png'), full_page=True)
             assert not page.evaluate('document.documentElement.scrollWidth > innerWidth'), name
@@ -297,6 +360,13 @@ with sync_playwright() as p:
         finish_quiz(page, 10)
         page.screenshot(path=str(EVIDENCE / 'offline-result.png'), full_page=True)
         assert '当前离线' in page.locator('#offline-status').inner_text()
+        home(page); start(page, 'fraction-to-percent', 10)
+        for _ in range(10):
+            a, b = [int(n) for n in re.findall(r'\d+', page.locator('.equation').inner_text())]
+            answer(page, round(a / b * 100, 4), touch=True)
+        page.locator('[data-action="close-modal"]').click()
+        assert history(page)[0]['summary']['correct'] == 10
+        page.screenshot(path=str(EVIDENCE/'offline-percent-result.png'), full_page=True)
         context.set_offline(False)
     check('Pages project subpath: installed service worker reloads and completes a full quiz offline', offline)
 
@@ -341,7 +411,20 @@ with sync_playwright() as p:
                 home(tab); start(tab, '1')
                 for _ in range(10): tab.locator('.flash-card').click()
                 expect(tab.locator('#answer')).to_be_visible()
-                home(tab)
+                home(tab); start(tab, 'fraction-to-percent', 10)
+                for _ in range(10):
+                    a, b = [int(n) for n in re.findall(r'\d+', tab.locator('.equation').inner_text())]
+                    answer(tab, round(a / b * 100 * 1.01, 4), touch=True)
+                tab.locator('[data-action="close-modal"]').click()
+                assert history(tab)[0]['summary']['correct'] == 10
+                tab.screenshot(path=str(EVIDENCE/f'webkit-{device}-percent-review.png'), full_page=True)
+                home(tab); start(tab, 'three-by-two-divide', 10)
+                for _ in range(10):
+                    a, b = [int(n) for n in re.findall(r'\d+', tab.locator('.equation').inner_text())]
+                    value = (Decimal(a) / Decimal(b)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                    answer(tab, str(value), touch=True)
+                tab.locator('[data-action="close-modal"]').click()
+                assert history(tab)[0]['summary']['correct'] == 10
                 ctx.close()
             assert not errors, errors
         check('WebKit phone/tablet: decimal touch input, full results, direct flash card flow', webkit_flow)

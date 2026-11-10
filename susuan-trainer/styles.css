@@ -185,3 +185,52 @@
   @media (max-height: 700px) and (min-width: 701px) { .equation { padding-top: 20px; } .keypad button { height: 45px; } }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
 }
+
+/* The home menu follows the user's compact three-column reference. */
+@layer compact-home {
+  .home-page { max-width: 960px; padding-top: 24px; }
+  .home-intro { margin-bottom: 20px; }
+  .home-intro h1 { font-size: 27px; font-weight: 650; }
+  .home-intro p { color: var(--muted); font-size: 12px; margin-top: 5px; }
+  .home-page .home-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  .home-page .section-label { margin-bottom: 10px; }
+  .home-page .section-label h2 { font-size: 14px; }
+  .home-page .section-label span { font-size: 10px; }
+  .home-page .training-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+  .home-page .mode-card { min-height: 78px; padding: 19px 9px 12px; border-radius: 8px; display: flex; justify-content: center; text-align: center; gap: 0; background: #d9eed6; border-color: #cde4c8; }
+  .home-page .mode-card strong { font-size: 15px; line-height: 1.45; font-weight: 550; letter-spacing: -.03em; overflow-wrap: anywhere; }
+  .home-page .mode-card small { font-size: 10px; line-height: 1.4; margin-top: 4px; }
+  .home-page .mode-symbol, .home-page .mode-arrow { display: none; }
+  .home-page .mode-number { top: 4px; right: 7px; font-size: 8px; }
+  .home-page .mode-card.selected { background: #208136; border-color: #208136; color: #fff; box-shadow: none; }
+  .home-page .mode-card.selected small, .home-page .mode-card.selected .mode-number { color: #e0f3dc; }
+  .home-page .mode-card:hover { transform: none; border-color: #3b8c4b; }
+  .home-page .practice-panel { position: static; width: 100%; padding: 20px; border-radius: 12px; }
+  .mode-picker-label { display: flex; align-items: center; justify-content: space-between; }
+  .mode-picker-label span { font-weight: 400; color: var(--green); font-size: 11px; }
+  .current-mode { font-size: 17px; font-weight: 600; background-color: #eff7e9; border-color: #abc99d; min-height: 48px; }
+  .home-page .practice-panel .mode-description { min-height: 0; font-size: 12px; margin-top: 8px; }
+  .home-page .divider { margin: 15px 0; }
+  .home-page .count-options button { min-height: 43px; }
+  .home-page .count-note { margin-bottom: 12px; }
+  .home-page .panel-tip { margin-top: 11px; }
+  @media (max-width: 700px) {
+    .home-page { padding: 19px 12px 25px; }
+    .home-intro { margin-bottom: 16px; }
+    .home-intro h1 { font-size: 23px; }
+    .home-intro p { font-size: 11px; }
+    .home-page .training-grid { gap: 7px; }
+    .home-page .mode-card { min-height: 69px; padding: 14px 5px 9px; }
+    .home-page .mode-card strong { font-size: 12px; line-height: 1.4; }
+    .home-page .mode-card small { display: none; }
+    .home-page .practice-panel { padding: 16px; }
+  }
+  @media (max-width: 340px) {
+    .home-page .mode-card strong { font-size: 11px; }
+    .home-page .mode-card { min-height: 66px; }
+  }
+}
+
+@layer compact-home { .wide-equation { font-size: clamp(24px, 5vw, 42px); } }
+
+@layer compact-home { .answer-rule { text-align: center; color: var(--green); font-size: 12px; margin: 0 0 9px; line-height: 1.6; } }

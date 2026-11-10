@@ -18,6 +18,12 @@ export const EXTRA_MODES = [
   { id: 'two-by-11', title: '两位数×11', symbol: '×11', note: '固定倍数练习', timing: 'two-by-11', op: '*', digits: [2, 2], fixed: 11 },
   { id: 'two-by-15', title: '两位数×15', symbol: '×15', note: '固定倍数练习', timing: 'two-by-15', op: '*', digits: [2, 2], fixed: 15 },
   { id: 'two-by-two', title: '两位数×两位数', symbol: '×', note: '提高乘法熟练度', timing: 'two-by-two-multiply', op: '*', digits: [2, 2] },
+  { id: 'many-addition', title: '多数相加', symbol: '+', note: '4个两位数相加', kind: 'multi', timing: 'many-addition', description: '一次显示4个两位数，输入它们的总和；每题独立作答。' },
+  { id: 'three-by-one-divide', title: '三位数÷一位数', symbol: '÷', note: '四舍五入到2位小数', timing: 'three-by-one-divide', op: '/', digits: [3, 1], decimalPlaces: 2, description: '三位数除以一位数，含不能整除的题目；答案四舍五入到2位小数。' },
+  { id: 'three-by-two-divide', title: '三位数÷两位数', symbol: '÷', note: '四舍五入到2位小数', timing: 'three-by-two-divide', op: '/', digits: [3, 2], decimalPlaces: 2, description: '三位数除以两位数；答案四舍五入到2位小数。' },
+  { id: 'five-by-three-divide', title: '五位数÷三位数', symbol: '÷', note: '四舍五入到2位小数', timing: 'five-by-three-divide', op: '/', digits: [5, 3], decimalPlaces: 2, description: '五位数除以三位数；答案四舍五入到2位小数。' },
+  { id: 'fraction-to-percent', title: '三位数÷四位数', symbol: '%', note: '百分数 · 相对误差±3%', timing: 'fraction-to-percent', op: '/', digits: [3, 4], percent: true, relativeTolerance: 0.03, description: '答案填写百分数数值：例如6%填6。允许相对误差±3%，按未取整的正确值计算。' },
+  { id: 'multiplication-estimation', title: '乘法估算', symbol: '≈', note: '允许相对误差±5%', timing: 'multiplication-estimation', op: '*', digits: [2, 2], relativeTolerance: 0.05, description: '两个两位数相乘，估算结果允许相对误差±5%，即与正确结果相差不超过其5%。' },
   { id: 'custom', title: '自定义练习', symbol: '…', note: '位数、运算符与数值范围', custom: true }
 ];
 

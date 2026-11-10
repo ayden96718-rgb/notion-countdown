@@ -90,7 +90,23 @@ for (let a = 10; a <= 99; a++) {
 }
 
 export const calculate = (a, op, b) => op === '+' ? a + b : op === '-' ? a - b : op === '*' ? a * b : a / b;
-export const expression = (q) => `${q.a} ${opSymbol(q.op)} ${q.b}`;
+export const expression = (q) => q.terms ? q.terms.join(' + ') : `${q.a} ${opSymbol(q.op)} ${q.b}`;
+export function roundQuotient(a, b, places = 2) {
+  // Operands are positive integers. Round the rational value before binary-float conversion.
+  const scale = 10 ** places;
+  return Math.floor((2 * a * scale + b) / (2 * b)) / scale;
+}
+export function formatAnswer(q) {
+  if (q.unit === '%') return `≈${q.answer.toFixed(4).replace(/\.?0+$/, '')}%`;
+  if (q.decimalPlaces !== undefined) return q.answer.toFixed(q.decimalPlaces);
+  return String(q.answer);
+}
+export function answerRule(q) {
+  if (q.unit === '%') return '答案填百分数数值（不含%），允许相对误差±3%';
+  if (q.relativeTolerance) return `允许相对误差±${q.relativeTolerance * 100}%（按正确值计算）`;
+  if (q.decimalPlaces !== undefined) return `答案四舍五入到${q.decimalPlaces}位小数`;
+  return '';
+}
 const question = (a, op, b) => ({ a, op, b, answer: calculate(a, op, b) });
 function opsFor(count, share, rng) {
   const plusCount = Math.max(1, Math.min(count - 1, Math.round(count * share)));
@@ -136,6 +152,9 @@ export function generateSession(id, count = 10, options = {}) {
           const [a, b] = pick(rng, subtractionPool);
           q = question(a, '-', b);
         }
+      } else if (mode.kind === 'multi') {
+        const terms = Array.from({ length: 4 }, () => int(rng, 10, 99));
+        q = { terms, op: '+', answer: terms.reduce((a, b) => a + b, 0) };
       } else if (['6', '7'].includes(mode.id)) {
         q = question(int(rng, 10, 99), mode.id === '6' ? '*' : '/', 2);
       } else if (['8', '9', '10'].includes(mode.id)) {
@@ -151,6 +170,13 @@ export function generateSession(id, count = 10, options = {}) {
         q = question(a, pick(rng, custom.ops), b);
       } else {
         q = question(int(rng, ...bounds(mode.digits[0])), mode.op, mode.fixed ?? int(rng, ...bounds(mode.digits[1])));
+        if (mode.percent) { q.answer *= 100; q.unit = '%'; }
+        if (mode.decimalPlaces !== undefined) {
+          q.exactAnswer = q.answer;
+          q.decimalPlaces = mode.decimalPlaces;
+          q.answer = roundQuotient(q.a, q.b, mode.decimalPlaces);
+        }
+        if (mode.relativeTolerance) q.relativeTolerance = mode.relativeTolerance;
       }
       if (!used.has(expression(q)) || retry === 79) break;
     }

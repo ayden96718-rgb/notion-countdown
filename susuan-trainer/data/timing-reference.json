@@ -151,6 +151,17 @@
       "excellent_s": 32,
       "tolerance_label": "±5% (original screenshot, formula pending)",
       "image": "18-multiplication-estimation.png"
+    },
+    {
+      "id": "many-addition",
+      "label": "多数相加（4个两位数）",
+      "count": 10,
+      "pass_s": 90,
+      "good_s": 75,
+      "excellent_s": 60,
+      "image": "本轮用户截图：57+43+47+76=",
+      "source_type": "user-screenshot-in-current-chat",
+      "source_note": "本轮截图确证4个两位加数及10题90/75/60秒，原交接包未含这张截图。"
     }
   ]
 }

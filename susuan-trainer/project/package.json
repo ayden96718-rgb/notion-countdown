@@ -1,6 +1,6 @@
 {
   "name": "susuan-trainer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "免费、本地优先的行测速算训练网页",
@@ -11,5 +11,7 @@
     "preview": "node scripts/serve.mjs dist",
     "test:browser": "python tests/browser_test.py"
   },
-  "engines": { "node": ">=22.7" }
+  "engines": {
+    "node": ">=22.7"
+  }
 }
