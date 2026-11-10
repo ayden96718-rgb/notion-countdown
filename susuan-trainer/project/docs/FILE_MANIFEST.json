@@ -12,20 +12,20 @@
     "sha256": "4fe7c1afb5d56667d340e0499e77d32ab382ae05746fe4f061d171e62d8f13e4"
   },
   "README.md": {
-    "size_bytes": 5210,
-    "sha256": "cf41403cd2b70685b925594529762d857bf3b343adb325410713fc5381ab3df5"
+    "size_bytes": 5252,
+    "sha256": "e518e632c96fa0ff9461a6b8929199ceebaaa1a11e98ab39fa3e49e1d8b26204"
   },
   "data/timing-reference.json": {
     "size_bytes": 4646,
     "sha256": "7983ade2cb384bc476ad372f39eb76ef07f70d57ea12d3bf25a83928a95cf638"
   },
   "docs/ACCEPTANCE_TESTS.md": {
-    "size_bytes": 6739,
-    "sha256": "39354d0c6d97c9f7d5c72882878caf9ca24712e35d4223044aac01a3848656aa"
+    "size_bytes": 7169,
+    "sha256": "dc0e8e2f22111cdd4bce91a5b317690d61c6c41eb2844a19f20b27a45e451fdc"
   },
   "docs/CHANGELOG.md": {
-    "size_bytes": 1910,
-    "sha256": "93a576045d3b959ca0d1ce9547ff97c72ac82d819ae8336bc45d96943e391207"
+    "size_bytes": 2118,
+    "sha256": "5c940203322c796b5ba077e597137cecf8eb3ff5099bb891119dcb2b079f10f9"
   },
   "docs/CODEX_HANDOFF.md": {
     "size_bytes": 5060,
@@ -36,8 +36,8 @@
     "sha256": "8d529796cf631915b88698fac71d97f613316ca7528c7311d51892a259695b83"
   },
   "docs/IMPLEMENTATION_REPORT.md": {
-    "size_bytes": 10571,
-    "sha256": "bb46c3cd3460f91265ecf72acd7784a64de6cf102c788e56720624e68daf22be"
+    "size_bytes": 11407,
+    "sha256": "ac96928a51b3b83d8c156ecb357ec84176cfb1f2af9fca97c28c1b25a218609e"
   },
   "docs/SCREENSHOT_INDEX.md": {
     "size_bytes": 9244,
@@ -48,8 +48,8 @@
     "sha256": "b3b98fd35e8931f37843c824718369fb059be3290ea7905d2e0adab9f3047aec"
   },
   "docs/evidence/browser-results.json": {
-    "size_bytes": 2357,
-    "sha256": "397033d95479b8b7d02da0003c23688ed0485aafd71750d67ab217db9f0abe8a"
+    "size_bytes": 2552,
+    "sha256": "19bbe9d6536d856a83e8c87fd6c96ca88d3a3c9be8242d13f2e4e103dffe30f4"
   },
   "docs/evidence/desktop-home.png": {
     "size_bytes": 153604,
@@ -185,7 +185,7 @@
   },
   "docs/evidence/unit-test-results.txt": {
     "size_bytes": 3098,
-    "sha256": "4d1551b9570051c5abc3ec195b92a975907ca84ceecd7928009bcf2127122560"
+    "sha256": "8bcbc67dd1aea03c64fbb23fa0967a65ab00813f765fca8ed5bd7946edb14f9c"
   },
   "docs/evidence/webkit-phone-home.png": {
     "size_bytes": 107880,
@@ -212,8 +212,8 @@
     "sha256": "d82ad7764d4d49a8e55dd22aaec56b89ed156db0e009f80bdc137ab290156db8"
   },
   "docs/requirements.md": {
-    "size_bytes": 33550,
-    "sha256": "20003c0c506a85364aa983d4e8cd05a0bd49c1d58cb068f552f6693ed55ab237"
+    "size_bytes": 34527,
+    "sha256": "a34d157d20b2c7966f3499e8ad332f234a323826cd940aa0ceb506b075e07e36"
   },
   "docs/screenshots/00-overview.jpg": {
     "size_bytes": 342403,
@@ -357,7 +357,7 @@
   },
   "package.json": {
     "size_bytes": 461,
-    "sha256": "181ab2cd4006db59945a040ab4d30b3c6ec5d6320d33194fddbd096f7449fddb"
+    "sha256": "9575f400cc8e7e9625d5af0ba16125c85dad61d25e39749b7b44573526a992ac"
   },
   "scripts/audit.mjs": {
     "size_bytes": 1816,
@@ -380,8 +380,8 @@
     "sha256": "465c01d9d8bb8fff37b08c17eb8c5d25e6e4dab5295977e642b91ce925f19d1f"
   },
   "src/app.js": {
-    "size_bytes": 35255,
-    "sha256": "ab19cde3e3c54aca627d325e2154a60bf043c26ae6c14733d43b842e68fe8e25"
+    "size_bytes": 36045,
+    "sha256": "5df64aff9c50bd683fab27fb28fb2c170321ab7bcc050807fcca4471ddcded79"
   },
   "src/engine.js": {
     "size_bytes": 9029,
@@ -412,8 +412,8 @@
     "sha256": "5346b5a3493ea61c1ce1696f607e3b9e000fe066be798381667eee0540fdeaaf"
   },
   "tests/browser_test.py": {
-    "size_bytes": 23553,
-    "sha256": "a57d11eded5f58ed6071ea9b46e166580ef58615363014cb0eb16db5345cdeec"
+    "size_bytes": 25163,
+    "sha256": "b65c6c4076df8da44bcdd92ee2c638331523b92b8e2bf7265f1aa39e20c0911c"
   },
   "tests/engine.test.mjs": {
     "size_bytes": 9321,

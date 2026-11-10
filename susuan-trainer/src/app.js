@@ -15,7 +15,7 @@ const settings = {
   count: Number.isInteger(saved?.count) && saved.count >= 5 && saved.count <= 100 ? saved.count : 10,
   customCount: saved?.customCount === true,
   mixedShare: [0.3, 0.5, 0.7].includes(saved?.mixedShare) ? saved.mixedShare : 0.5,
-  modeId: modeById(saved?.modeId)?.kind !== 'flash' && modeById(saved?.modeId) ? saved.modeId : '3'
+  modeId: modeById(saved?.modeId) ? saved.modeId : '1'
 };
 let selected = modeById(settings.modeId);
 let training = null;
@@ -63,17 +63,18 @@ function leaveFor(hash) {
 }
 
 function modeCard(mode) {
-  return `<button class="mode-card${selected.id === mode.id ? ' selected' : ''}" data-mode="${mode.id}" data-core="${Boolean(mode.number)}" aria-label="${mode.number ? `第${mode.number}组 ` : ''}${mode.title}${mode.kind === 'flash' ? '，立即开始' : ''}" ${mode.kind === 'flash' ? '' : `aria-pressed="${selected.id === mode.id}"`}>
+  return `<button class="mode-card${selected.id === mode.id ? ' selected' : ''}" data-mode="${mode.id}" data-core="${Boolean(mode.number)}" aria-label="${mode.number ? `第${mode.number}组 ` : ''}${mode.title}${mode.kind === 'flash' ? '，立即开始' : ''}" aria-pressed="${selected.id === mode.id}">
     ${mode.number ? `<span class="mode-number">${String(mode.number).padStart(2, '0')}</span>` : ''}<span class="mode-symbol" aria-hidden="true">${mode.symbol}</span><span><strong>${mode.title}</strong><small>${mode.note}</small></span>${mode.kind === 'flash' ? '<span class="mode-arrow" aria-hidden="true">↗</span>' : ''}</button>`;
 }
 
 function panel() {
-  const description = selected.description ?? (selected.untimed ? '慢慢算，先把方法练熟。没有计时和评级。' : selected.custom ? '按你设置的位数和范围，随机生成加、减、乘算式。' : selected.id === '3' ? '每一道都发生个位进位，重点练习几十几之间的加法。' : selected.id === '4' ? '每一道都需要个位借位，所有结果均为正数。' : selected.mixed ? '两种运算随机混排，一题一答，完成后查看逐题复盘。' : '一次一道算式，完成后回顾答案与每题用时。');
+  const description = selected.hint ?? selected.description ?? (selected.untimed ? '慢慢算，先把方法练熟。没有计时和评级。' : selected.custom ? '按你设置的位数和范围，随机生成加、减、乘算式。' : selected.id === '3' ? '每一道都发生个位进位，重点练习几十几之间的加法。' : selected.id === '4' ? '每一道都需要个位借位，所有结果均为正数。' : selected.mixed ? '两种运算随机混排，一题一答，完成后查看逐题复盘。' : '一次一道算式，完成后回顾答案与每题用时。');
   const timing = timingFor(selected, settings.count, reference);
-  return `<aside class="practice-panel" aria-label="练习设置"><label class="field-label mode-picker-label" for="current-mode">本次练习 <span>可在此更换题型 ↓</span></label><select class="field current-mode" id="current-mode">${[...MODES, ...EXTRA_MODES].filter(m => m.kind !== 'flash').map(m => `<option value="${m.id}"${selected.id === m.id ? ' selected' : ''}>${m.number ? `${String(m.number).padStart(2, '0')} · ` : ''}${m.title}</option>`).join('')}</select><p class="mode-description">${description}</p><div class="divider"></div>
-    <label class="field-label">每组题量</label><div class="count-options" role="group" aria-label="题量选择">${[10, 15].map(n => `<button data-count="${n}" class="${settings.count === n && !settings.customCount ? 'active' : ''}" aria-pressed="${settings.count === n && !settings.customCount}">${n === 10 ? '快速' : '正常'} ${n}</button>`).join('')}<button data-count="custom" class="${settings.customCount ? 'active' : ''}" aria-pressed="${settings.customCount}">自定义</button></div>
+  return `<aside class="practice-panel" aria-label="练习设置"><label class="field-label mode-picker-label" for="current-mode">本次练习 <span>可在此更换题型 ↓</span></label><select class="field current-mode" id="current-mode">${[...MODES, ...EXTRA_MODES].map(m => `<option value="${m.id}"${selected.id === m.id ? ' selected' : ''}>${m.number ? `${String(m.number).padStart(2, '0')} · ` : ''}${m.title}</option>`).join('')}</select><p class="mode-description">${description}</p><div class="divider"></div>
+    ${selected.kind === 'flash' ? `<div class="flash-count-note"><span class="field-label">固定题量</span><strong>${selected.id === '2' ? '1个起始数 + 10个个位减数' : '10个个位加数'}</strong></div>` : `    <label class="field-label">每组题量</label><div class="count-options" role="group" aria-label="题量选择">${[10, 15].map(n => `<button data-count="${n}" class="${settings.count === n && !settings.customCount ? 'active' : ''}" aria-pressed="${settings.count === n && !settings.customCount}">${n === 10 ? '快速' : '正常'} ${n}</button>`).join('')}<button data-count="custom" class="${settings.customCount ? 'active' : ''}" aria-pressed="${settings.customCount}">自定义</button></div>
     ${settings.customCount ? `<div class="custom-count"><label class="quiet" for="custom-count">题数（5～100）</label><input class="field" id="custom-count" type="number" min="5" max="100" step="1" inputmode="numeric" value="${settings.count}"></div>` : ''}
-    <p class="count-note">${selected.untimed ? '自由练习，不计时、不评级。' : timing ? `合格 ${timing.pass}s · 良好 ${timing.good}s · 优秀 ${timing.excellent}s${timing.derived ? '<br>按比例推算，非原应用截图原值' : '<br>整组用时参考，正确率单独记录'}` : '此题型时间门槛待核实，仅记录实际用时。'}</p>
+`}
+    <p class="count-note">${selected.kind === 'flash' ? '逐张点击数卡，结束后统一填写答案；仅记录实际用时。' : selected.untimed ? '自由练习，不计时、不评级。' : timing ? `合格 ${timing.pass}s · 良好 ${timing.good}s · 优秀 ${timing.excellent}s${timing.derived ? '<br>按比例推算，非原应用截图原值' : '<br>整组用时参考，正确率单独记录'}` : '此题型时间门槛待核实，仅记录实际用时。'}</p>
     ${selected.mixed ? `<label class="field-label" for="mixed-share">加法比例</label><select class="field" id="mixed-share">${[0.3, 0.5, 0.7].map(n => `<option value="${n}"${settings.mixedShare === n ? ' selected' : ''}>约 ${n * 100}% 加法 / ${100 - n * 100}% 减法</option>`).join('')}</select><p class="count-note">本站默认各半，可调整；顺序始终随机。</p>` : ''}
     ${selected.custom ? '<button class="text-button" data-action="custom-builder">调整出题规则 →</button>' : ''}
     <button class="button primary wide" data-action="start">开始练习 <span aria-hidden="true">→</span></button>
@@ -118,7 +119,7 @@ function validCount() {
 function start(mode = selected) {
   if (mode.kind !== 'flash' && !validCount()) return;
   hideToast();
-  if (mode.kind !== 'flash') { selected = mode; settings.modeId = mode.id; saveSettings(); }
+  selected = mode; settings.modeId = mode.id; saveSettings();
   try {
     const spec = generateSession(mode.id, settings.count, { mixedShare: settings.mixedShare, custom: customConfig });
     training = new TrainingSession(spec, { untimed: mode.untimed });
@@ -247,6 +248,12 @@ function download(filename, content, type) {
 function exportQuestions() {
   if (!validCount()) return;
   const spec = generateSession(selected.id, settings.count, { mixedShare: settings.mixedShare, custom: customConfig });
+  if (spec.kind === 'flash') {
+    const lines = [`速算 · ${selected.title}`, '固定10个数字，按顺序逐张心算，最后统一作答。', ...(spec.start ? [`起始数：${spec.start}`, '依次减去下列数字：'] : ['依次相加下列数字：']), ...spec.digits.map((n, i) => `${i + 1}. ${n}`), '\n—— 参考答案 ——', String(spec.answer)];
+    download(`速算-${selected.title}-10个数字.txt`, '\uFEFF' + lines.join('\n'), 'text/plain;charset=utf-8');
+    toast('已导出一套新数卡；不会提前揭示下一次练习的数字。');
+    return;
+  }
   const lines = [`速算 · ${selected.title}`, `${spec.count}题 / 答案见末页`, ...(answerRule(spec.questions[0]) ? [answerRule(spec.questions[0])] : []), ''];
   spec.questions.forEach((q, i) => lines.push(`${i + 1}. ${expression(q)} = ______${q.unit ?? ''}`));
   lines.push('\n\n—— 参考答案 ——');
@@ -361,7 +368,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-2219c4c05f93`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-f7ced4981720`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 

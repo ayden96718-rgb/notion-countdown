@@ -12,7 +12,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from playwright.sync_api import sync_playwright, expect
 
 ROOT = Path(__file__).resolve().parents[1]
-EVIDENCE = ROOT / 'docs' / 'evidence'
+EVIDENCE = Path(os.environ.get('EVIDENCE_DIR', str(ROOT / 'docs' / 'evidence')))
 EVIDENCE.mkdir(parents=True, exist_ok=True)
 BASE = os.environ.get('TEST_URL', 'http://127.0.0.1:4173/susuan-trainer/')
 reports = []
@@ -150,6 +150,31 @@ with sync_playwright() as p:
         assert len(page.locator('.training-grid').evaluate('(node) => getComputedStyle(node).gridTemplateColumns').split()) == 3
         page.screenshot(path=str(EVIDENCE / 'desktop-home.png'), full_page=True)
     check('desktop: ten correctly numbered main entries, original green UI', home_check)
+
+    def flash_picker():
+        expect(page.locator('#current-mode')).to_have_value('1')
+        expect(page.locator('#current-mode option')).to_have_count(23)
+        assert page.locator('#current-mode option').all_text_contents()[:2] == ['01 · 个位数相加', '02 · 个位数相减']
+        for group, cards in [('1', 10), ('2', 11)]:
+            page.locator('#current-mode').select_option(group)
+            expect(page.locator('[data-mode="'+group+'"]')).to_have_attribute('aria-pressed', 'true')
+            assert page.locator('[data-count]').count() == 0
+            assert '10个' in page.locator('.flash-count-note').inner_text()
+            page.reload()
+            expect(page.locator('#current-mode')).to_have_value(group)
+            with page.expect_download() as dl:
+                page.locator('[data-action="export-questions"]').click()
+            assert '参考答案' in Path(dl.value.path()).read_text('utf-8-sig')
+            page.locator('[data-action="start"]').click()
+            nums = []
+            for _ in range(cards):
+                nums.append(int(page.locator('#flash-digit').inner_text()))
+                assert page.locator('#answer').count() == 0
+                page.locator('.flash-card').click()
+            answer(page, sum(nums) if group == '1' else nums[0]-sum(nums[1:]))
+            assert history(page)[0]['summary']['correct'] == 1
+            home(page)
+    check('flash groups in picker: 23 ordered options, fresh default group 1, persisted choices, fixed counts, export and real flash flow', flash_picker)
 
     def change_current_mode():
         page.locator('#current-mode').select_option('8')

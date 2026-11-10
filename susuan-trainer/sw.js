@@ -1,5 +1,5 @@
 const CACHE_PREFIX = `susuan-${encodeURIComponent(new URL(self.registration.scope).pathname)}-`;
-const CACHE_NAME = CACHE_PREFIX + '2219c4c05f93';
+const CACHE_NAME = CACHE_PREFIX + 'f7ced4981720';
 const ASSETS = [
   './', './index.html', './styles.css', './src/app.js', './src/modes.js',
   './src/engine.js', './src/session.js', './src/timing.js', './src/storage.js',

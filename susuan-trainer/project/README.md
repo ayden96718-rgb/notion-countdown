@@ -2,7 +2,7 @@
 
 一个免费、无广告、无需账号的静态速算网站。支持手机、平板、电脑、离线练习和本地成绩复盘。代码不依赖第三方前端库、API或数据库。
 
-**开发状态：v1.1.0：十组核心、十二种扩展与自定义已实现，首页为三列紧凑格子。部署状态见 [实施报告](docs/IMPLEMENTATION_REPORT.md)。**
+**开发状态：v1.1.1：十组核心、十二种扩展与自定义已实现，首页为三列紧凑格子。部署状态见 [实施报告](docs/IMPLEMENTATION_REPORT.md)。**
 
 ![三列紧凑训练首页](docs/evidence/desktop-home.png)
 
@@ -41,7 +41,7 @@ npm run preview
 
 `dist/` 是可部署产物。构建仅复制网页资产，**不包含参考截图、文档、测试记录或开发缓存**。站点兼容仓库子路径，没有写死域名。
 
-首页所有入口按每行三个格子排列。“本次练习”选择框可直接更换题型，与格子同步并记住上次选择；改变题型时保留已填的有效自定义题量。
+首页所有入口按每行三个格子排列。“本次练习”选择框包含全部23项（含个位数加减），与格子同步并记住上次选择；首次默认第1组。改变题型时保留已填的有效自定义题量。
 
 ## 离线与隐私
 
@@ -69,6 +69,6 @@ python tests/browser_test.py     # 需要Playwright和浏览器，参见实施�
 
 当前子目录通过现有 `main` 分支根目录Pages发布；本项目附带的工作流是未来独立仓库的备选模板，在嵌套的 `project/.github/` 中不会执行。更新子目录包使用 `node scripts/manifest.mjs`、`node scripts/prepare-pages-folder.mjs`。参见 [部署步骤](docs/DEPLOYMENT.md)。
 
-后续维护先读 [AGENTS.md](AGENTS.md)、[唯一权威需求 v2.5](docs/requirements.md) 和 [计时依据](data/timing-reference.json)。交接原文、27张参考截图和索引保留在 `docs/`，只作需求证据，未用于网站视觉资产。
+后续维护先读 [AGENTS.md](AGENTS.md)、[唯一权威需求 v2.6](docs/requirements.md) 和 [计时依据](data/timing-reference.json)。交接原文、27张参考截图和索引保留在 `docs/`，只作需求证据，未用于网站视觉资产。
 
 本轮按用户要求不增加凑整百、独立混合形态、键盘排列切换、手写笔、N-back等其他功能。错题综合评级仍待确认；正确率与速度参考分别显示。完整边界见实施报告。
