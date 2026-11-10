@@ -61,4 +61,13 @@
 
 现有账号唯一公开仓库为 `ayden96718-rgb/notion-countdown`，原Pages已启用 `main` 分支根目录发布。v2.4仅新增 `susuan-trainer/` 文件夹：根目录放生产产物，`project/` 放完整源码、交接资料与验收证据。保留原倒计时首页和Pages设置，不修改其他路径。源码的独立仓库工作流在嵌套位置不执行，沿用原Pages发布。
 
-当前上传与实际公开访问正在验证，验证通过后记录地址与发布证据。独立建仓限制不再阻塞当前子目录交付。完整步骤见 [DEPLOYMENT.md](DEPLOYMENT.md)。
+已上传并完成Pages发布。首次站点提交 `56bb1efe48d0751bf9cb70ffb2cc0e685d6c8275`，Pages构建状态 `built`，2026-11-10 19:56:01 UTC完成；随后补充发布证据的提交只修改此子目录文档和测试材料。
+
+- 实际网站：<https://ayden96718-rgb.github.io/notion-countdown/susuan-trainer/>
+- 代码与交接资料：<https://github.com/ayden96718-rgb/notion-countdown/tree/main/susuan-trainer/project>
+- 线上逐资产证据：[published-results.json](evidence/published-results.json)，15个生产资产均HTTP200，SHA-256与通过13项浏览器流程的构建完全一致；目录URL返回相同首页。
+- 原倒计时首页仍HTTP200，Git blob维持 `1881683bbb6ba7665c3cb78bef9097a1a296a1b4`。新增路径全部在 `susuan-trainer/` 内。
+
+云Chromium直接访问线上站点时不信任执行环境代理CA；向全局浏览器证书库导入已有代理CA的操作被自动审批拒绝，理由是会持久改变浏览器信任范围。本次改用已配置系统CA的HTTPS逐资产校验，保留证书验证；未更改浏览器信任库。交互和离线已在本地相同构建的Chromium/WebKit验收，不能称作线上真机测试。无需为此次交付额外更改信任设置。
+
+完整步骤见 [DEPLOYMENT.md](DEPLOYMENT.md)。

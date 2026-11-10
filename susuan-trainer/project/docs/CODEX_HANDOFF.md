@@ -1,6 +1,6 @@
 # Codex 开发交接说明
 
-> v2.3实施说明：本文保留原始开发顺序作为规范。十组核心训练已在本地实现；第7组奇数用小数作答已获用户确认。当前状态、测试与部署证据详见 [`IMPLEMENTATION_REPORT.md`](IMPLEMENTATION_REPORT.md)，后续维护仍先读 `requirements.md`。
+> v2.4实施说明：本文保留原始开发顺序作为规范。十组核心训练已实现并按用户授权在notion-countdown/susuan-trainer子目录发布；完整源码保存在project/，原倒计时保留。第7组奇数用小数作答已获用户确认。当前状态、测试与部署证据详见 [`IMPLEMENTATION_REPORT.md`](IMPLEMENTATION_REPORT.md)，后续维护仍先读 `requirements.md`。
 
 ## 你将接手的任务
 

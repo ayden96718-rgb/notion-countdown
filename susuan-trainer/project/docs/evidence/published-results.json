@@ -1,0 +1,106 @@
+{
+  "url": "https://ayden96718-rgb.github.io/notion-countdown/susuan-trainer/",
+  "verified_at_utc": "2026-11-10T19:59:18.006063+00:00",
+  "status": "passed",
+  "tls_verification": "enabled, configured system CA bundle",
+  "checks": [
+    "15 public site assets return HTTP 200 and exactly match the tested build",
+    "public directory URL returns the exact tested homepage",
+    "original countdown homepage still returns its unchanged Git blob"
+  ],
+  "assets": [
+    {
+      "path": "data/timing-reference.json",
+      "status": 200,
+      "sha256": "1db8acbf083cb989d858cd74aaad2faec4d7f647387e262f6ecee78558e6bc12",
+      "bytes": 4249
+    },
+    {
+      "path": "icons/apple-touch-icon.png",
+      "status": 200,
+      "sha256": "c956ab98f254ce671df7733373bd7f38aa1299a556150c54a33f9e1e642c5f95",
+      "bytes": 557
+    },
+    {
+      "path": "icons/icon-192.png",
+      "status": 200,
+      "sha256": "ae5d88b41ac4ac9dc706a7319d572c71eb76e0fa1edeecb4a31747dde31cf1b6",
+      "bytes": 577
+    },
+    {
+      "path": "icons/icon-512.png",
+      "status": 200,
+      "sha256": "4ec6d62131243d7b5386957d9d83a7ae3e050493e916fa90dc743b9ca4522923",
+      "bytes": 1783
+    },
+    {
+      "path": "icons/icon.svg",
+      "status": 200,
+      "sha256": "80eb63a57ee6a384ed5a7d1bb0b55192da9c4304f080854bcc649202037fd165",
+      "bytes": 457
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "sha256": "8f435e6852e916efb078d3863e9fbb32e241c8f080fe8d21dd9e8492ba66194c",
+      "bytes": 1962
+    },
+    {
+      "path": "manifest.webmanifest",
+      "status": 200,
+      "sha256": "e699e144028b321044b5cb88d22c8f1d6e554bba8a4c0dc74a85366b97a9cf17",
+      "bytes": 639
+    },
+    {
+      "path": "src/app.js",
+      "status": 200,
+      "sha256": "7c93892b80c34acb9edace438c00c590b791999ef8d6123b9a59b6ef5d8e4c30",
+      "bytes": 33170
+    },
+    {
+      "path": "src/engine.js",
+      "status": 200,
+      "sha256": "056374697a39333c046f0e8019f9c03b212c9d09e619a7ea12684b2c64196280",
+      "bytes": 7649
+    },
+    {
+      "path": "src/modes.js",
+      "status": 200,
+      "sha256": "1e6ab1ef1f8bfc2f26a6f6271e66695092bf435219691b524ee68edef69d7984",
+      "bytes": 2829
+    },
+    {
+      "path": "src/session.js",
+      "status": 200,
+      "sha256": "9d4ed03df84c3a6a684d7b8a1f38ee6a655462ca73e45e2f8201b625fa20a4fb",
+      "bytes": 2064
+    },
+    {
+      "path": "src/storage.js",
+      "status": 200,
+      "sha256": "73f96fe8e33693e2f29206a433468dbe3c4c0932a34e8198e6e71866b604c113",
+      "bytes": 1026
+    },
+    {
+      "path": "src/timing.js",
+      "status": 200,
+      "sha256": "f9d291ae5d06726c7f08df6d31c2d6e4fbf64c97f471ad46f08c714cb136ce48",
+      "bytes": 1257
+    },
+    {
+      "path": "styles.css",
+      "status": 200,
+      "sha256": "286bd2773847a19cfadf5b4d7f0944a15b3a8adc9695574eee90fb4814415ffd",
+      "bytes": 20715
+    },
+    {
+      "path": "sw.js",
+      "status": 200,
+      "sha256": "4bc7a1945d2339237a6592af558adbd60e9b5b702a0707efd6abef087abbf6d5",
+      "bytes": 1641
+    }
+  ],
+  "original_homepage_blob": "1881683bbb6ba7665c3cb78bef9097a1a296a1b4",
+  "browser_runtime_evidence": "browser-results.json: 13 local Chromium/WebKit checks against identical build assets",
+  "cloud_live_browser_limitation": "Cloud Chromium does not trust the environment proxy CA. No trust-store changes or certificate-validation disabling used."
+}

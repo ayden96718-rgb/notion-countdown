@@ -20,24 +20,24 @@
     "sha256": "1db8acbf083cb989d858cd74aaad2faec4d7f647387e262f6ecee78558e6bc12"
   },
   "docs/ACCEPTANCE_TESTS.md": {
-    "size_bytes": 5477,
-    "sha256": "41d3cabef22d3b5e253705b260e8006e90ba25c354138c09f5baf8601d71e9c5"
+    "size_bytes": 5531,
+    "sha256": "3a10b4fe6cc521fa06020e9e92c56e72b7230a840c911a6b6ecdf648b9d53ade"
   },
   "docs/CHANGELOG.md": {
-    "size_bytes": 1629,
-    "sha256": "56fe4df71edbd03825ca65a19573be2c60a21763660c9bd054ec907e61e7970f"
+    "size_bytes": 1643,
+    "sha256": "d89e78f8de9e477309bcf7e9a62d96d6b8602ce1ccc6d104e2cc66ca5809d5da"
   },
   "docs/CODEX_HANDOFF.md": {
-    "size_bytes": 4831,
-    "sha256": "b0c57e77d93f7c886227f5a315def20ca60c7dff9a5e5f416a0a9e4e14682239"
+    "size_bytes": 4942,
+    "sha256": "c0d93804545b422481581b4856f2677e138b77c091e24bd21380030c4caa8cc4"
   },
   "docs/DEPLOYMENT.md": {
     "size_bytes": 3290,
     "sha256": "8d529796cf631915b88698fac71d97f613316ca7528c7311d51892a259695b83"
   },
   "docs/IMPLEMENTATION_REPORT.md": {
-    "size_bytes": 7390,
-    "sha256": "5aa79081ffb865472a82f2de33a11c66c3f2e7528f438a6a530c970887fe80bf"
+    "size_bytes": 8477,
+    "sha256": "30079b212fda8f464e6dd5f157f8ca6302ae5d0c0cefef4cfb54d525da5c6352"
   },
   "docs/SCREENSHOT_INDEX.md": {
     "size_bytes": 8353,
@@ -111,6 +111,10 @@
     "size_bytes": 48804,
     "sha256": "6f4905a598b6b742add40a6a9109787d62a606a9a6cc30b30d16c50fe2d132e0"
   },
+  "docs/evidence/published-results.json": {
+    "size_bytes": 3382,
+    "sha256": "813443748e55f0ce74404776d33e880ec5af7a7d45e9e0d40a9713cebdd26387"
+  },
   "docs/evidence/small-phone-home.png": {
     "size_bytes": 102591,
     "sha256": "6b9bcd50a705c222b6e5216acb13f035cebc7769d8e5653c1836b17a53e95df5"
@@ -148,8 +152,8 @@
     "sha256": "23447fbdec625175988e9dbc523303788d4766b68ff95d76fa2ea4f7eed9b156"
   },
   "docs/requirements.md": {
-    "size_bytes": 30808,
-    "sha256": "189abd4a8622bb06a832fad12fcb8bd251b6c2c47a5a296f75f9681e69cf1370"
+    "size_bytes": 30936,
+    "sha256": "02b2636ce11a9adfb47759800f95e5944b40e6a79e14d30f443f883fc1e782b2"
   },
   "docs/screenshots/00-overview.jpg": {
     "size_bytes": 342403,
@@ -354,6 +358,10 @@
   "tests/engine.test.mjs": {
     "size_bytes": 9192,
     "sha256": "cf055c0bf42cc5e0fa8cc67f50e3ddf04b348d82f87b0bdf0fcb9bdbe1822cd2"
+  },
+  "tests/published_smoke.py": {
+    "size_bytes": 2686,
+    "sha256": "7e2218cd887d070d24bec6e839c86197766f7f1229612e18dac56a4bda557aaa"
   },
   "tests/session.test.mjs": {
     "size_bytes": 3929,
