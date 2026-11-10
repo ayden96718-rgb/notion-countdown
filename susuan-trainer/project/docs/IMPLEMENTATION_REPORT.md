@@ -83,4 +83,4 @@ v1.0已上传并完成Pages发布。首次站点提交 `56bb1efe48d0751bf9cb70ff
 - 新截图入口：[三列手机首页](evidence/phone-home.png)、[多数相加](evidence/new-many-addition-training.png)、[百分数作答](evidence/new-fraction-to-percent-training.png)、[普通除法复盘](evidence/new-three-by-two-divide-review.png)、[估算复盘](evidence/new-multiplication-estimation-review.png)。
 - 发布仍只更新notion-countdown仓库中的susuan-trainer/；不改变原首页或Pages设置。完成后的线上逐资产核验写入published-results.json。
 
-本轮v1.1.0：26项核心测试、15项浏览器流程全部通过，构建成功；新增百分数离线答题通过。正在沿用原Pages推送和核对新版，最终线上逐资产结果以published-results.json为准。
+本轮v1.1.0已上线：发布提交b7adb42c93051af2563b72b8c692c47e3198aeb1，Pages于2026-11-10 20:50:20 UTC构建built。26项核心测试、15项浏览器流程通过，新增百分数离线答题通过；15个线上资产均HTTP200且SHA-256与验收构建一致，原倒计时首页blob未变。详见published-results.json。后续发布记录提交不更改这些生产资产。

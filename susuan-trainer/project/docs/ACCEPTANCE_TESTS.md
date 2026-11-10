@@ -5,7 +5,7 @@
 ## 基本体验
 
 - [x] 静态Pages产物与工作流已准备，不使用付费服务器/域名/API。
-- [x] 当前按v2.4仅新增notion-countdown/susuan-trainer目录，Pages构建built；实际网页及15项资产HTTP200并与已测试构建逐字节一致，原首页blob未变。独立建仓接口403已按用户选择改为子目录方案。
+- [x] 按v2.4授权仅在notion-countdown/susuan-trainer目录内更新，Pages构建built；实际网页及15项资产HTTP200并与已测试构建逐字节一致，原首页blob未变。独立建仓接口403已按用户选择改为子目录方案。
 - [x] Chromium桌面/手机/平板及WebKit手机/平板启动与操作通过自动化；见浏览器结果。
 - [ ] iPhone/iPad Safari、Windows实体设备验收及苹果主屏幕安装实测（当前未连接真机）。
 - [x] 触屏数字键盘、实体键盘、输入清空、退格、确定可用。
