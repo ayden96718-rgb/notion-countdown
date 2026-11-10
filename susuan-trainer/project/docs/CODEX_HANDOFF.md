@@ -1,6 +1,6 @@
 # Codex 开发交接说明
 
-> v2.5实施说明：本文保留原始开发顺序作为规范。十组核心训练已实现并按用户授权在notion-countdown/susuan-trainer子目录发布；完整源码保存在project/，原倒计时保留。第7组奇数用小数作答已获用户确认；v2.5补充六种限定题型、三列入口与可记忆的题型选择器，并按用户明确接受的规则判分。当前状态、测试与部署证据详见 [`IMPLEMENTATION_REPORT.md`](IMPLEMENTATION_REPORT.md)，后续维护仍先读 `requirements.md`。
+> v2.7实施说明：本文保留原始开发顺序作为历史交接。十组核心及六种限定补充题型已实现并按用户授权在notion-countdown/susuan-trainer子目录发布；完整源码保存在project/，原倒计时保留。第7组奇数用小数作答已确认。最新要求：全部23个三列宫格点击直接开始，删除题型选择器、设置面板与额外开始按钮，题量按需弹窗设置，自定义规则在训练页更改。原有数学与判分规则不变。当前状态、测试与部署证据详见 [`IMPLEMENTATION_REPORT.md`](IMPLEMENTATION_REPORT.md)，后续维护仍先读 `requirements.md`。
 
 ## 你将接手的任务
 

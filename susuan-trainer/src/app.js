@@ -13,7 +13,7 @@ const store = new LocalStore(local);
 const saved = store.read('settings', {});
 const settings = {
   count: Number.isInteger(saved?.count) && saved.count >= 5 && saved.count <= 100 ? saved.count : 10,
-  customCount: saved?.customCount === true,
+  customCount: saved?.customCount === true || (Number.isInteger(saved?.count) && saved.count >= 5 && saved.count <= 100 && ![10, 15].includes(saved.count)),
   mixedShare: [0.3, 0.5, 0.7].includes(saved?.mixedShare) ? saved.mixedShare : 0.5,
   modeId: modeById(saved?.modeId) ? saved.modeId : '1'
 };
@@ -63,61 +63,48 @@ function leaveFor(hash) {
 }
 
 function modeCard(mode) {
-  return `<button class="mode-card${selected.id === mode.id ? ' selected' : ''}" data-mode="${mode.id}" data-core="${Boolean(mode.number)}" aria-label="${mode.number ? `第${mode.number}组 ` : ''}${mode.title}${mode.kind === 'flash' ? '，立即开始' : ''}" aria-pressed="${selected.id === mode.id}">
-    ${mode.number ? `<span class="mode-number">${String(mode.number).padStart(2, '0')}</span>` : ''}<span class="mode-symbol" aria-hidden="true">${mode.symbol}</span><span><strong>${mode.title}</strong><small>${mode.note}</small></span>${mode.kind === 'flash' ? '<span class="mode-arrow" aria-hidden="true">↗</span>' : ''}</button>`;
+  return `<button class="mode-card" data-mode="${mode.id}" data-core="${Boolean(mode.number)}" aria-label="${mode.number ? `第${mode.number}组 ` : ''}${mode.title}，点击开始">
+    ${mode.number ? `<span class="mode-number">${String(mode.number).padStart(2, '0')}</span>` : ''}<strong>${mode.title}</strong></button>`;
 }
 
-function panel() {
-  const description = selected.hint ?? selected.description ?? (selected.untimed ? '慢慢算，先把方法练熟。没有计时和评级。' : selected.custom ? '按你设置的位数和范围，随机生成加、减、乘算式。' : selected.id === '3' ? '每一道都发生个位进位，重点练习几十几之间的加法。' : selected.id === '4' ? '每一道都需要个位借位，所有结果均为正数。' : selected.mixed ? '两种运算随机混排，一题一答，完成后查看逐题复盘。' : '一次一道算式，完成后回顾答案与每题用时。');
-  const timing = timingFor(selected, settings.count, reference);
-  return `<aside class="practice-panel" aria-label="练习设置"><label class="field-label mode-picker-label" for="current-mode">本次练习 <span>可在此更换题型 ↓</span></label><select class="field current-mode" id="current-mode">${[...MODES, ...EXTRA_MODES].map(m => `<option value="${m.id}"${selected.id === m.id ? ' selected' : ''}>${m.number ? `${String(m.number).padStart(2, '0')} · ` : ''}${m.title}</option>`).join('')}</select><p class="mode-description">${description}</p><div class="divider"></div>
-    ${selected.kind === 'flash' ? `<div class="flash-count-note"><span class="field-label">固定题量</span><strong>${selected.id === '2' ? '1个起始数 + 10个个位减数' : '10个个位加数'}</strong></div>` : `    <label class="field-label">每组题量</label><div class="count-options" role="group" aria-label="题量选择">${[10, 15].map(n => `<button data-count="${n}" class="${settings.count === n && !settings.customCount ? 'active' : ''}" aria-pressed="${settings.count === n && !settings.customCount}">${n === 10 ? '快速' : '正常'} ${n}</button>`).join('')}<button data-count="custom" class="${settings.customCount ? 'active' : ''}" aria-pressed="${settings.customCount}">自定义</button></div>
-    ${settings.customCount ? `<div class="custom-count"><label class="quiet" for="custom-count">题数（5～100）</label><input class="field" id="custom-count" type="number" min="5" max="100" step="1" inputmode="numeric" value="${settings.count}"></div>` : ''}
-`}
-    <p class="count-note">${selected.kind === 'flash' ? '逐张点击数卡，结束后统一填写答案；仅记录实际用时。' : selected.untimed ? '自由练习，不计时、不评级。' : timing ? `合格 ${timing.pass}s · 良好 ${timing.good}s · 优秀 ${timing.excellent}s${timing.derived ? '<br>按比例推算，非原应用截图原值' : '<br>整组用时参考，正确率单独记录'}` : '此题型时间门槛待核实，仅记录实际用时。'}</p>
-    ${selected.mixed ? `<label class="field-label" for="mixed-share">加法比例</label><select class="field" id="mixed-share">${[0.3, 0.5, 0.7].map(n => `<option value="${n}"${settings.mixedShare === n ? ' selected' : ''}>约 ${n * 100}% 加法 / ${100 - n * 100}% 减法</option>`).join('')}</select><p class="count-note">本站默认各半，可调整；顺序始终随机。</p>` : ''}
-    ${selected.custom ? '<button class="text-button" data-action="custom-builder">调整出题规则 →</button>' : ''}
-    <button class="button primary wide" data-action="start">开始练习 <span aria-hidden="true">→</span></button>
-    <div class="panel-secondary"><button class="text-button" data-action="export-questions">导出题目 ↗</button><a class="text-button" href="#history">练习记录 ↗</a></div><p class="panel-tip">第1、2组点击卡片直接开始，固定10个数字，不受题量设置影响。</p></aside>`;
+function quantityLabel() {
+  return settings.customCount ? `自定义（${settings.count}题）` : `${settings.count === 15 ? '正常' : '快速'}（${settings.count}题）`;
 }
 
-function renderHome({ anchor } = {}) {
-  const oldTop = anchor ? document.querySelector(anchor)?.getBoundingClientRect().top : null;
+function renderHome() {
   stopTimer();
   main.classList.add('home-page');
-  main.innerHTML = `<section class="home-intro"><h1>速算训练</h1><p>点格子选择题型，再选择题量开始练习。</p></section>
-    <div class="home-layout"><section class="training-section" aria-labelledby="training-title"><div class="section-label"><h2 id="training-title">选择题型</h2><span>01–10 为你的定制训练</span></div><div class="training-grid">${[...MODES, ...EXTRA_MODES].map(modeCard).join('')}</div></section>${panel()}</div>`;
-  if (oldTop !== null && oldTop !== undefined) {
-    const newTop = document.querySelector(anchor)?.getBoundingClientRect().top;
-    if (newTop !== undefined) window.scrollBy(0, newTop - oldTop);
-  }
+  main.innerHTML = `<section class="direct-home" aria-label="训练题型"><button class="quantity-row" data-action="quantity" data-current-count="${settings.count}"><strong>题量</strong><span>${quantityLabel()}　›</span></button><section class="training-section" aria-label="点击题型直接开始"><div class="training-grid">${[...MODES, ...EXTRA_MODES].map(modeCard).join('')}</div></section><div class="home-tools"><button class="button" data-action="export-menu">导出题目</button><a class="button" href="#history">历史记录</a></div></section>`;
 }
 
-function chooseMode(mode, anchor) {
-  const countInput = document.querySelector('#custom-count');
-  const enteredCount = Number(countInput?.value);
-  if (countInput?.value.trim() && Number.isInteger(enteredCount) && enteredCount >= 5 && enteredCount <= 100) settings.count = enteredCount;
-  selected = mode;
-  settings.modeId = mode.id;
-  saveSettings();
-  renderHome({ anchor });
+function showQuantity() {
+  showDialog(`<h2 id="modal-title">题量</h2><form id="quantity-form"><div class="quantity-options">${[10, 15, 'custom'].map(value => `<label><input type="radio" name="countMode" value="${value}"${value === 'custom' ? settings.customCount ? ' checked' : '' : !settings.customCount && settings.count === value ? ' checked' : ''}>${value === 'custom' ? '自定义' : `${value === 10 ? '快速' : '正常'}（${value}题）`}</label>`).join('')}</div><label class="field-label" for="custom-count">自定义题数（5～100）</label><input class="field" id="custom-count" name="customCount" type="number" inputmode="numeric" min="5" max="100" step="1" value="${settings.count}"${settings.customCount ? '' : ' disabled'}><p>个位数加减固定10个数字。</p><details><summary>混合加减比例</summary><select class="field" name="mixedShare">${[0.3, 0.5, 0.7].map(n => `<option value="${n}"${settings.mixedShare === n ? ' selected' : ''}>约${n * 100}%加法 / ${100 - n * 100}%减法</option>`).join('')}</select></details><div class="dialog-actions"><button type="button" class="button" data-action="close-modal">取消</button><button type="submit" class="button primary">确定</button></div></form>`);
+  const form = modal.querySelector('#quantity-form');
+  form.addEventListener('change', () => {
+    form.elements.customCount.disabled = form.elements.countMode.value !== 'custom';
+  });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const custom = form.elements.countMode.value === 'custom';
+    const count = Number(custom ? form.elements.customCount.value : form.elements.countMode.value);
+    if (!Number.isInteger(count) || count < 5 || count > 100) return;
+    settings.count = count;
+    settings.customCount = custom;
+    settings.mixedShare = Number(form.elements.mixedShare.value);
+    saveSettings(); closeDialog(); renderHome();
+  });
 }
 
-function validCount() {
-  const input = document.querySelector('#custom-count');
-  if (input) {
-    const value = Number(input.value);
-    if (!input.value.trim() || !Number.isInteger(value) || value < 5 || value > 100) {
-      input.focus(); toast('请输入5～100的整数题量'); return false;
-    }
-    settings.count = value;
-    saveSettings();
-  }
-  return true;
+function showExport() {
+  showDialog(`<h2 id="modal-title">导出题目</h2><form id="export-form"><label class="field-label" for="export-mode">题型</label><select class="field" id="export-mode">${[...MODES, ...EXTRA_MODES].map(mode => `<option value="${mode.id}"${selected.id === mode.id ? ' selected' : ''}>${mode.title}</option>`).join('')}</select><p>普通练习${settings.count}题，个位数加减固定10个数字。</p><div class="dialog-actions"><button type="button" class="button" data-action="close-modal">取消</button><button type="submit" class="button primary">导出</button></div></form>`);
+  modal.querySelector('#export-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const mode = modeById(modal.querySelector('#export-mode').value);
+    if (mode) { exportQuestions(mode); closeDialog(); }
+  });
 }
 
 function start(mode = selected) {
-  if (mode.kind !== 'flash' && !validCount()) return;
   hideToast();
   selected = mode; settings.modeId = mode.id; saveSettings();
   try {
@@ -159,7 +146,7 @@ function renderTraining() {
   main.innerHTML = `<section class="training" aria-labelledby="training-name"><div class="training-top"><button class="back-button" data-action="leave">← 返回首页</button><h1 id="training-name">${mode.title}</h1><span class="quiet">${mode.number ? `第 ${String(mode.number).padStart(2, '0')} 组` : '拓展练习'}</span></div>
     <div class="session-card"><div class="session-meta"><div class="progress-text">${cards ? '数卡' : flash ? '最终作答' : '题目'} <strong>${index}</strong> / ${total}</div>${mode.untimed ? '<span>自由练习</span>' : `<span class="timer" aria-label="累计用时">◷ <span id="timer">${formatTime(training.elapsed())}</span></span>`}</div><div class="progress-track" role="progressbar" aria-label="练习进度" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${cards ? training.index : flash ? total : training.records.length}"><div class="progress-fill" style="width:${progress * 100}%"></div></div>
     ${cards ? `<div class="flash-area"><span class="flash-stage">${mode.id === '2' ? training.index === 0 ? '先记住这个起始数' : `减去第 ${training.index} 个数字` : `记住并加上第 ${training.index + 1} 个数字`}</span><button class="flash-card" data-action="next-card" aria-label="当前数字${training.spec.cards[training.index]}，点击查看下一张"><span id="flash-digit">${training.spec.cards[training.index]}</span><span class="flash-tag">${training.index === total - 1 ? '点击，填写最终答案' : '点击卡片，继续 →'}</span></button><p class="flash-instruction">${mode.hint}</p></div>` : `${flash ? '<div class="equation">最后的结果是？</div>' : `<div class="equation${training.current.terms || training.current.unit ? ' wide-equation' : ''}" aria-label="${escape(expression(training.current))} 等于多少">${escape(expression(training.current))} =${training.current.unit ? ` ${training.current.unit}` : ''}</div>${answerRule(training.current) ? `<p class="answer-rule">${answerRule(training.current)}</p>` : ''}`}${thresholds(mode, training.spec.count)}${answerArea()}`}
-    </div><div class="training-bottom"><p>${mode.untimed ? '不记录用时。' : '从首题显示计至最后一次提交，切到后台仍继续计时。'}${mode.id === '7' ? '奇数可用 .5 作答。' : ''}</p><button class="text-button" data-action="restart">↻ 重新开始</button></div></section>`;
+    </div><div class="training-bottom"><p>${mode.untimed ? '不记录用时。' : '从首题显示计至最后一次提交，切到后台仍继续计时。'}${mode.id === '7' ? '奇数可用 .5 作答。' : ''}</p>${mode.custom ? '<button class="text-button" data-action="custom-builder">出题设置</button>' : ''}<button class="text-button" data-action="restart">↻ 重新开始</button></div></section>`;
   if (!mode.untimed) timerHandle = setInterval(() => {
     const timer = document.querySelector('#timer');
     if (timer && training) timer.textContent = formatTime(training.elapsed());
@@ -245,27 +232,26 @@ function download(filename, content, type) {
   const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-function exportQuestions() {
-  if (!validCount()) return;
-  const spec = generateSession(selected.id, settings.count, { mixedShare: settings.mixedShare, custom: customConfig });
+function exportQuestions(mode = selected) {
+  const spec = generateSession(mode.id, settings.count, { mixedShare: settings.mixedShare, custom: customConfig });
   if (spec.kind === 'flash') {
-    const lines = [`速算 · ${selected.title}`, '固定10个数字，按顺序逐张心算，最后统一作答。', ...(spec.start ? [`起始数：${spec.start}`, '依次减去下列数字：'] : ['依次相加下列数字：']), ...spec.digits.map((n, i) => `${i + 1}. ${n}`), '\n—— 参考答案 ——', String(spec.answer)];
-    download(`速算-${selected.title}-10个数字.txt`, '\uFEFF' + lines.join('\n'), 'text/plain;charset=utf-8');
+    const lines = [`速算 · ${mode.title}`, '固定10个数字，按顺序逐张心算，最后统一作答。', ...(spec.start ? [`起始数：${spec.start}`, '依次减去下列数字：'] : ['依次相加下列数字：']), ...spec.digits.map((n, i) => `${i + 1}. ${n}`), '\n—— 参考答案 ——', String(spec.answer)];
+    download(`速算-${mode.title}-10个数字.txt`, '\uFEFF' + lines.join('\n'), 'text/plain;charset=utf-8');
     toast('已导出一套新数卡；不会提前揭示下一次练习的数字。');
     return;
   }
-  const lines = [`速算 · ${selected.title}`, `${spec.count}题 / 答案见末页`, ...(answerRule(spec.questions[0]) ? [answerRule(spec.questions[0])] : []), ''];
+  const lines = [`速算 · ${mode.title}`, `${spec.count}题 / 答案见末页`, ...(answerRule(spec.questions[0]) ? [answerRule(spec.questions[0])] : []), ''];
   spec.questions.forEach((q, i) => lines.push(`${i + 1}. ${expression(q)} = ______${q.unit ?? ''}`));
   lines.push('\n\n—— 参考答案 ——');
   spec.questions.forEach((q, i) => lines.push(`${i + 1}. ${formatAnswer(q)}`));
-  download(`速算-${selected.title}-${spec.count}题.txt`, '\uFEFF' + lines.join('\n'), 'text/plain;charset=utf-8');
+  download(`速算-${mode.title}-${spec.count}题.txt`, '\uFEFF' + lines.join('\n'), 'text/plain;charset=utf-8');
   toast('已生成一套新题；不会提前揭示下一次练习的题目。');
 }
 
 function showCustomBuilder() {
   const c = customConfig;
   const digits = (name, value) => `<select name="${name}" class="field">${[1, 2, 3, 4].map(n => `<option value="${n}"${value === n ? ' selected' : ''}>${n}位数</option>`).join('')}</select>`;
-  showDialog(`<h2 id="modal-title">自定义练习</h2><p>本站支持加、减、乘运算。减法保留你设定的两数范围，可能出现负数答案。</p><form id="builder-form"><div class="form-grid"><label>首数位数${digits('firstDigits', c.firstDigits)}</label><label>后数类型<select class="field" name="secondType"><option value="digits"${c.secondType === 'digits' ? ' selected' : ''}>随机位数</option><option value="fixed"${c.secondType === 'fixed' ? ' selected' : ''}>固定数字</option><option value="range"${c.secondType === 'range' ? ' selected' : ''}>随机范围</option></select></label><div class="form-full"><span class="field-label">运算符（可多选）</span><div class="checkbox-row">${['+', '-', '*'].map(op => `<label><input type="checkbox" name="ops" value="${op}"${c.ops.includes(op) ? ' checked' : ''}>${{ '+': '加 ＋', '-': '减 −', '*': '乘 ×' }[op]}</label>`).join('')}</div></div><label class="form-full" data-builder="digits">后数位数${digits('secondDigits', c.secondDigits)}</label><label class="form-full" data-builder="fixed">固定数字<input class="field" name="fixed" type="number" min="1" max="9999" step="1" value="${c.fixed}"></label><label data-builder="range">范围下限<input class="field" name="min" type="number" min="1" max="9999" step="1" value="${c.min}"></label><label data-builder="range">范围上限<input class="field" name="max" type="number" min="1" max="9999" step="1" value="${c.max}"></label></div><div class="form-error" id="builder-error" role="status"></div><p>无已核实的时间门槛；规则保存在此浏览器。</p><div class="dialog-actions"><button type="button" class="button" data-action="close-modal">取消</button><button type="submit" class="button primary">保存规则</button></div></form>`);
+  showDialog(`<h2 id="modal-title">自定义练习</h2><p>本站支持加、减、乘运算。减法保留你设定的两数范围，可能出现负数答案。</p><form id="builder-form"><div class="form-grid"><label>首数位数${digits('firstDigits', c.firstDigits)}</label><label>后数类型<select class="field" name="secondType"><option value="digits"${c.secondType === 'digits' ? ' selected' : ''}>随机位数</option><option value="fixed"${c.secondType === 'fixed' ? ' selected' : ''}>固定数字</option><option value="range"${c.secondType === 'range' ? ' selected' : ''}>随机范围</option></select></label><div class="form-full"><span class="field-label">运算符（可多选）</span><div class="checkbox-row">${['+', '-', '*'].map(op => `<label><input type="checkbox" name="ops" value="${op}"${c.ops.includes(op) ? ' checked' : ''}>${{ '+': '加 ＋', '-': '减 −', '*': '乘 ×' }[op]}</label>`).join('')}</div></div><label class="form-full" data-builder="digits">后数位数${digits('secondDigits', c.secondDigits)}</label><label class="form-full" data-builder="fixed">固定数字<input class="field" name="fixed" type="number" min="1" max="9999" step="1" value="${c.fixed}"></label><label data-builder="range">范围下限<input class="field" name="min" type="number" min="1" max="9999" step="1" value="${c.min}"></label><label data-builder="range">范围上限<input class="field" name="max" type="number" min="1" max="9999" step="1" value="${c.max}"></label></div><div class="form-error" id="builder-error" role="status"></div><p>无已核实的时间门槛；规则保存在此浏览器。</p><div class="dialog-actions"><button type="button" class="button" data-action="close-modal">取消</button><button type="submit" class="button primary">应用并重新开始</button></div></form>`);
   const form = document.querySelector('#builder-form');
   const update = () => form.querySelectorAll('[data-builder]').forEach(node => {
     const visible = node.dataset.builder === form.elements.secondType.value;
@@ -277,13 +263,13 @@ function showCustomBuilder() {
     const data = new FormData(form);
     const config = { firstDigits: Number(data.get('firstDigits')), ops: data.getAll('ops'), secondType: data.get('secondType'), secondDigits: Number(data.get('secondDigits') ?? c.secondDigits), fixed: Number(data.get('fixed') ?? c.fixed), min: Number(data.get('min') ?? c.min), max: Number(data.get('max') ?? c.max) };
     try {
-      validateCustom(config); customConfig = config; store.write('custom', config); closeDialog(); chooseMode(modeById('custom')); toast('已保存，可以开始自定义练习。');
+      validateCustom(config); customConfig = config; store.write('custom', config); closeDialog(); start(modeById('custom'));
     } catch (error) { document.querySelector('#builder-error').textContent = error.message; }
   });
 }
 
 function help() {
-  showDialog(`<h2 id="modal-title">一间随身心算练习室</h2><p><strong>连续心算：</strong>第1、2组点击首页入口即开始，逐张点卡换数字，全部结束后只答一次。第2组先记起始数，再依次相减。</p><p><strong>逐题作答：</strong>其他题型先选题量，再开始。数字键盘或实体键盘均可输入；第7组允许奇数，用 .5 表示半整数。</p><p><strong>切换题型：</strong>点击首页格子，或在“本次练习”选择框中更换。系统记住上次选择；第1、2组点格子直接开始。</p><p><strong>新增题型：</strong>普通除法四舍五入到2位小数；乘法估算允许相对误差±5%；三位÷四位填写百分数数值（例如6%填6），允许相对误差±3%。</p><p><strong>计时：</strong>首题显示至最后提交，包括后台和离开页面前的等待。第6、7组完全不计时。参考时间与正确率分别显示，尚未设定错题对等级的影响。</p><p><strong>安装与离线：</strong>iPhone/iPad Safari 点“分享 → 添加到主屏幕”。首次联网打开并完成缓存后可离线练习；清除浏览器数据会删除成绩。</p><p><strong>隐私：</strong>免费，无广告、账号或云端同步。最近100组成绩只存在当前浏览器，可以在练习记录页导出。</p><div class="dialog-actions"><button class="button primary" data-action="close-modal" autofocus>知道了</button></div>`);
+  showDialog(`<h2 id="modal-title">一间随身心算练习室</h2><p><strong>连续心算：</strong>第1、2组点击首页入口即开始，逐张点卡换数字，全部结束后只答一次。第2组先记起始数，再依次相减。</p><p><strong>逐题作答：</strong>点击题型格子直接开始，题量可按需调整。数字键盘或实体键盘均可输入；第7组允许奇数，用 .5 表示半整数。</p><p><strong>切换题型：</strong>点击首页任一格子，直接进入对应训练；首页“题量”只调整普通练习，个位数加减固定10个数字。自定义练习在答题页可修改规则。</p><p><strong>新增题型：</strong>普通除法四舍五入到2位小数；乘法估算允许相对误差±5%；三位÷四位填写百分数数值（例如6%填6），允许相对误差±3%。</p><p><strong>计时：</strong>首题显示至最后提交，包括后台和离开页面前的等待。第6、7组完全不计时。参考时间与正确率分别显示，尚未设定错题对等级的影响。</p><p><strong>安装与离线：</strong>iPhone/iPad Safari 点“分享 → 添加到主屏幕”。首次联网打开并完成缓存后可离线练习；清除浏览器数据会删除成绩。</p><p><strong>隐私：</strong>免费，无广告、账号或云端同步。最近100组成绩只存在当前浏览器，可以在练习记录页导出。</p><div class="dialog-actions"><button class="button primary" data-action="close-modal" autofocus>知道了</button></div>`);
 }
 
 function renderRoute() {
@@ -300,13 +286,9 @@ document.addEventListener('click', e => {
   const modeButton = e.target.closest('[data-mode]');
   if (modeButton) {
     const mode = modeById(modeButton.dataset.mode);
-    if (mode.kind === 'flash') start(mode);
-    else if (mode.custom) showCustomBuilder();
-    else { chooseMode(mode, `[data-mode="${mode.id}"]`); document.querySelector(`[data-mode="${mode.id}"]`)?.focus({ preventScroll: true }); }
+    if (mode) start(mode);
     return;
   }
-  const count = e.target.closest('[data-count]');
-  if (count) { settings.customCount = count.dataset.count === 'custom'; if (!settings.customCount) settings.count = Number(count.dataset.count); saveSettings(); renderHome({ anchor: '.practice-panel' }); document.querySelector(`[data-count="${count.dataset.count}"]`)?.focus({ preventScroll: true }); return; }
   const key = e.target.closest('[data-key]');
   if (key) { keyInput(key.dataset.key); return; }
   const record = e.target.closest('[data-record]');
@@ -315,7 +297,8 @@ document.addEventListener('click', e => {
   if (nav && nav.getAttribute('href') !== '#main') { e.preventDefault(); leaveFor(nav.hash.slice(1)); return; }
   const action = e.target.closest('[data-action]')?.dataset.action;
   if (!action) return;
-  if (action === 'start') start();
+  if (action === 'quantity') showQuantity();
+  else if (action === 'export-menu') showExport();
   else if (action === 'next-card') nextCard();
   else if (action === 'submit') submit();
   else if (action === 'help') help();
@@ -324,7 +307,7 @@ document.addEventListener('click', e => {
   else if (action === 'close-modal') { closeDialog(); if (activeTraining()) focusAnswer(); }
   else if (action === 'modal-home') { closeDialog(); setRoute('home'); }
   else if (action === 'restart') confirmAction('重新开始这组练习？', '本次未完成的答案将丢弃，重新生成一组新题。', () => start(modeById(training.spec.modeId)), '重新开始');
-  else if (action === 'retry-result') { const mode = modeById(latestResult.modeId); if (mode) { settings.count = latestResult.spec.count; if (latestResult.spec.options?.custom) customConfig = latestResult.spec.options.custom; if (latestResult.spec.options?.mixedShare) settings.mixedShare = latestResult.spec.options.mixedShare; start(mode); } }
+  else if (action === 'retry-result') { const mode = modeById(latestResult.modeId); if (mode) { if (latestResult.spec.kind !== 'flash') { settings.count = latestResult.spec.count; settings.customCount = ![10, 15].includes(settings.count); } if (latestResult.spec.options?.custom) customConfig = latestResult.spec.options.custom; if (latestResult.spec.options?.mixedShare) settings.mixedShare = latestResult.spec.options.mixedShare; start(mode); } }
   else if (action === 'export-questions') exportQuestions();
   else if (action === 'export-result') download('速算-本次记录.json', JSON.stringify(latestResult, null, 2), 'application/json');
   else if (action === 'export-history') download('速算-练习记录.json', JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), records: store.history() }, null, 2), 'application/json');
@@ -332,18 +315,6 @@ document.addEventListener('click', e => {
   else if (action === 'custom-builder') showCustomBuilder();
 });
 
-document.addEventListener('change', e => {
-  if (e.target.id === 'current-mode') {
-    const mode = modeById(e.target.value);
-    if (mode) { chooseMode(mode, '.practice-panel'); document.querySelector('#current-mode')?.focus({ preventScroll: true }); }
-  }
-  else if (e.target.id === 'mixed-share') { settings.mixedShare = Number(e.target.value); saveSettings(); }
-  else if (e.target.id === 'custom-count' && validCount()) {
-    const timing = timingFor(selected, settings.count, reference);
-    const note = document.querySelector('.count-note');
-    if (note && timing) note.innerHTML = `合格 ${timing.pass}s · 良好 ${timing.good}s · 优秀 ${timing.excellent}s<br>${timing.derived ? '按比例推算，非原应用截图原值' : '整组用时参考，正确率单独记录'}`;
-  }
-});
 document.addEventListener('submit', e => { if (e.target.id === 'answer-form') { e.preventDefault(); submit(); } });
 document.addEventListener('input', e => { if (e.target.id === 'answer') document.querySelector('#answer-error').textContent = ''; });
 document.addEventListener('keydown', e => {
@@ -368,7 +339,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-f7ced4981720`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-cf838cdf7300`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 

@@ -234,3 +234,17 @@
 @layer compact-home { .wide-equation { font-size: clamp(24px, 5vw, 42px); } }
 
 @layer compact-home { .answer-rule { text-align: center; color: var(--green); font-size: 12px; margin: 0 0 9px; line-height: 1.6; } }
+
+@layer direct-home {
+  .home-page { max-width: 840px; padding: 18px 12px 24px; }
+  .quantity-row { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 45px; padding: 10px 14px; margin-bottom: 12px; border: 1px solid #cde4c8; border-radius: 8px; background: #e3f0df; font-size: 14px; }
+  .quantity-row span { color: var(--muted); font-size: 12px; }
+  .home-page .mode-card { padding: 16px 7px; min-height: 72px; }
+  .home-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 14px; }
+  .home-tools .button { background: #d9eed6; border-color: #cde4c8; }
+  .quantity-options { display: grid; gap: 10px; margin: 17px 0; }
+  .quantity-options label { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #eff6ea; border-radius: 7px; cursor: pointer; }
+  .quantity-options input { width: 18px; height: 18px; accent-color: var(--green); }
+  .training-bottom { flex-wrap: wrap; }
+  @media (max-width: 700px) { .home-page .mode-card { min-height: 65px; padding: 13px 5px; } }
+}

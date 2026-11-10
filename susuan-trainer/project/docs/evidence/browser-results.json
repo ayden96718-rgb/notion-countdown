@@ -2,72 +2,72 @@
   {
     "check": "desktop: ten correctly numbered main entries, original green UI",
     "status": "passed",
-    "seconds": 0.28
+    "seconds": 0.32
   },
   {
-    "check": "flash groups in picker: 23 ordered options, fresh default group 1, persisted choices, fixed counts, export and real flash flow",
+    "check": "all 23 tiles: one click enters matching training, no selection panel, dropdown, preselection or extra start button",
     "status": "passed",
-    "seconds": 1.8
+    "seconds": 5.87
   },
   {
-    "check": "current practice: direct dropdown/grid selection, remembered on reload, custom count retained",
+    "check": "quantity: optional setting persists; single-digit groups retain fixed cards and export independently",
     "status": "passed",
-    "seconds": 0.31
+    "seconds": 1.49
   },
   {
     "check": "group 1: real clicks through ten cards, final-only answer and sequence review",
     "status": "passed",
-    "seconds": 0.94
+    "seconds": 0.92
   },
   {
     "check": "group 2: eleven real cards, dynamic positive subtraction and actual borrow review",
     "status": "passed",
-    "seconds": 1.12
+    "seconds": 1.0
   },
   {
     "check": "groups 3–5: touch keyboard, blank rejection, 10/15 answers, constraints and exact review totals",
     "status": "passed",
-    "seconds": 3.38
+    "seconds": 4.25
   },
   {
     "check": "groups 6/7: no clock in training/results/history; odd ÷2 accepted as .5",
     "status": "passed",
-    "seconds": 2.47
+    "seconds": 2.38
   },
   {
     "check": "groups 8–10: distinct 10-question timing evidence, three-digit operands, derived 15-question label",
     "status": "passed",
-    "seconds": 1.98
+    "seconds": 1.72
   },
   {
     "check": "six new screenshot modes: visible arithmetic, decimal touch input, 5%/3% relative grading, wrong answers and full review",
     "status": "passed",
-    "seconds": 9.27
+    "seconds": 8.02
   },
   {
     "check": "navigation/restart confirmation preserves unfinished answers; custom count rejects 4 and accepts 7",
     "status": "passed",
-    "seconds": 1.07
+    "seconds": 1.61
   },
   {
     "check": "custom range validation, negative answers via ±, question export and persistent history export/review",
     "status": "passed",
-    "seconds": 1.5
+    "seconds": 1.64
   },
   {
     "check": "390px phone, 820px tablet and 320px small phone: no horizontal overflow, ≥44px touch keys",
     "status": "passed",
-    "seconds": 1.75
+    "seconds": 1.17
   },
   {
     "check": "Pages project subpath: installed service worker reloads and completes a full quiz offline",
     "status": "passed",
-    "seconds": 3.85
+    "seconds": 3.94
   },
   {
     "check": "blocked localStorage: practice and results still work, export remains available",
     "status": "passed",
-    "seconds": 1.26
+    "seconds": 1.32
   },
   {
     "check": "zero uncaught browser JavaScript errors during all Chromium flows",
@@ -77,6 +77,6 @@
   {
     "check": "WebKit phone/tablet: decimal touch input, full results, direct flash card flow",
     "status": "passed",
-    "seconds": 21.27
+    "seconds": 20.08
   }
 ]

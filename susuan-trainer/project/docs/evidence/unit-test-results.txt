@@ -1,33 +1,33 @@
 
-> susuan-trainer@1.1.1 test
+> susuan-trainer@1.2.0 test
 > node --test --test-isolation=none tests/*.test.mjs
 
-✔ all ten original group numbers, names, direct flash modes and untimed exceptions remain intact (2.277947ms)
-✔ 2,000 addition flash sets have ten nonzero digits, a clear large-digit majority and variety (35.210704ms)
-✔ given subtraction demonstration really has 8 borrows and answer 14 (0.260636ms)
-✔ 1,000 subtraction sets have dynamic positive starts ≤99, 10 subtrahends and high actual borrowing (884.177434ms)
-✔ group 3: 18,000+ samples across every supported count satisfy forced carry/borrow and easy-addition caps (19.168621ms)
-✔ group 4: 18,000+ samples across every supported count satisfy forced carry/borrow and easy-addition caps (30.64409ms)
-✔ group 5: 18,000+ samples across every supported count satisfy forced carry/borrow and easy-addition caps (23.448099ms)
-✔ mixed operation shares are configurable; generated order is reproducible but not fixed alternating/blocked (3.127517ms)
-✔ groups 6 and 7 include two-digit inputs, and odd ÷2 answers use exact halves (5.099385ms)
-✔ three-digit groups never copy four-digit screenshot operand; carry/borrow is not artificially forced (10.564871ms)
-✔ timings use exact evidence per count; only unverified quantities are labelled derived (0.807705ms)
-✔ only clearly supported additional modes are live and use their own screenshot timings (1.166764ms)
-✔ custom builder respects first digits, second fixed/range and multiple operators including negatives (1.354932ms)
-✔ multiple addition follows the new screenshot: four independent two-digit addends, all shown together (42.802189ms)
-✔ multiple-addition results retain original four operands, entered answers and consistent durations (0.551029ms)
-✔ new division examples preserve operand widths, include non-integer results and use their own timing evidence (5.573904ms)
-✔ multiplication estimation follows two-digit operand examples and 48/40/32-second timing (0.97662ms)
-✔ ordinary division rounds exact rational half ties correctly and leaves group 7 halves untouched (1.491365ms)
-✔ estimated multiplication accepts inclusive relative 5% boundaries and rejects values outside them (0.198686ms)
-✔ percent mode uses percentage values and relative 3%, never ±3 percentage points or the decimal ratio (0.287655ms)
-✔ new tolerance rules are recorded per question; result totals and original exact-answer behavior remain consistent (1.096678ms)
-✔ flash workflow cannot submit before last card; subtraction has exactly 11 cards (2.924548ms)
-✔ quiz statistics, actual per-question durations and total agree, including wrong answers (0.394415ms)
-✔ untimed groups do not even call a clock; all time fields stay null including results (0.386809ms)
-✔ decimal and signed input validates full string instead of truncating (0.165263ms)
-✔ local records are idempotent, bounded to 100, and unavailable storage does not break practice (6.698751ms)
+✔ all ten original group numbers, names, direct flash modes and untimed exceptions remain intact (2.346097ms)
+✔ 2,000 addition flash sets have ten nonzero digits, a clear large-digit majority and variety (35.574115ms)
+✔ given subtraction demonstration really has 8 borrows and answer 14 (0.279615ms)
+✔ 1,000 subtraction sets have dynamic positive starts ≤99, 10 subtrahends and high actual borrowing (1442.933105ms)
+✔ group 3: 18,000+ samples across every supported count satisfy forced carry/borrow and easy-addition caps (25.797926ms)
+✔ group 4: 18,000+ samples across every supported count satisfy forced carry/borrow and easy-addition caps (43.364949ms)
+✔ group 5: 18,000+ samples across every supported count satisfy forced carry/borrow and easy-addition caps (55.835517ms)
+✔ mixed operation shares are configurable; generated order is reproducible but not fixed alternating/blocked (4.000497ms)
+✔ groups 6 and 7 include two-digit inputs, and odd ÷2 answers use exact halves (5.593298ms)
+✔ three-digit groups never copy four-digit screenshot operand; carry/borrow is not artificially forced (14.419665ms)
+✔ timings use exact evidence per count; only unverified quantities are labelled derived (0.788555ms)
+✔ only clearly supported additional modes are live and use their own screenshot timings (1.651082ms)
+✔ custom builder respects first digits, second fixed/range and multiple operators including negatives (1.48059ms)
+✔ multiple addition follows the new screenshot: four independent two-digit addends, all shown together (57.631566ms)
+✔ multiple-addition results retain original four operands, entered answers and consistent durations (0.875378ms)
+✔ new division examples preserve operand widths, include non-integer results and use their own timing evidence (10.336358ms)
+✔ multiplication estimation follows two-digit operand examples and 48/40/32-second timing (2.424572ms)
+✔ ordinary division rounds exact rational half ties correctly and leaves group 7 halves untouched (1.730607ms)
+✔ estimated multiplication accepts inclusive relative 5% boundaries and rejects values outside them (0.217277ms)
+✔ percent mode uses percentage values and relative 3%, never ±3 percentage points or the decimal ratio (0.22689ms)
+✔ new tolerance rules are recorded per question; result totals and original exact-answer behavior remain consistent (0.590968ms)
+✔ flash workflow cannot submit before last card; subtraction has exactly 11 cards (3.979273ms)
+✔ quiz statistics, actual per-question durations and total agree, including wrong answers (0.628611ms)
+✔ untimed groups do not even call a clock; all time fields stay null including results (0.478479ms)
+✔ decimal and signed input validates full string instead of truncating (0.17989ms)
+✔ local records are idempotent, bounded to 100, and unavailable storage does not break practice (6.365616ms)
 ℹ tests 26
 ℹ suites 0
 ℹ pass 26
@@ -35,4 +35,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 1125.952883
+ℹ duration_ms 1773.149003

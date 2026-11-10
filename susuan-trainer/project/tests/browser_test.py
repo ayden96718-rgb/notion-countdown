@@ -67,14 +67,24 @@ def home(page):
     page.evaluate('window.scrollTo(0, 0)')
 
 
-def start(page, group, count=10):
-    page.locator(f'[data-mode="{group}"]').click()
-    if group in ('1', '2'):
-        expect(page.locator('.flash-card')).to_be_visible()
+def set_count(page, count):
+    if page.locator('.quantity-row').get_attribute('data-current-count') == str(count):
         return
-    page.locator(f'[data-count="{count}"]').click()
-    page.locator('[data-action="start"]').click()
-    expect(page.locator('#answer')).to_be_visible()
+    page.locator('[data-action="quantity"]').click()
+    form = page.locator('#quantity-form')
+    value = str(count) if count in (10, 15) else 'custom'
+    form.locator(f'[name="countMode"][value="{value}"]').check()
+    if value == 'custom':
+        form.locator('#custom-count').fill(str(count))
+    form.locator('button[type="submit"]').click()
+    expect(page.locator('dialog[open]')).to_have_count(0)
+
+
+def start(page, group, count=10):
+    if group not in ('1', '2'):
+        set_count(page, count)
+    page.locator(f'[data-mode="{group}"]').click()
+    expect(page.locator('.flash-card' if group in ('1', '2') else '#answer')).to_be_visible()
 
 
 def finish_quiz(page, count, wrong_first=False, touch=False):
@@ -151,46 +161,39 @@ with sync_playwright() as p:
         page.screenshot(path=str(EVIDENCE / 'desktop-home.png'), full_page=True)
     check('desktop: ten correctly numbered main entries, original green UI', home_check)
 
-    def flash_picker():
-        expect(page.locator('#current-mode')).to_have_value('1')
-        expect(page.locator('#current-mode option')).to_have_count(23)
-        assert page.locator('#current-mode option').all_text_contents()[:2] == ['01 · 个位数相加', '02 · 个位数相减']
-        for group, cards in [('1', 10), ('2', 11)]:
-            page.locator('#current-mode').select_option(group)
-            expect(page.locator('[data-mode="'+group+'"]')).to_have_attribute('aria-pressed', 'true')
-            assert page.locator('[data-count]').count() == 0
-            assert '10个' in page.locator('.flash-count-note').inner_text()
-            page.reload()
-            expect(page.locator('#current-mode')).to_have_value(group)
-            with page.expect_download() as dl:
-                page.locator('[data-action="export-questions"]').click()
-            assert '参考答案' in Path(dl.value.path()).read_text('utf-8-sig')
-            page.locator('[data-action="start"]').click()
-            nums = []
-            for _ in range(cards):
-                nums.append(int(page.locator('#flash-digit').inner_text()))
-                assert page.locator('#answer').count() == 0
-                page.locator('.flash-card').click()
-            answer(page, sum(nums) if group == '1' else nums[0]-sum(nums[1:]))
-            assert history(page)[0]['summary']['correct'] == 1
+    def direct_entries():
+        assert page.locator('#current-mode, .practice-panel, [data-action="start"]').count() == 0
+        entries = page.locator('[data-mode]').evaluate_all('(nodes) => nodes.map(n => [n.dataset.mode, n.querySelector("strong").textContent])')
+        assert len(entries) == 23
+        assert [title for _, title in entries[:2]] == ['个位数相加', '个位数相减']
+        for group, title in entries:
             home(page)
-    check('flash groups in picker: 23 ordered options, fresh default group 1, persisted choices, fixed counts, export and real flash flow', flash_picker)
+            assert page.locator('.mode-card.selected').count() == 0
+            # Exactly one tile click must enter the exercise, including custom.
+            page.locator(f'[data-mode="{group}"]').click()
+            expect(page).to_have_url(re.compile(r'#train$'))
+            expect(page.locator('#training-name')).to_have_text(title)
+            expect(page.locator('.flash-card' if group in ('1', '2') else '#answer')).to_be_visible()
+            assert page.locator('dialog[open]').count() == 0
+        home(page)
+    check('all 23 tiles: one click enters matching training, no selection panel, dropdown, preselection or extra start button', direct_entries)
 
-    def change_current_mode():
-        page.locator('#current-mode').select_option('8')
-        expect(page.locator('[data-mode="8"]')).to_have_attribute('aria-pressed', 'true')
+    def quantity_and_flash_export():
+        set_count(page, 15)
         page.reload()
-        expect(page.locator('#current-mode')).to_have_value('8')
-        page.locator('[data-mode="4"]').click()
-        expect(page.locator('#current-mode')).to_have_value('4')
-        expect(page.locator('[data-mode="8"]')).to_have_attribute('aria-pressed', 'false')
-        page.locator('[data-count="custom"]').click()
-        page.locator('#custom-count').fill('12')
-        page.locator('#current-mode').select_option('9')
-        expect(page.locator('#current-mode')).to_have_value('9')
-        expect(page.locator('#custom-count')).to_have_value('12')
-        page.locator('[data-count="10"]').click()
-    check('current practice: direct dropdown/grid selection, remembered on reload, custom count retained', change_current_mode)
+        expect(page.locator('.quantity-row')).to_have_attribute('data-current-count', '15')
+        for group in ('1', '2'):
+            page.locator('[data-action="export-menu"]').click()
+            page.locator('#export-mode').select_option(group)
+            with page.expect_download() as dl:
+                page.locator('#export-form button[type="submit"]').click()
+            content = Path(dl.value.path()).read_text('utf-8-sig')
+            assert '参考答案' in content and '固定10个数字' in content
+            page.locator(f'[data-mode="{group}"]').click()
+            assert page.locator('.progress-text').inner_text().endswith('10' if group == '1' else '11')
+            home(page)
+        set_count(page, 10)
+    check('quantity: optional setting persists; single-digit groups retain fixed cards and export independently', quantity_and_flash_export)
     check('group 1: real clicks through ten cards, final-only answer and sequence review', lambda: flash_flow(page, '1'))
     check('group 2: eleven real cards, dynamic positive subtraction and actual borrow review', lambda: flash_flow(page, '2'))
 
@@ -303,13 +306,16 @@ with sync_playwright() as p:
         page.locator('#confirm-action').click()
         assert page.locator('.progress-text').inner_text().strip().startswith('题目 1')
         home(page)
-        page.locator('[data-mode="3"]').click()
-        page.locator('[data-count="custom"]').click()
+        page.locator('[data-action="quantity"]').click()
+        form = page.locator('#quantity-form')
+        form.locator('[name="countMode"][value="custom"]').check()
         page.locator('#custom-count').fill('4')
-        page.locator('[data-action="start"]').click()
+        form.locator('button[type="submit"]').click()
         assert page.locator('#answer').count() == 0
+        expect(form).to_be_visible()
         page.locator('#custom-count').fill('7')
-        page.locator('[data-action="start"]').click()
+        form.locator('button[type="submit"]').click()
+        page.locator('[data-mode="3"]').click()
         expect(page.locator('#answer')).to_be_visible()
         assert '19.6s' in page.locator('.thresholds').inner_text()
         finish_quiz(page, 7)
@@ -317,7 +323,10 @@ with sync_playwright() as p:
 
     def custom_and_exports():
         home(page)
+        set_count(page, 10)
         page.locator('[data-mode="custom"]').click()
+        expect(page.locator('#answer')).to_be_visible()
+        page.locator('[data-action="custom-builder"]').click()
         form = page.locator('#builder-form')
         form.locator('[name="firstDigits"]').select_option('1')
         form.locator('[name="secondType"]').select_option('range')
@@ -329,12 +338,7 @@ with sync_playwright() as p:
         assert '下限' in page.locator('#builder-error').inner_text()
         form.locator('[name="max"]').fill('600')
         form.locator('button[type="submit"]').click()
-        page.locator('[data-count="10"]').click()
-        with page.expect_download() as dl:
-            page.locator('[data-action="export-questions"]').click()
-        content = Path(dl.value.path()).read_text('utf-8-sig')
-        assert '参考答案' in content and '10.' in content
-        page.locator('[data-action="start"]').click()
+        expect(page.locator('dialog[open]')).to_have_count(0)
         a, op, b, value = equation(page)
         assert value < 0
         # Exercise touch ± for negative answers.
@@ -345,6 +349,12 @@ with sync_playwright() as p:
         page.locator('[data-action="close-modal"]').click()
         assert history(page)[0]['summary']['correct'] == 10
         page.locator('[data-action="home"]').click()
+        page.locator('[data-action="export-menu"]').click()
+        page.locator('#export-mode').select_option('custom')
+        with page.expect_download() as dl:
+            page.locator('#export-form button[type="submit"]').click()
+        content = Path(dl.value.path()).read_text('utf-8-sig')
+        assert '参考答案' in content and '10.' in content
         page.locator('a[data-nav="history"]').click()
         expect(page.locator('.history-item')).to_have_count(len(history(page)))
         with page.expect_download() as dl: page.locator('[data-action="export-history"]').click()
@@ -358,8 +368,7 @@ with sync_playwright() as p:
     def responsive():
         for size, name in [({'width': 390, 'height': 844}, 'phone'), ({'width': 820, 'height': 1180}, 'tablet'), ({'width': 320, 'height': 568}, 'small-phone')]:
             home(page); page.set_viewport_size(size)
-            page.locator('[data-mode="3"]').click()
-            page.locator('[data-count="10"]').click()
+            set_count(page, 10)
             page.evaluate('window.scrollTo(0, 0)')
             page.screenshot(path=str(EVIDENCE / f'{name}-home.png'), full_page=True)
             assert not page.evaluate('document.documentElement.scrollWidth > innerWidth'), name
