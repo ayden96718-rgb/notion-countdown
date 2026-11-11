@@ -1,0 +1,26 @@
+[
+  {
+    "browser": "chromium",
+    "status": "passed",
+    "checks": [
+      "single tap enters training",
+      "repeated digit taps are not lost or duplicated",
+      "four submissions keep keypad and input mounted",
+      "both flash modes keep card mounted and advance exactly once per tap",
+      "final answers match visible sequence",
+      "zero JavaScript errors"
+    ]
+  },
+  {
+    "browser": "webkit",
+    "status": "passed",
+    "checks": [
+      "single tap enters training",
+      "repeated digit taps are not lost or duplicated",
+      "four submissions keep keypad and input mounted",
+      "both flash modes keep card mounted and advance exactly once per tap",
+      "final answers match visible sequence",
+      "zero JavaScript errors"
+    ]
+  }
+]

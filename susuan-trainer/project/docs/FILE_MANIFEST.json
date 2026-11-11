@@ -12,32 +12,32 @@
     "sha256": "4fe7c1afb5d56667d340e0499e77d32ab382ae05746fe4f061d171e62d8f13e4"
   },
   "README.md": {
-    "size_bytes": 5381,
-    "sha256": "1a8f736eb6d80a5c01c88e68b343c4b9d03151d909d50c52de090c0e52871cfb"
+    "size_bytes": 5459,
+    "sha256": "5141e478e3bbb0452ca3931b5773ec1c22baf3cbfeb96dba874e909cd849bc2e"
   },
   "data/timing-reference.json": {
     "size_bytes": 4646,
     "sha256": "7983ade2cb384bc476ad372f39eb76ef07f70d57ea12d3bf25a83928a95cf638"
   },
   "docs/ACCEPTANCE_TESTS.md": {
-    "size_bytes": 8051,
-    "sha256": "65e4ab728bd4972aedb176c38e7bec9ca9c3f161bb78070cde6ac5e7446006c7"
+    "size_bytes": 8500,
+    "sha256": "7324fa565cb45e02e3da032d5a2b7e342d6617ddb418e048aac3c8dc076fe3d3"
   },
   "docs/CHANGELOG.md": {
-    "size_bytes": 2409,
-    "sha256": "b45eb597fd96b1015f4dc063e1a6b23588fed023ea1514cdca04b8ce546a4d7f"
+    "size_bytes": 2622,
+    "sha256": "939460e449f7d3d185e10dd25451fc3899c468a7220255f4e51d2ab606f4490a"
   },
   "docs/CODEX_HANDOFF.md": {
-    "size_bytes": 5178,
-    "sha256": "b6c709df17c1ddfa528229800d1d860574a629aaf4f9ac2bc8a12ff2d472787d"
+    "size_bytes": 5262,
+    "sha256": "ae5d10695d5381fabf7c37111d114d6866faa2c313b1851557b6e90eefa67f8a"
   },
   "docs/DEPLOYMENT.md": {
     "size_bytes": 3290,
     "sha256": "8d529796cf631915b88698fac71d97f613316ca7528c7311d51892a259695b83"
   },
   "docs/IMPLEMENTATION_REPORT.md": {
-    "size_bytes": 13910,
-    "sha256": "0213cca72105e48d79fffcb4991a15e316717757903d1b3b20d7f685f1320071"
+    "size_bytes": 15346,
+    "sha256": "77932b51b495b51496bcd00bacf4b503cd6b9b25e5a80c4fa0c8003ce4e53220"
   },
   "docs/SCREENSHOT_INDEX.md": {
     "size_bytes": 9244,
@@ -48,8 +48,8 @@
     "sha256": "b3b98fd35e8931f37843c824718369fb059be3290ea7905d2e0adab9f3047aec"
   },
   "docs/evidence/browser-results.json": {
-    "size_bytes": 2548,
-    "sha256": "ba1f741d4964f59289a52d0e4188d7bdbea23cced6ddf3475cc9bb4dbc2af40f"
+    "size_bytes": 2547,
+    "sha256": "265bdfe37e9c77710d45e5d5cc9ef7b026c36d4b4212b7475e0c3f07cbaf9570"
   },
   "docs/evidence/desktop-home.png": {
     "size_bytes": 66550,
@@ -187,9 +187,13 @@
     "size_bytes": 57087,
     "sha256": "deed19145c388512330e1bacbe5fdc90577b163d3d8ca69173931f3ed77a665e"
   },
+  "docs/evidence/touch-results.json": {
+    "size_bytes": 769,
+    "sha256": "f2da5cc72b2567e686e4741a2f625381be0395cbcf036dfb79ceb61654572b6b"
+  },
   "docs/evidence/unit-test-results.txt": {
-    "size_bytes": 3099,
-    "sha256": "1c5778d411008b27223e08916e32c6fbd1cf0ddb4f0c00204178edc0ed31c4f7"
+    "size_bytes": 3102,
+    "sha256": "7f8d4a3f04be0b8e7bab2f1996412d4b3d60db19dbab8ee696efaa37de5e5785"
   },
   "docs/evidence/webkit-phone-home.png": {
     "size_bytes": 63662,
@@ -216,8 +220,8 @@
     "sha256": "d82ad7764d4d49a8e55dd22aaec56b89ed156db0e009f80bdc137ab290156db8"
   },
   "docs/requirements.md": {
-    "size_bytes": 36322,
-    "sha256": "291b0df5bf72a6cce3833851eee3db0f0539d8486173c8d16cc38d23d61ec5b2"
+    "size_bytes": 36834,
+    "sha256": "cb393200ed1e50bc601f215d55ecf16770a8280d7e024760eac96c428ddbcc03"
   },
   "docs/screenshots/00-overview.jpg": {
     "size_bytes": 342403,
@@ -361,7 +365,7 @@
   },
   "package.json": {
     "size_bytes": 461,
-    "sha256": "258a78cb606a9f1d069bcc7e216761f1ed65635196ed8e067df77162b88fa869"
+    "sha256": "bfbdff08c862a933f381b2e593391d2143b7c9026368bf4dda602cca00973e3d"
   },
   "scripts/audit.mjs": {
     "size_bytes": 1816,
@@ -384,8 +388,8 @@
     "sha256": "465c01d9d8bb8fff37b08c17eb8c5d25e6e4dab5295977e642b91ce925f19d1f"
   },
   "src/app.js": {
-    "size_bytes": 33049,
-    "sha256": "5025bd6bf871688c74a96a161b49ee5e136b23483bce36a1f8586cf698f4fe20"
+    "size_bytes": 35215,
+    "sha256": "2e929f3c86ff5c1836ff3d0a518d41cb189dc240741e8eba74030dc1e77537ef"
   },
   "src/engine.js": {
     "size_bytes": 9029,
@@ -408,8 +412,8 @@
     "sha256": "f9d291ae5d06726c7f08df6d31c2d6e4fbf64c97f471ad46f08c714cb136ce48"
   },
   "styles.css": {
-    "size_bytes": 24817,
-    "sha256": "22358309a5b6555746848627e19e0177356b622bd57491f2760d39236a0f37af"
+    "size_bytes": 25154,
+    "sha256": "00d00c7d8fed46ab11d7e77a68f6e967c4820af45efec62000a3fc50c7bd2612"
   },
   "sw.js": {
     "size_bytes": 1646,
@@ -438,5 +442,9 @@
   "tests/session.test.mjs": {
     "size_bytes": 3929,
     "sha256": "289d6128bd17ca2b81b475ee9154d1cec5b1127d810933c9ad028052832c2336"
+  },
+  "tests/touch_browser_test.py": {
+    "size_bytes": 3658,
+    "sha256": "f05c210c28b0ca5f7d9d652f286ccfcb7678d0a28509932226cf297dbfe033da"
   }
 }

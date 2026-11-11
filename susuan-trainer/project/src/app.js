@@ -154,10 +154,42 @@ function renderTraining() {
   if (!cards) focusAnswer();
 }
 
-function focusAnswer() { document.querySelector('#answer')?.focus({ preventScroll: true }); }
+// Keep the touched controls mounted between questions: replacing them can interrupt
+// rapid taps and repeatedly rebuild layout/focus on mobile browsers.
+function updateTraining() {
+  const flash = training.spec.kind === 'flash';
+  const cards = training.phase === 'cards';
+  if (flash && !cards) { renderTraining(); return; }
+  const total = flash ? training.spec.cards.length : training.spec.count;
+  const completed = flash ? training.index : training.records.length;
+  document.querySelector('.progress-text').innerHTML = `${cards ? '数卡' : '题目'} <strong>${completed + 1}</strong> / ${total}`;
+  document.querySelector('.progress-track').setAttribute('aria-valuenow', completed);
+  document.querySelector('.progress-fill').style.width = `${completed / total * 100}%`;
+  if (cards) {
+    const button = document.querySelector('.flash-card');
+    const digit = training.spec.cards[training.index];
+    document.querySelector('#flash-digit').textContent = digit;
+    button.setAttribute('aria-label', `当前数字${digit}，点击查看下一张`);
+    document.querySelector('.flash-stage').textContent = training.spec.modeId === '2' ? `减去第 ${training.index} 个数字` : `记住并加上第 ${training.index + 1} 个数字`;
+    document.querySelector('.flash-tag').textContent = training.index === total - 1 ? '点击，填写最终答案' : '点击卡片，继续 →';
+    // A short color pulse also confirms a turn when consecutive digits are equal.
+    button.getAnimations().forEach(animation => animation.cancel());
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) button.animate([{ backgroundColor: '#b9dca7' }, { backgroundColor: '#d3e8c4' }], { duration: 140 });
+  } else {
+    const q = training.current;
+    const equation = document.querySelector('.equation');
+    equation.textContent = `${expression(q)} =${q.unit ? ` ${q.unit}` : ''}`;
+    equation.setAttribute('aria-label', `${expression(q)} 等于多少`);
+    document.querySelector('#answer').value = '';
+    document.querySelector('#answer-error').textContent = '';
+    focusAnswer();
+  }
+}
+
+function focusAnswer() { const input = document.querySelector('#answer'); if (input && document.activeElement !== input) input.focus({ preventScroll: true }); }
 function nextCard() {
   if (!training?.nextCard()) return;
-  renderTraining();
+  updateTraining();
   if (training.phase === 'cards') document.querySelector('.flash-card')?.focus({ preventScroll: true });
 }
 function keyInput(key) {
@@ -179,7 +211,7 @@ function submit() {
   const record = training.submit(input.value);
   if (!record) { document.querySelector('#answer-error').textContent = '请输入完整的数字答案'; focusAnswer(); return; }
   if (training.finished) complete();
-  else renderTraining();
+  else updateTraining();
 }
 
 function complete() {

@@ -1,6 +1,6 @@
 {
   "name": "susuan-trainer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "type": "module",
   "description": "免费、本地优先的行测速算训练网页",
