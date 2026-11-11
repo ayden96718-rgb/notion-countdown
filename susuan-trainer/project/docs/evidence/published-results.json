@@ -1,10 +1,10 @@
 {
   "url": "https://ayden96718-rgb.github.io/notion-countdown/susuan-trainer/",
-  "verified_at_utc": "2026-11-11T08:35:52.595563+00:00",
+  "verified_at_utc": "2026-11-11T10:47:41.847939+00:00",
   "status": "passed",
   "tls_verification": "enabled, configured system CA bundle",
   "checks": [
-    "15 public site assets return HTTP 200 and exactly match the tested build",
+    "16 public site assets return HTTP 200 and exactly match the tested build",
     "public directory URL returns the exact tested homepage",
     "original countdown homepage still returns its unchanged Git blob"
   ],
@@ -42,8 +42,8 @@
     {
       "path": "index.html",
       "status": 200,
-      "sha256": "d3fa1515d42a5f024a0ff53ca58bcaca037362b944581696bd2c3309799634c2",
-      "bytes": 1956
+      "sha256": "3afdb531d820e6f796b7371f30c792678c8fc5d99dbf7f8dfa7412eb8d0b4a4f",
+      "bytes": 2012
     },
     {
       "path": "manifest.webmanifest",
@@ -52,10 +52,16 @@
       "bytes": 639
     },
     {
+      "path": "src/analysis.js",
+      "status": 200,
+      "sha256": "97e8f9a08e681410be0d2e7409941b6c5ef23c8f58bf4ab25b96f32046297546",
+      "bytes": 4221
+    },
+    {
       "path": "src/app.js",
       "status": 200,
-      "sha256": "45c0031c255a38384f474100991f27fb818a844fed08918ec592eaacae52162a",
-      "bytes": 35210
+      "sha256": "a86227d9b5bb9f7fb1d9792b7e17cb23dea1e91e865d278a34c76742162d5914",
+      "bytes": 40984
     },
     {
       "path": "src/engine.js",
@@ -90,14 +96,14 @@
     {
       "path": "styles.css",
       "status": 200,
-      "sha256": "00d00c7d8fed46ab11d7e77a68f6e967c4820af45efec62000a3fc50c7bd2612",
-      "bytes": 25154
+      "sha256": "f14634427298d5d0b9ac3735357f00103548499f3632c385c660541722962c08",
+      "bytes": 30075
     },
     {
       "path": "sw.js",
       "status": 200,
-      "sha256": "a3462ea25bad254bc8024aae2e7d2fa7d0c1f677ca0dd09d0f18fd79829228c8",
-      "bytes": 1641
+      "sha256": "b192a443955f41d88032d802a8070d51fee02943b25edb7f2da7996b735244c1",
+      "bytes": 1662
     }
   ],
   "original_homepage_blob": "1881683bbb6ba7665c3cb78bef9097a1a296a1b4",
