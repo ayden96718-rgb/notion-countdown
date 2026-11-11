@@ -120,3 +120,5 @@ v1.0已上传并完成Pages发布。首次站点提交 `56bb1efe48d0751bf9cb70ff
 验收：26项核心测试；原16项Chromium/WebKit流程；新增tests/touch_browser_test.py使用Chromium和WebKit的真实触摸事件，覆盖一次进入、连续输入111、连续提交不替换键盘/输入框、两组闪卡每次只前进一步且卡片节点不替换、最终答案与所见序列一致。具体运行结果见evidence/touch-results.json及browser-results.json。WebKit为浏览器引擎模拟，未连接用户iPad真机；不据此承诺所有设备均无延迟。
 
 发布继续仅更新notion-countdown/susuan-trainer/，实际线上验证见published-results.json。
+
+本轮v1.2.1已上线，代码提交3969573e55a8b9eccb577468022c2e982f74bce3；2026-11-11T08:35:52.595563+00:00完成线上验证：15项资产与本次验收构建一致，原倒计时首页未变。26项核心测试、16项完整浏览器流程、Chromium/WebKit触屏专项检查全部通过。
