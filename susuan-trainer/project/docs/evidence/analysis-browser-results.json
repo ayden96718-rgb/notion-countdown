@@ -1,0 +1,28 @@
+[
+  {
+    "browser": "chromium",
+    "status": "passed",
+    "checks": [
+      "23 home entries fit 390x844,820x1180,640x640,320x568 with >=44px targets",
+      "empty analysis",
+      "independent per-mode recent ten and weighted error rate",
+      "three curves and per-session slider details",
+      "untimed mode omits time and qualification",
+      "training keypad fits phone screen",
+      "offline analysis"
+    ]
+  },
+  {
+    "browser": "webkit",
+    "status": "passed",
+    "checks": [
+      "23 home entries fit 390x844,820x1180,640x640,320x568 with >=44px targets",
+      "empty analysis",
+      "independent per-mode recent ten and weighted error rate",
+      "three curves and per-session slider details",
+      "untimed mode omits time and qualification",
+      "training keypad fits phone screen",
+      "analysis module present in offline cache"
+    ]
+  }
+]

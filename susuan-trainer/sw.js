@@ -1,8 +1,8 @@
 const CACHE_PREFIX = `susuan-${encodeURIComponent(new URL(self.registration.scope).pathname)}-`;
-const CACHE_NAME = CACHE_PREFIX + '5e593de55bbe';
+const CACHE_NAME = CACHE_PREFIX + '49a192064401';
 const ASSETS = [
   './', './index.html', './styles.css', './src/app.js', './src/modes.js',
-  './src/engine.js', './src/session.js', './src/timing.js', './src/storage.js',
+  './src/engine.js', './src/session.js', './src/timing.js', './src/storage.js', './src/analysis.js',
   './data/timing-reference.json', './manifest.webmanifest',
   './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'
 ];

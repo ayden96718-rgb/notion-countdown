@@ -2,7 +2,7 @@
 
 一个免费、无广告、无需账号的静态速算网站。支持手机、平板、电脑、离线练习和本地成绩复盘。代码不依赖第三方前端库、API或数据库。
 
-**开发状态：v1.2.1：十组核心、十二种扩展与自定义已实现，首页三列紧凑格子，点击任意题型直接开始。部署状态见 [实施报告](docs/IMPLEMENTATION_REPORT.md)。**
+**开发状态：v1.3.0：十组核心、十二种扩展与自定义已实现，首页三列紧凑格子，点击任意题型直接开始。部署状态见 [实施报告](docs/IMPLEMENTATION_REPORT.md)。**
 
 ![三列紧凑训练首页](docs/evidence/desktop-home.png)
 
@@ -52,7 +52,7 @@ npm run preview
 ## 验证
 
 ```bash
-npm test                         # 26项算法/判分/状态/存储测试
+npm test                         # 31项算法/判分/状态/存储/学习分析测试
 npm run build
 npm run preview                  # 另开终端运行以下命令
 python tests/browser_test.py     # 需要Playwright和浏览器，参见实施报告
@@ -69,6 +69,9 @@ python tests/browser_test.py     # 需要Playwright和浏览器，参见实施�
 
 当前子目录通过现有 `main` 分支根目录Pages发布；本项目附带的工作流是未来独立仓库的备选模板，在嵌套的 `project/.github/` 中不会执行。更新子目录包使用 `node scripts/manifest.mjs`、`node scripts/prepare-pages-folder.mjs`。参见 [部署步骤](docs/DEPLOYMENT.md)。
 
-后续维护先读 [AGENTS.md](AGENTS.md)、[唯一权威需求 v2.8](docs/requirements.md) 和 [计时依据](data/timing-reference.json)。交接原文、27张参考截图和索引保留在 `docs/`，只作需求证据，未用于网站视觉资产。
+后续维护先读 [AGENTS.md](AGENTS.md)、[唯一权威需求 v2.9](docs/requirements.md) 和 [计时依据](data/timing-reference.json)。交接原文、27张参考截图和索引保留在 `docs/`，只作需求证据，未用于网站视觉资产。
 
 本轮按用户要求不增加凑整百、独立混合形态、键盘排列切换、手写笔、N-back等其他功能。错题综合评级仍待确认；正确率与速度参考分别显示。完整边界见实施报告。
+
+
+右上角“学习分析”按题型独立展示最近10次正确率、平均每题用时和近10次合格率，同图双轴。合格采用整组全对且用时不超合格线；不计时或无标准题型不虚构数据。近期错误率、前后5次进步对比与滑块详情均来自本机已保存记录；只有最近100组记录可供统计。题型首页按屏幕高度适配，保留44px以上触控目标。

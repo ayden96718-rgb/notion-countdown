@@ -1,3 +1,4 @@
+import { analyze, chart } from './analysis.js';
 import { MODES, EXTRA_MODES, modeById } from './modes.js';
 import { generateSession, expression, formatAnswer, answerRule, validateCustom } from './engine.js';
 import { TrainingSession } from './session.js';
@@ -18,6 +19,7 @@ const settings = {
   modeId: modeById(saved?.modeId) ? saved.modeId : '1'
 };
 let selected = modeById(settings.modeId);
+let analysisMode = null;
 let training = null;
 let latestResult = null;
 let timerHandle;
@@ -259,6 +261,26 @@ function renderHistory() {
   main.innerHTML = `<section class="training"><div class="eyebrow">YOUR PRACTICE LOG</div><h1>每一次练习，都算数。</h1><p class="quiet" style="margin-top:12px">仅保存最近100组，存于此浏览器。不同设备之间不会自动同步。</p>${records.length ? `<div class="history-list">${records.map(r => `<button class="history-item" data-record="${escape(r.id)}"><span><strong>${escape(modeById(r.modeId)?.title ?? '练习记录')}</strong><small>${escape(new Date(r.date).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }))}</small></span><span class="score">${r.summary.correct} / ${r.summary.total} <span aria-hidden="true">↗</span><small>${r.untimed ? '自由练习 · 不计时' : formatTime(r.summary.totalMs)}</small></span></button>`).join('')}</div><div class="history-toolbar"><button class="button" data-action="export-history">导出全部记录</button><button class="button danger subtle" data-action="clear-history">清空本机记录</button></div>` : '<div class="empty-state"><h2>第一条记录，等你来写。</h2><p>完成一组练习，就能在这里回看答案。</p><button class="button primary" data-action="home">开始练习 →</button></div>'}</section>`;
 }
 
+function renderAnalysis() {
+  main.classList.remove('home-page');
+  stopTimer();
+  const records = store.history();
+  const modes = [...MODES, ...EXTRA_MODES];
+  const mode = modeById(analysisMode) ?? modeById(records[0]?.modeId) ?? modes[0];
+  analysisMode = mode.id;
+  const data = analyze(records, mode, reference);
+  const pct = n => n === null ? '—' : `${n.toFixed(1)}%`;
+  const pace = n => n === null ? '—' : `${n.toFixed(1)}秒`;
+  const change = data.change;
+  const trend = change ? `后5次对比前5次：正确率${change.accuracy >= 0 ? '提高' : '下降'} ${Math.abs(change.accuracy).toFixed(1)} 个百分点${change.speed === null ? '' : `；用时${change.speed >= 0 ? '缩短' : '增加'} ${Math.abs(change.speed).toFixed(1)}%`}。` : `本题型已有${data.points.length}次记录，满10次后比较前5次和后5次。`;
+  const guide = !data.points.length ? '先完成一组练习，建立起点。' : data.errorRate > 0 ? '先复盘错题，再逐步提速。正确率稳定后，用时下降才更有意义。' : data.passRate !== null && data.passRate < 100 ? '近期答题准确，接下来练习在合格时间内稳定完成。' : '继续观察正确率和用时，争取稳定达标。';
+  main.innerHTML = `<section class="analysis-page"><h1>学习分析</h1><p class="quiet">考公速算 · 每种题型独立统计最近10次</p><label class="field-label" for="analysis-mode">查看题型</label><select class="field" id="analysis-mode">${modes.map(m=>`<option value="${m.id}"${m.id===mode.id?' selected':''}>${m.title}</option>`).join('')}</select><div class="analysis-stats"><div><strong>${pct(data.accuracy)}</strong><span>正确率</span><small>错误率 ${pct(data.errorRate)}</small></div><div><strong>${pace(data.pace)}</strong><span>${data.flash?'平均整组用时':'平均每题用时'}</span><small>${mode.untimed?'此题型不计时':`${data.timedCount}次有效计时`}</small></div><div><strong>${pct(data.passRate)}</strong><span>合格率</span><small>${data.passSamples?`${data.passSamples}次可判定练习`:'暂无计时合格标准'}</small></div></div><section class="analysis-chart-panel"><h2>${mode.title} · 最近${data.points.length}次</h2><div class="chart-legend"><span class="accuracy-legend">━ 正确率</span>${data.timedCount?`<span class="time-legend">━ ${data.flash?'整组':'每题'}用时</span>`:''}${data.passSamples?'<span class="pass-legend">┄ 近10次合格率</span>':''}</div><div class="chart-axes"><span>左轴：百分比</span>${data.timedCount?'<span>右轴：秒 · 越低越快</span>':''}</div>${chart(data)}${data.points.length?`<label class="point-picker" for="analysis-point">查看第 <output id="point-number">${data.points.length}</output> 次练习<input id="analysis-point" type="range" min="1" max="${data.points.length}" value="${data.points.length}" step="1"></label><p id="point-detail" class="point-detail" aria-live="polite"></p>`:''}<p class="quiet">横轴按练习先后排列。${data.flash?'闪卡整组答一次，正确率按整组统计。':'用时按每题平均显示，便于比较不同题量。'}</p><details class="analysis-rule"><summary>合格率怎么算</summary><p>本分析以“整组全对，且整组用时≤对应题量合格线”为合格。每个合格率点取截至当次的最近10次同题型练习；不足10次按实际次数计算，缺失计时的记录不参与。无计时标准的题型不计算合格率。自定义题量沿用已标注的比例推算标准。</p></details></section><div class="analysis-insight"><strong>进步观察</strong><p>${trend}</p><p>${guide}</p></div><details class="analysis-overview"><summary>各题型近期错误率</summary><p class="quiet">各自最近10次；点击行查看该题型专属折线。</p><div class="analysis-mode-list">${modes.map(m=>{const d=analyze(records,m,reference);return `<button data-analysis-mode="${m.id}" class="analysis-mode-row${m.id===mode.id?' current':''}"><span>${m.title}<small>${d.points.length}次练习</small></span><span>${d.points.length?`错误率 ${pct(d.errorRate)}`:'暂无记录'}<small>${d.pace===null?'—':`${d.flash?'整组':'每题'} ${pace(d.pace)}`}</small></span></button>`;}).join('')}</div></details><p class="analysis-footnote">仅使用本浏览器保存的最近100组记录，各题型较早的数据可能已不在其中。不同题型不会混入同一条折线；自定义题型若改变规则，前后用时需结合难度看待。</p></section>`;
+  document.querySelector('#analysis-mode').addEventListener('change',e=>{analysisMode=e.target.value;renderAnalysis();});
+  document.querySelectorAll('[data-analysis-mode]').forEach(button=>button.addEventListener('click',()=>{analysisMode=button.dataset.analysisMode;renderAnalysis();focusMain();}));
+  const slider=document.querySelector('#analysis-point');
+  if(slider){const show=()=>{const p=data.points[Number(slider.value)-1];document.querySelector('#point-number').textContent=slider.value;document.querySelector('#point-detail').textContent=`${new Date(p.date).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})} · 答对 ${p.correct}/${p.total} · 正确率 ${pct(p.accuracy)} · ${data.flash?'整组':'每题'}用时 ${pace(p.pace)} · 本次${p.passed===null?'不判定合格':p.passed?'合格':'未合格'}${p.threshold?`（合格线${p.threshold.pass}秒${p.threshold.derived?'，按题量推算':''}）`:''} · 近10次合格率 ${pct(p.passRate)}（${p.passSamples}次有效样本）`;};slider.addEventListener('input',show);show();}
+}
+
 function download(filename, content, type) {
   const url = URL.createObjectURL(new Blob([content], { type }));
   const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
@@ -307,8 +329,10 @@ function help() {
 function renderRoute() {
   if (!reference) return;
   const route = location.hash.slice(1) || 'home';
+  main.classList.toggle('analysis-view', route === 'analysis');
   document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', route === a.dataset.nav || route === 'result' && a.dataset.nav === 'history' || route === 'train' && a.dataset.nav === 'home'));
-  if (route === 'history') renderHistory();
+  if (route === 'analysis') renderAnalysis();
+  else if (route === 'history') renderHistory();
   else if (route === 'train' && training && !training.finished) renderTraining();
   else if (route === 'result' && latestResult) renderResult(latestResult);
   else { history.replaceState(null, '', '#home'); renderHome(); }
@@ -371,7 +395,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-5e593de55bbe`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-49a192064401`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 

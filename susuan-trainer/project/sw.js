@@ -2,7 +2,7 @@ const CACHE_PREFIX = `susuan-${encodeURIComponent(new URL(self.registration.scop
 const CACHE_NAME = CACHE_PREFIX + '__CACHE_VERSION__';
 const ASSETS = [
   './', './index.html', './styles.css', './src/app.js', './src/modes.js',
-  './src/engine.js', './src/session.js', './src/timing.js', './src/storage.js',
+  './src/engine.js', './src/session.js', './src/timing.js', './src/storage.js', './src/analysis.js',
   './data/timing-reference.json', './manifest.webmanifest',
   './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'
 ];
