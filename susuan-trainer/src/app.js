@@ -462,7 +462,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-d31b7eda7013`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-e13ea06e8ce0`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 
@@ -479,7 +479,7 @@ try {
       const channel = new MessageChannel();
       channel.port1.onmessage = event => {
         channel.port1.close();
-        updatePending = event.data !== 'd31b7eda7013';
+        updatePending = event.data !== 'e13ea06e8ce0';
         if (updatePending && main.classList.contains('home-page') && !activeTraining() && !modal.open) location.reload();
       };
       controller.postMessage('release-version', [channel.port2]);

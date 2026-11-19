@@ -379,7 +379,12 @@ body:has(.result-view) .site-footer, .result-view .eyebrow { display: none; }
   .training:has(.session-card) .training-top { margin-bottom: 6px; }
   .session-card { padding: 12px 8px; }
   .session-card .progress-track { margin-top: 7px; }
-  .session-card .equation { padding: 14px 0 8px; }
+  .session-card .equation { padding: 14px 0 8px; font-size: clamp(34px, 10.5vw, 50px); }
+  .session-card .wide-equation { font-size: clamp(26px, 7vw, 38px); }
   .session-card .keypad { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin-top: 10px; }
   .session-card .keypad button { width: 100%; height: clamp(48px, 8svh, 74px); }
+}
+
+@media (max-width: 700px) and (min-height: 740px) {
+  .session-card .keypad { margin-top: clamp(22px, calc(12svh - 64px), 46px); }
 }

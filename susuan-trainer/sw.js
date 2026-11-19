@@ -1,5 +1,5 @@
 const CACHE_PREFIX = `susuan-${encodeURIComponent(new URL(self.registration.scope).pathname)}-`;
-const CACHE_NAME = CACHE_PREFIX + 'd31b7eda7013';
+const CACHE_NAME = CACHE_PREFIX + 'e13ea06e8ce0';
 const ASSETS = [
   './', './index.html', './styles.css', './src/app.js', './src/modes.js',
   './src/engine.js', './src/session.js', './src/timing.js', './src/storage.js', './src/analysis.js',
@@ -34,5 +34,5 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('message', event => {
-  if (event.data === 'release-version') event.ports[0]?.postMessage('d31b7eda7013');
+  if (event.data === 'release-version') event.ports[0]?.postMessage('e13ea06e8ce0');
 });
