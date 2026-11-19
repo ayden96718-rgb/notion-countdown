@@ -152,6 +152,12 @@ export function generateSession(id, count = 10, options = {}) {
           const [a, b] = pick(rng, subtractionPool);
           q = question(a, '-', b);
         }
+      } else if (mode.id === 'two-plus-one' || mode.id === 'two-minus-one') {
+        const adding = mode.op === '+';
+        const digit = int(rng, 1, 9);
+        const tens = int(rng, adding ? 1 : 2, 9);
+        const units = adding ? int(rng, 10 - digit, 9) : int(rng, 0, digit - 1);
+        q = question(10 * tens + units, mode.op, digit);
       } else if (mode.kind === 'multi') {
         const terms = Array.from({ length: 4 }, () => int(rng, 10, 99));
         q = { terms, op: '+', answer: terms.reduce((a, b) => a + b, 0) };

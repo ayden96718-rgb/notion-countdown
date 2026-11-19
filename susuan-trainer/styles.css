@@ -286,7 +286,7 @@
 @layer compact-screen {
   .home-page { padding: 10px 12px; min-height:0; }
   .home-page .training-grid { gap:6px; }
-  .home-page .mode-card { height:clamp(44px, calc((100svh - 244px) / 8), 62px); min-height:44px; padding:8px 4px; }
+  .home-page .mode-card { height:clamp(44px, calc((100svh - 250px) / 9), 62px); min-height:44px; padding:8px 4px; }
   .home-page .quantity-row { min-height:38px; margin-bottom:8px; padding:6px 12px; }
   .home-tools { margin-top:8px; gap:6px; }
   .home-tools .button { min-height:40px; padding:7px 10px; }
@@ -306,7 +306,7 @@
 
 @layer comfortable-fit {
   @media(max-width:700px){
-    .home-page .mode-card { height:clamp(44px, calc((100svh - 212px) / 8), 62px); }
+    .home-page .mode-card { height:clamp(44px, calc((100svh - 218px) / 9), 62px); }
     .training-top { margin-bottom:12px; }
     main:has(.training) { padding-top:18px; padding-bottom:18px; }
     .session-card { padding:16px; }
@@ -338,3 +338,15 @@
     .training-bottom { margin-top:6px; }
   }
 }
+
+.result-header { margin-bottom: 10px; }
+.result-hero { padding: 10px 14px; margin-bottom: 8px; }
+.result-hero h2, .result-kicker { margin: 0; }
+.result-hero .result-stats, .result-hero .result-note { margin: 4px 0 0; }
+.result-actions { margin: 8px 0; }
+.result-actions + .section-label { margin: 10px 0 6px; }
+.review-table th, .review-table td { padding: 5px 8px; }
+.finish-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; }
+.finish-actions .button { padding-inline: 2px; white-space: nowrap; font-size: 13px; }
+
+@media (max-height: 620px) { .home-page .training-grid { grid-template-columns: repeat(4,minmax(0,1fr)); } }

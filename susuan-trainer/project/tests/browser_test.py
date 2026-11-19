@@ -126,7 +126,7 @@ def flash_flow(page, group):
     expected = sum(digits) if group == '1' else digits[0] - sum(digits[1:])
     assert expected > 0
     answer(page, expected, touch=True)
-    expect(page.locator('.digit-review > div')).to_have_count(10)
+    expect(page.locator('.digit-review')).to_have_count(0)
     expect(page.locator('.result-hero h2')).to_have_text(str(expected))
     assert page.locator('dialog[open]').count() == 0
     saved = history(page)[0]
@@ -164,7 +164,7 @@ with sync_playwright() as p:
     def direct_entries():
         assert page.locator('#current-mode, .practice-panel, [data-action="start"]').count() == 0
         entries = page.locator('[data-mode]').evaluate_all('(nodes) => nodes.map(n => [n.dataset.mode, n.querySelector("strong").textContent])')
-        assert len(entries) == 23
+        assert len(entries) == 25
         assert [title for _, title in entries[:2]] == ['个位数相加', '个位数相减']
         for group, title in entries:
             home(page)
@@ -176,7 +176,7 @@ with sync_playwright() as p:
             expect(page.locator('.flash-card' if group in ('1', '2') else '#answer')).to_be_visible()
             assert page.locator('dialog[open]').count() == 0
         home(page)
-    check('all 23 tiles: one click enters matching training, no selection panel, dropdown, preselection or extra start button', direct_entries)
+    check('all 25 tiles: one click enters matching training, no selection panel, dropdown, preselection or extra start button', direct_entries)
 
     def quantity_and_flash_export():
         set_count(page, 15)
@@ -255,7 +255,7 @@ with sync_playwright() as p:
     def screenshot_modes():
         expected_names = ['many-addition', 'three-by-one-divide', 'three-by-two-divide', 'five-by-three-divide', 'fraction-to-percent', 'multiplication-estimation']
         home(page)
-        assert page.locator('[data-mode]').count() == 23
+        assert page.locator('[data-mode]').count() == 25
         for mode_id in expected_names:
             home(page); start(page, mode_id)
             for i in range(10):

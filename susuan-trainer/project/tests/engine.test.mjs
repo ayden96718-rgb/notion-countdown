@@ -8,7 +8,7 @@ import { timingFor, timeReference } from '../src/timing.js';
 const reference = JSON.parse(await readFile(new URL('../data/timing-reference.json', import.meta.url)));
 
 test('all ten original group numbers, names, direct flash modes and untimed exceptions remain intact', () => {
-  assert.deepEqual(MODES.map(m => m.number), [1,2,3,4,5,6,7,8,9,10]);
+  assert.deepEqual(MODES.filter(m => m.number).map(m => m.number), [1,2,3,4,5,6,7,8,9,10]);
   assert.equal(modeById('1').title, '个位数相加');
   assert.equal(modeById('2').title, '个位数相减');
   for (const id of ['6', '7']) assert.equal(modeById(id).untimed, true);
@@ -192,4 +192,23 @@ test('custom builder respects first digits, second fixed/range and multiple oper
   assert.throws(() => generateSession('3', 4), /题量/);
   assert.throws(() => generateSession('3', 10.5), /题量/);
   assert.equal(typeof seededRandom(1)(), 'number');
+});
+
+test('two-digit plus/minus one-digit sets cross tens and reuse two-digit timing', () => {
+  assert.deepEqual(MODES.slice(2,4).map(m => m.id), ['two-plus-one','two-minus-one']);
+  for (const id of ['two-plus-one','two-minus-one']) {
+    for (const count of [10, 15, 20]) {
+      assert.deepEqual(timingFor(modeById(id), count, reference), timingFor(modeById('3'), count, reference));
+      for (let seed = 0; seed < 100; seed++) {
+        for (const {a,b,op,answer} of generateSession(id,count,{seed}).questions) {
+          assert.ok(a >= 10 && a <= 99 && b >= 1 && b <= 9);
+          if (id === 'two-plus-one') {
+            assert.ok(op === '+' && a % 10 + b >= 10 && answer === a + b);
+          } else {
+            assert.ok(op === '-' && a >= 20 && a % 10 < b && answer === a - b);
+          }
+        }
+      }
+    }
+  }
 });
