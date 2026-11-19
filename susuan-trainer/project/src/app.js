@@ -236,6 +236,36 @@ function resultStats(result) {
   return `<div class="result-stats"><div><strong class="correct">${summary.correct}</strong><span>答对</span></div><div><strong class="${summary.wrong ? 'wrong' : ''}">${summary.wrong}</strong><span>答错</span></div>${untimed ? '' : `<div><strong>${formatTime(summary.totalMs)}</strong><span>整组用时</span></div>`}</div>${timeLabel ? `<p class="result-note">${timeLabel} · 仅作速度参考，正确率单独记录。${timing.derived ? '<br>时间门槛按比例推算，非原应用截图原值。' : ''}</p>` : ''}`;
 }
 
+function fitReview() {
+  const section = main.querySelector('.result-view');
+  const pager = section?.querySelector('.review-pager');
+  if (!pager) return;
+  const rows = Array.from(section.querySelectorAll('tbody tr'));
+  if (!rows.length) return;
+  const viewport = window.visualViewport?.height ?? window.innerHeight;
+  const first = Number(pager.dataset.first || 0);
+  rows.forEach(row => { row.hidden = false; });
+  pager.hidden = true;
+  const bottom = () => section.getBoundingClientRect().bottom + window.scrollY + 6;
+  if (bottom() <= viewport) {
+    pager.dataset.first = '0';
+    return;
+  }
+  pager.hidden = false;
+  const rowHeight = Math.max(...rows.map(row => row.getBoundingClientRect().height));
+  rows.forEach(row => { row.hidden = true; });
+  const size = Math.max(1, Math.floor((viewport - bottom()) / rowHeight));
+  const start = Math.floor(Math.min(first, rows.length - 1) / size) * size;
+  rows.slice(start, start + size).forEach(row => { row.hidden = false; });
+  pager.dataset.first = String(start);
+  pager.dataset.size = String(size);
+  pager.querySelector('output').textContent = (start + 1) + '–' + Math.min(start + size, rows.length) + ' / ' + rows.length;
+  pager.firstElementChild.disabled = start === 0;
+  pager.lastElementChild.disabled = start + size >= rows.length;
+}
+window.addEventListener('resize', fitReview);
+window.visualViewport?.addEventListener('resize', fitReview);
+
 function renderResult(result, popup = false) {
   main.classList.remove('home-page');
   stopTimer();
@@ -248,9 +278,11 @@ function renderResult(result, popup = false) {
     const correct = result.records[0]?.correct;
     review = `<p class="notice ${correct ? 'correct' : 'wrong'}">${correct ? '✓ 答对了' : '× 答错了'} · 你的答案 ${escape(result.records[0]?.entered)} · 正确答案 <strong>${result.spec.answer}</strong>${result.modeId === '2' ? `<br>逐步验算：本组发生 ${result.spec.borrows} 次个位借位 / 10 次减法` : ''}</p>`;
   } else {
-    review = `<div class="section-label"><h2>逐题复盘</h2><span>${result.summary.total} 道题</span></div><div class="review-table-wrap"><table class="review-table"><thead><tr><th scope="col">题目</th><th scope="col">${result.records.some(q => q.relativeTolerance) ? '参考答案' : '正确答案'}</th><th scope="col">你的答案</th>${result.untimed ? '' : '<th scope="col">用时</th>'}</tr></thead><tbody>${result.records.map((q, i) => `<tr><td><span class="review-index">${i + 1}</span>${escape(expression(q))}</td><td>${formatAnswer(q)}</td><td class="${q.correct ? 'correct' : 'wrong'}">${escape(q.entered)}${q.unit ?? ''} ${q.correct ? '✓' : '×'}</td>${result.untimed ? '' : `<td>${(q.elapsedMs / 1000).toFixed(1)}s</td>`}</tr>`).join('')}</tbody></table></div>`;
+    review = `<div class="section-label"><h2>逐题复盘</h2><span>${result.summary.total} 道题</span><div class="review-pager" hidden data-first="0"><button data-step="-1" aria-label="上一页">上一页</button><output></output><button data-step="1" aria-label="下一页">下一页</button></div></div><div class="review-table-wrap"><table class="review-table"><thead><tr><th scope="col">题目</th><th scope="col">${result.records.some(q => q.relativeTolerance) ? '参考答案' : '正确答案'}</th><th scope="col">你的答案</th>${result.untimed ? '' : '<th scope="col">用时</th>'}</tr></thead><tbody>${result.records.map((q, i) => `<tr><td><span class="review-index">${i + 1}</span>${escape(expression(q))}</td><td>${formatAnswer(q)}</td><td class="${q.correct ? 'correct' : 'wrong'}">${escape(q.entered)}${q.unit ?? ''} ${q.correct ? '✓' : '×'}</td>${result.untimed ? '' : `<td>${(q.elapsedMs / 1000).toFixed(1)}s</td>`}</tr>`).join('')}</tbody></table></div>`;
   }
-  main.innerHTML = `<section class="training"><div class="result-header"><div><div class="eyebrow">PRACTICE COMPLETE</div><h1>${flash ? '这一组，完成了。' : '练习完成。'}</h1></div><span class="quiet">${escape(mode?.title ?? '练习记录')}</span></div><div class="result-hero"><div class="result-kicker">${flash ? '最终心算结果' : '本次正确率'}</div><h2>${flash ? result.spec.answer : `${Math.round(correctCount / result.summary.total * 100)}%`}</h2>${resultStats(result)}${result.untimed ? '<p class="result-note">自由练习 · 不计时、不评级</p>' : ''}</div><div class="result-actions"><button class="button primary" data-action="retry-result">再练一组 →</button><button class="button" data-action="home">返回首页</button><button class="text-button" data-action="export-result">导出本次记录 ↗</button></div>${review}${result.records[0]?.relativeTolerance ? `<p class="result-note">${answerRule(result.records[0])}。${result.records[0].unit ? '参考百分数显示最多4位小数，误差按未取整的正确值计算。' : ''}</p>` : ''}</section>`;
+  main.innerHTML = `<section class="training result-view"><div class="result-header"><div><div class="eyebrow">PRACTICE COMPLETE</div><h1>${flash ? '这一组，完成了。' : '练习完成。'}</h1></div><span class="quiet">${escape(mode?.title ?? '练习记录')}</span></div><div class="result-hero"><div class="result-kicker">${flash ? '最终心算结果' : '本次正确率'}</div><h2>${flash ? result.spec.answer : `${Math.round(correctCount / result.summary.total * 100)}%`}</h2>${resultStats(result)}${result.untimed ? '<p class="result-note">自由练习 · 不计时、不评级</p>' : ''}</div><div class="result-actions"><button class="button primary" data-action="retry-result">再练一组 →</button><button class="button" data-action="home">返回首页</button><button class="text-button" data-action="export-result">导出本次记录 ↗</button></div>${review}${result.records[0]?.relativeTolerance ? `<p class="result-note">${answerRule(result.records[0])}。${result.records[0].unit ? '参考百分数显示最多4位小数，误差按未取整的正确值计算。' : ''}</p>` : ''}</section>`;
+  window.scrollTo(0, 0);
+  fitReview();
   if (popup) showDialog(`<h2 id="modal-title">练习结果</h2><p>${escape(mode?.title ?? '')} · 共 ${result.summary.total} 道题</p>${resultStats(result)}<div class="dialog-actions finish-actions"><button class="button" data-action="modal-home">返回首页</button><button class="button primary" data-action="close-modal" autofocus>逐题复盘</button><button class="button" data-action="retry-result">再练一组</button></div>`);
 }
 
@@ -351,6 +383,13 @@ document.addEventListener('click', e => {
   if (record) { latestResult = store.history().find(r => r.id === record.dataset.record); setRoute('result'); focusMain(); return; }
   const nav = e.target.closest('a[href^="#"]');
   if (nav && nav.getAttribute('href') !== '#main') { e.preventDefault(); leaveFor(nav.hash.slice(1)); return; }
+  const step = e.target.closest('.review-pager [data-step]');
+  if (step) {
+    const pager = step.parentElement;
+    pager.dataset.first = String(Number(pager.dataset.first) + Number(step.dataset.step) * Number(pager.dataset.size));
+    fitReview();
+    return;
+  }
   const action = e.target.closest('[data-action]')?.dataset.action;
   if (!action) return;
   if (action === 'quantity') showQuantity();

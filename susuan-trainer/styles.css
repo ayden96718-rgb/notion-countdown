@@ -350,3 +350,22 @@
 .finish-actions .button { padding-inline: 2px; white-space: nowrap; font-size: 13px; }
 
 @media (max-height: 620px) { .home-page .training-grid { grid-template-columns: repeat(4,minmax(0,1fr)); } }
+
+main:has(.result-view) { min-height: 0; padding-block: 4px; }
+body:has(.result-view) .site-footer, .result-view .eyebrow { display: none; }
+.result-view .result-header h1 { font-size: 20px; }
+.result-view .result-header { margin: 0 0 4px; }
+.result-view .result-hero { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0 8px; }
+.result-view .result-kicker { grid-column: 1; }
+.result-view .result-hero h2 { grid-column: 1; font-size: 24px; }
+.result-view .result-stats { grid-column: 2; grid-row: 1 / 3; margin: 0; }
+.result-view .result-note { grid-column: 1 / -1; }
+.review-pager:not([hidden]) { display: flex; align-items: center; gap: 4px; }
+.review-pager button { min-height: 32px; padding-inline: 5px; color: var(--green); }
+.review-pager button:disabled { opacity: .4; }
+.review-pager output { font-size: 11px; }
+.result-view .section-label { align-items: center; flex-wrap: wrap; gap: 4px; }
+@media (max-height: 480px) {
+  body:has(.result-view) .site-header { display: none; }
+  .result-view .result-actions { margin: 3px 0; }
+}
