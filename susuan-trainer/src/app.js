@@ -131,7 +131,9 @@ function thresholds(mode, count) {
 
 function keypad() {
   const negative = training.spec.kind === 'quiz' && training.spec.questions.some(q => q.answer < 0);
-  return `<div class="keypad" role="group" aria-label="数字键盘"><button class="utility" data-key="clear" aria-label="清空答案">清空</button><button class="utility" data-key="backspace" aria-label="退格">⌫ 退格</button>${training.spec.kind === 'flash' ? '<span aria-hidden="true"></span>' : `<button class="utility" data-key="${negative ? 'sign' : '.'}" aria-label="${negative ? '切换正负号' : '输入小数点'}">${negative ? '±' : '小数点'}</button>`}${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button data-key="${n}" aria-label="数字${n}">${n}</button>`).join('')}<button data-key="." aria-label="小数点">.</button><button data-key="0" aria-label="数字0">0</button><button class="confirm" data-action="submit">确定 ↵</button></div>`;
+  const singleDecimal = training.spec.kind === 'flash' ||
+    ['two-plus-one', 'two-minus-one', 'two-mixed-one'].includes(training.spec.modeId);
+  return `<div class="keypad" role="group" aria-label="数字键盘"><button class="utility" data-key="clear" aria-label="清空答案">清空</button><button class="utility" data-key="backspace" aria-label="退格">⌫ 退格</button>${singleDecimal ? '<span aria-hidden="true"></span>' : `<button class="utility" data-key="${negative ? 'sign' : '.'}" aria-label="${negative ? '切换正负号' : '输入小数点'}">${negative ? '±' : '小数点'}</button>`}${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button data-key="${n}" aria-label="数字${n}">${n}</button>`).join('')}<button data-key="." aria-label="小数点">.</button><button data-key="0" aria-label="数字0">0</button><button class="confirm" data-action="submit">确定 ↵</button></div>`;
 }
 
 function answerArea() {
@@ -442,7 +444,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-52a132876a5d`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-7ebcaccd427c`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 
@@ -459,7 +461,7 @@ try {
       const channel = new MessageChannel();
       channel.port1.onmessage = event => {
         channel.port1.close();
-        updatePending = event.data !== '52a132876a5d';
+        updatePending = event.data !== '7ebcaccd427c';
         if (updatePending && main.classList.contains('home-page') && !activeTraining() && !modal.open) location.reload();
       };
       controller.postMessage('release-version', [channel.port2]);
