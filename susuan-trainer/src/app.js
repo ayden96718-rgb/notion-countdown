@@ -21,6 +21,7 @@ const settings = {
 let selected = modeById(settings.modeId);
 let analysisMode = null;
 let training = null;
+let updatePending = false;
 let latestResult = null;
 let timerHandle;
 let toastHandle;
@@ -74,6 +75,7 @@ function quantityLabel() {
 }
 
 function renderHome() {
+  if (updatePending) { location.reload(); return; }
   stopTimer();
   main.classList.add('home-page');
   main.innerHTML = `<section class="direct-home" aria-label="训练题型"><button class="quantity-row" data-action="quantity" data-current-count="${settings.count}"><strong>题量</strong><span>${quantityLabel()}　›</span></button><section class="training-section" aria-label="点击题型直接开始"><div class="training-grid">${[...MODES, ...EXTRA_MODES].map(modeCard).join('')}</div></section><div class="home-tools"><button class="button" data-action="export-menu">导出题目</button><a class="button" href="#history">历史记录</a></div></section>`;
@@ -440,7 +442,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-b28372b8d433`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-52a132876a5d`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 
@@ -451,7 +453,25 @@ try {
   renderRoute();
   if (!store.available) toast('浏览器存储不可用，仍可练习；成绩请手动导出。');
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    navigator.serviceWorker.register('./sw.js').then(registration => {
+    function checkController() {
+      const controller = navigator.serviceWorker.controller;
+      if (!controller) return;
+      const channel = new MessageChannel();
+      channel.port1.onmessage = event => {
+        channel.port1.close();
+        updatePending = event.data !== '52a132876a5d';
+        if (updatePending && main.classList.contains('home-page') && !activeTraining() && !modal.open) location.reload();
+      };
+      controller.postMessage('release-version', [channel.port2]);
+    }
+    navigator.serviceWorker.addEventListener('controllerchange', checkController);
+    checkController();
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(registration => {
+      const refresh = () => { if (navigator.onLine) registration.update().catch(() => {}); };
+      refresh();
+      window.addEventListener('online', refresh);
+      window.addEventListener('pageshow', event => { if (event.persisted) refresh(); });
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
       const check = () => updateOfflineStatus();
       if (registration.active) check();
       registration.addEventListener('updatefound', () => {

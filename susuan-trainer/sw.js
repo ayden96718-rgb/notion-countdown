@@ -1,5 +1,5 @@
 const CACHE_PREFIX = `susuan-${encodeURIComponent(new URL(self.registration.scope).pathname)}-`;
-const CACHE_NAME = CACHE_PREFIX + 'b28372b8d433';
+const CACHE_NAME = CACHE_PREFIX + '52a132876a5d';
 const ASSETS = [
   './', './index.html', './styles.css', './src/app.js', './src/modes.js',
   './src/engine.js', './src/session.js', './src/timing.js', './src/storage.js', './src/analysis.js',
@@ -8,8 +8,11 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', event => {
-  // Wait for the next launch to activate an update, so an ongoing exercise keeps its code version.
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(ASSETS.map(asset => new Request(new URL(asset, self.location.href), { cache: 'reload' })));
+    await self.skipWaiting();
+  })());
 });
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
@@ -28,4 +31,8 @@ self.addEventListener('fetch', event => {
     const cache = await caches.open(CACHE_NAME);
     return await cache.match(event.request, { ignoreSearch: true }) || await fetch(event.request);
   })());
+});
+
+self.addEventListener('message', event => {
+  if (event.data === 'release-version') event.ports[0]?.postMessage('52a132876a5d');
 });

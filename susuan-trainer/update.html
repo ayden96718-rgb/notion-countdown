@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>更新速算练习</title><p role="status">正在获取最新速算练习…</p><a href="./">进入速算练习</a>
+<script type="module">
+const status = document.querySelector('[role=status]');
+try {
+  if (!('serviceWorker' in navigator)) location.replace('./');
+  else {
+    const registration = await navigator.serviceWorker.register('./sw.js', {updateViaCache: 'none'});
+    await registration.update();
+    const worker = registration.installing || registration.waiting || registration.active;
+    if (!worker) throw Error();
+    await new Promise((resolve, reject) => {
+      const check = () => {
+        if (worker.state === 'activated') resolve();
+        if (worker.state === 'redundant') reject(Error());
+      };
+      worker.addEventListener('statechange', check);
+      check();
+    });
+    location.replace('./');
+  }
+} catch { status.textContent = '更新未完成。请联网后刷新此页重试。'; }
+</script></html>

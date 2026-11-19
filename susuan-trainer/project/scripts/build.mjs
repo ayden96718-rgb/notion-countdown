@@ -7,7 +7,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const dist = path.join(root, 'dist');
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
-const files = ['index.html', 'styles.css', 'manifest.webmanifest', 'sw.js', 'src', 'icons', 'data/timing-reference.json'];
+const files = ['index.html', 'update.html', 'styles.css', 'manifest.webmanifest', 'sw.js', 'src', 'icons', 'data/timing-reference.json'];
 for (const file of files) {
   const target = path.join(dist, file);
   await mkdir(path.dirname(target), { recursive: true });
