@@ -80,6 +80,7 @@ for (const id of ['3', '4', '5']) test(`group ${id}: 18,000+ samples across ever
         } else {
           assert.equal(q.op, '-');
           assert.ok(q.a > q.b && q.a % 10 < q.b % 10);
+          if (id === '4') assert.ok(q.b % 10 - q.a % 10 >= 2);
           assert.equal(q.answer, q.a - q.b);
           assert.ok(!(q.a < 20 && q.b < 20));
         }

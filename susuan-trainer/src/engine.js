@@ -103,6 +103,8 @@ for (let a = 10; a <= 99; a++) {
   }
 }
 
+const wideBorrowPool = subtractionPool.filter(([a, b]) => b % 10 - a % 10 >= 2);
+
 export const calculate = (a, op, b) => op === '+' ? a + b : op === '-' ? a - b : op === '*' ? a * b : a / b;
 export const expression = (q) => q.terms ? q.terms.join(' + ') : `${q.a} ${opSymbol(q.op)} ${q.b}`;
 export function roundQuotient(a, b, places = 2) {
@@ -163,7 +165,7 @@ export function generateSession(id, count = 10, options = {}) {
           const [a, b] = pick(rng, additionPools[bucket]);
           q = question(a, '+', b);
         } else {
-          const [a, b] = pick(rng, subtractionPool);
+          const [a, b] = pick(rng, mode.id === '4' ? wideBorrowPool : subtractionPool);
           q = question(a, '-', b);
         }
       } else if (mode.id === 'two-plus-one' || mode.id === 'two-minus-one' || mode.id === 'two-mixed-one') {
