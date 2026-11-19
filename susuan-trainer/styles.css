@@ -385,6 +385,8 @@ body:has(.result-view) .site-footer, .result-view .eyebrow { display: none; }
   .session-card .keypad button { width: 100%; height: clamp(48px, 8svh, 74px); }
 }
 
-@media (max-width: 700px) and (min-height: 740px) {
-  .session-card .keypad { margin-top: clamp(22px, calc(12svh - 64px), 46px); }
+@media (max-width: 700px) and (orientation: portrait) {
+  /* Reserve the upper half for the header, progress and question. */
+  .session-card #answer-form { min-height: calc(50dvh - 145px); }
+  .session-card .keypad button { height: clamp(44px, calc(9dvh - 6px), 74px); }
 }

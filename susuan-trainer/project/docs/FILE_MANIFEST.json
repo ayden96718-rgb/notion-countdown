@@ -24,8 +24,8 @@
     "sha256": "e230591a39bf0016aaea4afce1b114d3f42c3ad5dbb448ca413370df538fc50a"
   },
   "docs/CHANGELOG.md": {
-    "size_bytes": 2860,
-    "sha256": "705a24ff6826bd45c133034540714d2b3a077aa2fe6920a8ee585ad510d5fecf"
+    "size_bytes": 4760,
+    "sha256": "4f30190cf8317426d040630d6270b564a7b6a572df34a97b87ea614993034f6b"
   },
   "docs/CODEX_HANDOFF.md": {
     "size_bytes": 5395,
@@ -224,8 +224,8 @@
     "sha256": "d82ad7764d4d49a8e55dd22aaec56b89ed156db0e009f80bdc137ab290156db8"
   },
   "docs/requirements.md": {
-    "size_bytes": 38969,
-    "sha256": "f3da503afef7ad538cf75216c5d492f22d04e75ad7efb00ff64dc0352fcb69ee"
+    "size_bytes": 41019,
+    "sha256": "a08cdd7bdf87b0a0bcd6d8e6e3852375026d85f8673d9b5eb1a2c5e3d436403a"
   },
   "docs/screenshots/00-overview.jpg": {
     "size_bytes": 342403,
@@ -420,8 +420,8 @@
     "sha256": "f9d291ae5d06726c7f08df6d31c2d6e4fbf64c97f471ad46f08c714cb136ce48"
   },
   "styles.css": {
-    "size_bytes": 30075,
-    "sha256": "f14634427298d5d0b9ac3735357f00103548499f3632c385c660541722962c08"
+    "size_bytes": 33128,
+    "sha256": "76c07633781e36407417e2622d9b0d23097b375b7c427e416bff3ea3d4788af8"
   },
   "sw.js": {
     "size_bytes": 1667,
