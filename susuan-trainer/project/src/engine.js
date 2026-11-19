@@ -169,9 +169,9 @@ export function generateSession(id, count = 10, options = {}) {
       } else if (mode.id === 'two-plus-one' || mode.id === 'two-minus-one' || mode.id === 'two-mixed-one') {
         const op = mode.op ?? ops[i];
         const adding = op === '+';
-        const digit = int(rng, 1, 9);
+        const digit = int(rng, 2, 9);
         const tens = int(rng, adding ? 1 : 2, 9);
-        const units = adding ? int(rng, 10 - digit, 9) : int(rng, 0, digit - 1);
+        const units = adding ? int(rng, 11 - digit, 9) : int(rng, 1, digit - 1);
         q = question(10 * tens + units, op, digit);
       } else if (mode.kind === 'multi') {
         const terms = Array.from({ length: 4 }, () => int(rng, 10, 99));

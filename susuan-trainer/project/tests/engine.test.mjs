@@ -202,6 +202,7 @@ test('two-digit plus/minus one-digit sets cross tens and reuse two-digit timing'
       for (let seed = 0; seed < 100; seed++) {
         for (const {a,b,op,answer} of generateSession(id,count,{seed}).questions) {
           assert.ok(a >= 10 && a <= 99 && b >= 1 && b <= 9);
+          assert.ok(a % 10 !== 0 && answer % 10 !== 0);
           if (id === 'two-plus-one') {
             assert.ok(op === '+' && a % 10 + b >= 10 && answer === a + b);
           } else {
@@ -233,6 +234,7 @@ test('both mixed modes force every crossing and include both operations', () => 
     assert.equal(new Set(questions.map(q => q.op)).size,2);
     for (const {a,b,op,answer} of questions) {
       assert.ok(a >= 10 && a <= 99 && b >= 1 && b <= 9);
+      assert.ok(a % 10 !== 0 && answer % 10 !== 0);
       assert.ok(op === '+' ? a % 10 + b >= 10 && answer === a+b : a >= 20 && a % 10 < b && answer === a-b);
     }
   }
