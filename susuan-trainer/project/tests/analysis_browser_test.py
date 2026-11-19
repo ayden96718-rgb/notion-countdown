@@ -14,7 +14,7 @@ with sync_playwright() as p:
   for width,height in [(390,844),(820,1180),(640,640),(320,568)]:
    page.set_viewport_size({'width':width,'height':height})
    page.wait_for_selector('[data-mode="1"]')
-   assert page.locator('[data-mode]').count()==25
+   assert page.locator('[data-mode]').count()==27
    assert page.locator('.home-tools').evaluate('(n)=>n.getBoundingClientRect().bottom')<=height+1,(name,width,height)
    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth')
    assert page.locator('.mode-card').first.bounding_box()['height']>=44
@@ -46,7 +46,7 @@ with sync_playwright() as p:
    assert page.evaluate("async()=>{const keys=await caches.keys();return (await Promise.all(keys.map(async k=>(await caches.open(k)).match(new URL('./src/analysis.js',location.href).href)))).some(Boolean)}")
   expect(page.locator('.analysis-chart-panel h2')).to_contain_text('最近10次')
   assert not errors,errors
-  reports.append({'browser':name,'status':'passed','checks':['25 home entries fit 390x844,820x1180,640x640,320x568 with >=44px targets','empty analysis','independent per-mode recent ten and weighted error rate','three curves and per-session slider details','untimed mode omits time and qualification','training keypad fits phone screen','offline analysis' if name=='chromium' else 'analysis module present in offline cache']})
+  reports.append({'browser':name,'status':'passed','checks':['27 home entries fit 390x844,820x1180,640x640,320x568 with >=44px targets','empty analysis','independent per-mode recent ten and weighted error rate','three curves and per-session slider details','untimed mode omits time and qualification','training keypad fits phone screen','offline analysis' if name=='chromium' else 'analysis module present in offline cache']})
   browser.close()
 (root/'docs/evidence/analysis-browser-results.json').write_text(json.dumps(reports,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps(reports,ensure_ascii=False))

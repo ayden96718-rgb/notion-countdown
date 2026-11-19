@@ -1,8 +1,10 @@
 export const MODES = [
   { id: '1', number: 1, title: '个位数相加', symbol: '+', note: '10个数字 · 连续心算', kind: 'flash', hint: '记住第一张数字，之后把每张数字加上去。点击卡片切换，最后只答一次。' },
   { id: '2', number: 2, title: '个位数相减', symbol: '−', note: '起始数 + 10个减数', kind: 'flash', hint: '记住起始数，之后逐张减去卡片上的数字。点击卡片切换，最后只答一次。' },
+  { id: 'flash-mixed', title: '个位数加减', symbol: '±', note: '连续进借位心算', kind: 'flash', hint: '记住起始数，按每张卡片的加减号心算，最后只答一次。' },
   { id: 'two-plus-one', title: '两位数加个位数', symbol: '+', note: '每题个位必进位', timing: 'two-digit-add-sub', op: '+' },
   { id: 'two-minus-one', title: '两位数减个位数', symbol: '−', note: '每题个位必借位 · 被减数至少20', timing: 'two-digit-add-sub', op: '-' },
+  { id: 'two-mixed-one', title: '两位数加减个位数', symbol: '±', note: '加必进位，减必借位', timing: 'two-digit-add-sub', mixed: true },
   { id: '3', number: 3, title: '两位数加法', symbol: '+', note: '每题个位必进位', timing: 'two-digit-add-sub' },
   { id: '4', number: 4, title: '两位数减法', symbol: '−', note: '每题个位必借位', timing: 'two-digit-add-sub' },
   { id: '5', number: 5, title: '两位数加减混合', symbol: '±', note: '进位与借位交替挑战', timing: 'two-digit-add-sub', mixed: true },

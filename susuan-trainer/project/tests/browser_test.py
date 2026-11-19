@@ -84,7 +84,7 @@ def start(page, group, count=10):
     if group not in ('1', '2'):
         set_count(page, count)
     page.locator(f'[data-mode="{group}"]').click()
-    expect(page.locator('.flash-card' if group in ('1', '2') else '#answer')).to_be_visible()
+    expect(page.locator('.flash-card' if group in ('1', '2','flash-mixed') else '#answer')).to_be_visible()
 
 
 def finish_quiz(page, count, wrong_first=False, touch=False):
@@ -164,7 +164,7 @@ with sync_playwright() as p:
     def direct_entries():
         assert page.locator('#current-mode, .practice-panel, [data-action="start"]').count() == 0
         entries = page.locator('[data-mode]').evaluate_all('(nodes) => nodes.map(n => [n.dataset.mode, n.querySelector("strong").textContent])')
-        assert len(entries) == 25
+        assert len(entries) == 27
         assert [title for _, title in entries[:2]] == ['个位数相加', '个位数相减']
         for group, title in entries:
             home(page)
@@ -173,10 +173,10 @@ with sync_playwright() as p:
             page.locator(f'[data-mode="{group}"]').click()
             expect(page).to_have_url(re.compile(r'#train$'))
             expect(page.locator('#training-name')).to_have_text(title)
-            expect(page.locator('.flash-card' if group in ('1', '2') else '#answer')).to_be_visible()
+            expect(page.locator('.flash-card' if group in ('1', '2','flash-mixed') else '#answer')).to_be_visible()
             assert page.locator('dialog[open]').count() == 0
         home(page)
-    check('all 25 tiles: one click enters matching training, no selection panel, dropdown, preselection or extra start button', direct_entries)
+    check('all 27 tiles: one click enters matching training, no selection panel, dropdown, preselection or extra start button', direct_entries)
 
     def quantity_and_flash_export():
         set_count(page, 15)
@@ -255,7 +255,7 @@ with sync_playwright() as p:
     def screenshot_modes():
         expected_names = ['many-addition', 'three-by-one-divide', 'three-by-two-divide', 'five-by-three-divide', 'fraction-to-percent', 'multiplication-estimation']
         home(page)
-        assert page.locator('[data-mode]').count() == 25
+        assert page.locator('[data-mode]').count() == 27
         for mode_id in expected_names:
             home(page); start(page, mode_id)
             for i in range(10):

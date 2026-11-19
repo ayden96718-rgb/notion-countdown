@@ -46,6 +46,20 @@ export function countBorrows(start, digits) {
 }
 
 function generateFlash(group, rng) {
+  if (group === 'flash-mixed') {
+    const start = int(rng, 1, 9);
+    let answer = start;
+    const digits = [];
+    for (let i = 0; i < 10; i++) {
+      const units = answer % 10;
+      const canBorrow = answer >= 10 && units < 9;
+      const subtract = canBorrow && (units === 0 || rng() < 0.5);
+      const step = subtract ? -int(rng, units + 1, 9) : int(rng, 10 - units, 9);
+      digits.push(step);
+      answer += step;
+    }
+    return { kind: 'flash', start, digits, cards: [start, ...digits], answer };
+  }
   if (group === '1') {
     let digits;
     for (let attempt = 0; attempt < 100; attempt++) {
@@ -152,12 +166,13 @@ export function generateSession(id, count = 10, options = {}) {
           const [a, b] = pick(rng, subtractionPool);
           q = question(a, '-', b);
         }
-      } else if (mode.id === 'two-plus-one' || mode.id === 'two-minus-one') {
-        const adding = mode.op === '+';
+      } else if (mode.id === 'two-plus-one' || mode.id === 'two-minus-one' || mode.id === 'two-mixed-one') {
+        const op = mode.op ?? ops[i];
+        const adding = op === '+';
         const digit = int(rng, 1, 9);
         const tens = int(rng, adding ? 1 : 2, 9);
         const units = adding ? int(rng, 10 - digit, 9) : int(rng, 0, digit - 1);
-        q = question(10 * tens + units, mode.op, digit);
+        q = question(10 * tens + units, op, digit);
       } else if (mode.kind === 'multi') {
         const terms = Array.from({ length: 4 }, () => int(rng, 10, 99));
         q = { terms, op: '+', answer: terms.reduce((a, b) => a + b, 0) };

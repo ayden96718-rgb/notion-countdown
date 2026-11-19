@@ -136,18 +136,24 @@ function answerArea() {
   return `<form id="answer-form" autocomplete="off"><label class="answer-label" for="answer">${training.spec.kind === 'flash' ? '所有数字已结束，请填写最终答案' : training.current.unit === '%' ? '你的答案（百分数数值）' : '你的答案'}</label><input id="answer" class="answer-input" type="text" inputmode="none" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="14" placeholder="输入答案" aria-describedby="answer-error"><div id="answer-error" class="answer-error" role="status"></div><button type="submit" hidden tabindex="-1">提交答案</button></form>${keypad()}<div class="keypad-caption">支持触屏与实体键盘 · Enter 确定 · Backspace 退格</div>`;
 }
 
+function flashCardLabel() {
+  const value = training.spec.cards[training.index];
+  return training.spec.modeId === 'flash-mixed' && training.index > 0 && value > 0 ? '+' + value : value;
+}
+
 function renderTraining() {
   main.classList.remove('home-page');
   stopTimer();
   const mode = modeById(training.spec.modeId);
   const flash = training.spec.kind === 'flash';
   const cards = training.phase === 'cards';
+  const cardLabel = cards ? flashCardLabel() : '';
   const index = flash ? Math.min(training.index + 1, training.spec.cards.length) : training.records.length + 1;
   const total = flash ? training.spec.cards.length : training.spec.count;
   const progress = flash ? training.index / total : training.records.length / total;
   main.innerHTML = `<section class="training" aria-labelledby="training-name"><div class="training-top"><button class="back-button" data-action="leave">← 返回首页</button><h1 id="training-name">${mode.title}</h1><span class="quiet">${mode.number ? `第 ${String(mode.number).padStart(2, '0')} 组` : '拓展练习'}</span></div>
     <div class="session-card"><div class="session-meta"><div class="progress-text">${cards ? '数卡' : flash ? '最终作答' : '题目'} <strong>${index}</strong> / ${total}</div>${mode.untimed ? '<span>自由练习</span>' : `<span class="timer" aria-label="累计用时">◷ <span id="timer">${formatTime(training.elapsed())}</span></span>`}</div><div class="progress-track" role="progressbar" aria-label="练习进度" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${cards ? training.index : flash ? total : training.records.length}"><div class="progress-fill" style="width:${progress * 100}%"></div></div>
-    ${cards ? `<div class="flash-area"><span class="flash-stage">${mode.id === '2' ? training.index === 0 ? '先记住这个起始数' : `减去第 ${training.index} 个数字` : `记住并加上第 ${training.index + 1} 个数字`}</span><button class="flash-card" data-action="next-card" aria-label="当前数字${training.spec.cards[training.index]}，点击查看下一张"><span id="flash-digit">${training.spec.cards[training.index]}</span><span class="flash-tag">${training.index === total - 1 ? '点击，填写最终答案' : '点击卡片，继续 →'}</span></button><p class="flash-instruction">${mode.hint}</p></div>` : `${flash ? '<div class="equation">最后的结果是？</div>' : `<div class="equation${training.current.terms || training.current.unit ? ' wide-equation' : ''}" aria-label="${escape(expression(training.current))} 等于多少">${escape(expression(training.current))} =${training.current.unit ? ` ${training.current.unit}` : ''}</div>${answerRule(training.current) ? `<p class="answer-rule">${answerRule(training.current)}</p>` : ''}`}${thresholds(mode, training.spec.count)}${answerArea()}`}
+    ${cards ? `<div class="flash-area"><span class="flash-stage">${mode.id === 'flash-mixed' ? (training.index ? '按符号心算' : '先记住这个起始数') : mode.id === '2' ? training.index === 0 ? '先记住这个起始数' : `减去第 ${training.index} 个数字` : `记住并加上第 ${training.index + 1} 个数字`}</span><button class="flash-card" data-action="next-card" aria-label="当前数字${cardLabel}，点击查看下一张"><span id="flash-digit">${cardLabel}</span><span class="flash-tag">${training.index === total - 1 ? '点击，填写最终答案' : '点击卡片，继续 →'}</span></button><p class="flash-instruction">${mode.hint}</p></div>` : `${flash ? '<div class="equation">最后的结果是？</div>' : `<div class="equation${training.current.terms || training.current.unit ? ' wide-equation' : ''}" aria-label="${escape(expression(training.current))} 等于多少">${escape(expression(training.current))} =${training.current.unit ? ` ${training.current.unit}` : ''}</div>${answerRule(training.current) ? `<p class="answer-rule">${answerRule(training.current)}</p>` : ''}`}${thresholds(mode, training.spec.count)}${answerArea()}`}
     </div><div class="training-bottom"><p>${mode.untimed ? '不记录用时。' : '从首题显示计至最后一次提交，切到后台仍继续计时。'}${mode.id === '7' ? '奇数可用 .5 作答。' : ''}</p>${mode.custom ? '<button class="text-button" data-action="custom-builder">出题设置</button>' : ''}<button class="text-button" data-action="restart">↻ 重新开始</button></div></section>`;
   if (!mode.untimed) timerHandle = setInterval(() => {
     const timer = document.querySelector('#timer');
@@ -169,10 +175,10 @@ function updateTraining() {
   document.querySelector('.progress-fill').style.width = `${completed / total * 100}%`;
   if (cards) {
     const button = document.querySelector('.flash-card');
-    const digit = training.spec.cards[training.index];
+    const digit = flashCardLabel();
     document.querySelector('#flash-digit').textContent = digit;
     button.setAttribute('aria-label', `当前数字${digit}，点击查看下一张`);
-    document.querySelector('.flash-stage').textContent = training.spec.modeId === '2' ? `减去第 ${training.index} 个数字` : `记住并加上第 ${training.index + 1} 个数字`;
+    document.querySelector('.flash-stage').textContent = training.spec.modeId === 'flash-mixed' ? '按符号心算' : training.spec.modeId === '2' ? `减去第 ${training.index} 个数字` : `记住并加上第 ${training.index + 1} 个数字`;
     document.querySelector('.flash-tag').textContent = training.index === total - 1 ? '点击，填写最终答案' : '点击卡片，继续 →';
     // A short color pulse also confirms a turn when consecutive digits are equal.
     button.getAnimations().forEach(animation => animation.cancel());
@@ -321,7 +327,7 @@ function download(filename, content, type) {
 function exportQuestions(mode = selected) {
   const spec = generateSession(mode.id, settings.count, { mixedShare: settings.mixedShare, custom: customConfig });
   if (spec.kind === 'flash') {
-    const lines = [`速算 · ${mode.title}`, '固定10个数字，按顺序逐张心算，最后统一作答。', ...(spec.start ? [`起始数：${spec.start}`, '依次减去下列数字：'] : ['依次相加下列数字：']), ...spec.digits.map((n, i) => `${i + 1}. ${n}`), '\n—— 参考答案 ——', String(spec.answer)];
+    const lines = [`速算 · ${mode.title}`, '固定10个数字，按顺序逐张心算，最后统一作答。', ...(spec.start ? [`起始数：${spec.start}`, mode.id === 'flash-mixed' ? '按正负号依次加减：' : '依次减去下列数字：'] : ['依次相加下列数字：']), ...spec.digits.map((n, i) => `${i + 1}. ${mode.id === 'flash-mixed' && n > 0 ? '+' : ''}${n}`), '\n—— 参考答案 ——', String(spec.answer)];
     download(`速算-${mode.title}-10个数字.txt`, '\uFEFF' + lines.join('\n'), 'text/plain;charset=utf-8');
     toast('已导出一套新数卡；不会提前揭示下一次练习的数字。');
     return;
@@ -434,7 +440,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-5ae0f311f738`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-a4ddef636900`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 

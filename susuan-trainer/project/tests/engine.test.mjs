@@ -195,7 +195,7 @@ test('custom builder respects first digits, second fixed/range and multiple oper
 });
 
 test('two-digit plus/minus one-digit sets cross tens and reuse two-digit timing', () => {
-  assert.deepEqual(MODES.slice(2,4).map(m => m.id), ['two-plus-one','two-minus-one']);
+  assert.deepEqual(MODES.slice(3,5).map(m => m.id), ['two-plus-one','two-minus-one']);
   for (const id of ['two-plus-one','two-minus-one']) {
     for (const count of [10, 15, 20]) {
       assert.deepEqual(timingFor(modeById(id), count, reference), timingFor(modeById('3'), count, reference));
@@ -209,6 +209,31 @@ test('two-digit plus/minus one-digit sets cross tens and reuse two-digit timing'
           }
         }
       }
+    }
+  }
+});
+
+test('both mixed modes force every crossing and include both operations', () => {
+  assert.deepEqual(MODES.slice(1,6).map(m => m.id), ['2','flash-mixed','two-plus-one','two-minus-one','two-mixed-one']);
+  for (let seed = 0; seed < 1000; seed++) {
+    const flash = generateSession('flash-mixed',10,{seed});
+    let total = flash.start;
+    assert.ok(total >= 1 && total <= 9);
+    assert.equal(flash.digits.length,10);
+    assert.deepEqual(flash.cards,[total,...flash.digits]);
+    assert.ok(flash.digits.some(n => n > 0) && flash.digits.some(n => n < 0));
+    for (const n of flash.digits) {
+      assert.ok(Math.abs(n) >= 1 && Math.abs(n) <= 9);
+      assert.ok(n > 0 ? total % 10 + n >= 10 : total % 10 < -n);
+      total += n;
+      assert.ok(total > 0);
+    }
+    assert.equal(total,flash.answer);
+    const {questions} = generateSession('two-mixed-one',15,{seed});
+    assert.equal(new Set(questions.map(q => q.op)).size,2);
+    for (const {a,b,op,answer} of questions) {
+      assert.ok(a >= 10 && a <= 99 && b >= 1 && b <= 9);
+      assert.ok(op === '+' ? a % 10 + b >= 10 && answer === a+b : a >= 20 && a % 10 < b && answer === a-b);
     }
   }
 });
