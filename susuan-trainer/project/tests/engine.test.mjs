@@ -80,7 +80,6 @@ for (const id of ['3', '4', '5']) test(`group ${id}: 18,000+ samples across ever
         } else {
           assert.equal(q.op, '-');
           assert.ok(q.a > q.b && q.a % 10 < q.b % 10);
-          if (id === '4') assert.ok(q.b % 10 - q.a % 10 >= 2);
           assert.equal(q.answer, q.a - q.b);
           assert.ok(!(q.a < 20 && q.b < 20));
         }
@@ -238,5 +237,22 @@ test('both mixed modes force every crossing and include both operations', () => 
       assert.ok(a % 10 !== 0 && answer % 10 !== 0);
       assert.ok(op === '+' ? a % 10 + b >= 10 && answer === a+b : a >= 20 && a % 10 < b && answer === a-b);
     }
+  }
+});
+
+test('one-digit subtraction and mixed subtraction retain rare small borrow gaps', () => {
+  for (const id of ['two-minus-one', 'two-mixed-one']) {
+    const bins = [0, 0, 0];
+    for (let seed = 0; seed < 500; seed++) {
+      for (const q of generateSession(id, 100, {seed}).questions) {
+        if (q.op !== '-') continue;
+        const gap = q.b - q.a % 10;
+        assert.ok(gap >= 1 && gap <= 8);
+        bins[Math.min(gap, 3) - 1]++;
+      }
+    }
+    const total = bins.reduce((a,b) => a+b);
+    assert.ok(Math.abs(bins[0]/total - 0.05) < 0.01);
+    assert.ok(Math.abs(bins[1]/total - 0.15) < 0.01);
   }
 });

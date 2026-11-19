@@ -103,7 +103,13 @@ for (let a = 10; a <= 99; a++) {
   }
 }
 
-const wideBorrowPool = subtractionPool.filter(([a, b]) => b % 10 - a % 10 >= 2);
+// Select the gap once per question so duplicate retries preserve the frequency bands.
+function chooseBorrowGap(rng) {
+  const roll = rng();
+  if (roll < 0.05) return 1;
+  if (roll < 0.20) return 2;
+  return int(rng, 3, 8);
+}
 
 export const calculate = (a, op, b) => op === '+' ? a + b : op === '-' ? a - b : op === '*' ? a * b : a / b;
 export const expression = (q) => q.terms ? q.terms.join(' + ') : `${q.a} ${opSymbol(q.op)} ${q.b}`;
@@ -156,6 +162,8 @@ export function generateSession(id, count = 10, options = {}) {
   const questions = [];
   const custom = mode.custom ? validateCustom(options.custom) : null;
   for (let i = 0; i < count; i++) {
+    const weightedBorrow = mode.id === 'two-minus-one' || (mode.id === 'two-mixed-one' && ops[i] === '-');
+    const gap = weightedBorrow ? chooseBorrowGap(rng) : 0;
     let q;
     for (let retry = 0; retry < 80; retry++) {
       if (['3', '4', '5'].includes(mode.id)) {
@@ -165,15 +173,15 @@ export function generateSession(id, count = 10, options = {}) {
           const [a, b] = pick(rng, additionPools[bucket]);
           q = question(a, '+', b);
         } else {
-          const [a, b] = pick(rng, mode.id === '4' ? wideBorrowPool : subtractionPool);
+          const [a, b] = pick(rng, subtractionPool);
           q = question(a, '-', b);
         }
       } else if (mode.id === 'two-plus-one' || mode.id === 'two-minus-one' || mode.id === 'two-mixed-one') {
         const op = mode.op ?? ops[i];
         const adding = op === '+';
-        const digit = int(rng, 2, 9);
+        const digit = int(rng, adding ? 2 : gap + 1, 9);
         const tens = int(rng, adding ? 1 : 2, 9);
-        const units = adding ? int(rng, 11 - digit, 9) : int(rng, 1, digit - 1);
+        const units = adding ? int(rng, 11 - digit, 9) : digit - gap;
         q = question(10 * tens + units, op, digit);
       } else if (mode.kind === 'multi') {
         const terms = Array.from({ length: 4 }, () => int(rng, 10, 99));
