@@ -141,8 +141,19 @@ function keypad() {
   </div>`;
 }
 
-function answerArea() {
-  return `<form id="answer-form" autocomplete="off"><label class="answer-label" for="answer">${training.spec.kind === 'flash' ? '所有数字已结束，请填写最终答案' : training.current.unit === '%' ? '你的答案（百分数数值）' : '你的答案'}</label><input id="answer" class="answer-input" type="text" inputmode="none" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="14" placeholder="输入答案" aria-describedby="answer-error"><div id="answer-error" class="answer-error" role="status"></div><button type="submit" hidden tabindex="-1">提交答案</button></form>${keypad()}<div class="keypad-caption">支持触屏与实体键盘 · Enter 确定 · Backspace 退格</div>`;
+function answerArea(mode, flash) {
+  const q = flash ? null : training.current;
+  const prompt = flash ? '最终结果' : expression(q);
+  return `<form id="answer-form" autocomplete="off">
+    <div class="equation${q?.terms || q?.unit ? ' wide-equation' : ''}"><span class="equation-prompt">${escape(prompt)} =</span> <span class="inline-answer"><span id="answer-width" aria-hidden="true"></span><input id="answer" aria-label="${escape(prompt)}的答案" type="text" inputmode="none" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="14" aria-describedby="answer-error"></span>${q?.unit ?? ''}</div>
+    ${q && answerRule(q) ? `<p class="answer-rule">${answerRule(q)}</p>` : ''}
+    ${thresholds(mode, training.spec.count)}
+    <div id="answer-error" class="answer-error" role="status"></div><button type="submit" hidden tabindex="-1">提交答案</button></form>
+    ${keypad()}<div class="keypad-caption">支持触屏与实体键盘 · Enter 确定 · Backspace 退格</div>`;
+}
+
+function syncAnswerWidth() {
+  document.querySelector('#answer-width').textContent = document.querySelector('#answer').value;
 }
 
 function flashCardLabel() {
@@ -162,7 +173,7 @@ function renderTraining() {
   const progress = flash ? training.index / total : training.records.length / total;
   main.innerHTML = `<section class="training" aria-labelledby="training-name"><div class="training-top"><button class="back-button" data-action="leave">← 返回首页</button><h1 id="training-name">${mode.title}</h1><span class="quiet">${mode.number ? `第 ${String(mode.number).padStart(2, '0')} 组` : '拓展练习'}</span></div>
     <div class="session-card"><div class="session-meta"><div class="progress-text">${cards ? '数卡' : flash ? '最终作答' : '题目'} <strong>${index}</strong> / ${total}</div>${mode.untimed ? '<span>自由练习</span>' : `<span class="timer" aria-label="累计用时">◷ <span id="timer">${formatTime(training.elapsed())}</span></span>`}</div><div class="progress-track" role="progressbar" aria-label="练习进度" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${cards ? training.index : flash ? total : training.records.length}"><div class="progress-fill" style="width:${progress * 100}%"></div></div>
-    ${cards ? `<div class="flash-area"><span class="flash-stage">${mode.id === 'flash-mixed' ? (training.index ? '按符号心算' : '先记住这个起始数') : mode.id === '2' ? training.index === 0 ? '先记住这个起始数' : `减去第 ${training.index} 个数字` : `记住并加上第 ${training.index + 1} 个数字`}</span><button class="flash-card" data-action="next-card" aria-label="当前数字${cardLabel}，点击查看下一张"><span id="flash-digit">${cardLabel}</span><span class="flash-tag">${training.index === total - 1 ? '点击，填写最终答案' : '点击卡片，继续 →'}</span></button><p class="flash-instruction">${mode.hint}</p></div>` : `${flash ? '<div class="equation">最后的结果是？</div>' : `<div class="equation${training.current.terms || training.current.unit ? ' wide-equation' : ''}" aria-label="${escape(expression(training.current))} 等于多少">${escape(expression(training.current))} =${training.current.unit ? ` ${training.current.unit}` : ''}</div>${answerRule(training.current) ? `<p class="answer-rule">${answerRule(training.current)}</p>` : ''}`}${thresholds(mode, training.spec.count)}${answerArea()}`}
+    ${cards ? `<div class="flash-area"><span class="flash-stage">${mode.id === 'flash-mixed' ? (training.index ? '按符号心算' : '先记住这个起始数') : mode.id === '2' ? training.index === 0 ? '先记住这个起始数' : `减去第 ${training.index} 个数字` : `记住并加上第 ${training.index + 1} 个数字`}</span><button class="flash-card" data-action="next-card" aria-label="当前数字${cardLabel}，点击查看下一张"><span id="flash-digit">${cardLabel}</span><span class="flash-tag">${training.index === total - 1 ? '点击，填写最终答案' : '点击卡片，继续 →'}</span></button><p class="flash-instruction">${mode.hint}</p></div>` : answerArea(mode, flash)}
     </div><div class="training-bottom"><p>${mode.untimed ? '不记录用时。' : '从首题显示计至最后一次提交，切到后台仍继续计时。'}${mode.id === '7' ? '奇数可用 .5 作答。' : ''}</p>${mode.custom ? '<button class="text-button" data-action="custom-builder">出题设置</button>' : ''}<button class="text-button" data-action="restart">↻ 重新开始</button></div></section>`;
   if (!mode.untimed) timerHandle = setInterval(() => {
     const timer = document.querySelector('#timer');
@@ -194,10 +205,11 @@ function updateTraining() {
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) button.animate([{ backgroundColor: '#b9dca7' }, { backgroundColor: '#d3e8c4' }], { duration: 140 });
   } else {
     const q = training.current;
-    const equation = document.querySelector('.equation');
-    equation.textContent = `${expression(q)} =${q.unit ? ` ${q.unit}` : ''}`;
-    equation.setAttribute('aria-label', `${expression(q)} 等于多少`);
-    document.querySelector('#answer').value = '';
+    document.querySelector('.equation-prompt').textContent = expression(q) + ' =';
+    const input = document.querySelector('#answer');
+    input.setAttribute('aria-label', expression(q) + '的答案');
+    input.value = '';
+    syncAnswerWidth();
     document.querySelector('#answer-error').textContent = '';
     focusAnswer();
   }
@@ -218,6 +230,7 @@ function keyInput(key) {
   else if (key === '.') {
     if (!input.value.includes('.')) input.value = input.value === '' || input.value === '-' ? `${input.value}0.` : `${input.value}.`;
   } else if (input.value.length < 14) input.value += key;
+  syncAnswerWidth();
   document.querySelector('#answer-error').textContent = '';
   focusAnswer();
 }
@@ -426,7 +439,7 @@ document.addEventListener('click', e => {
 });
 
 document.addEventListener('submit', e => { if (e.target.id === 'answer-form') { e.preventDefault(); submit(); } });
-document.addEventListener('input', e => { if (e.target.id === 'answer') document.querySelector('#answer-error').textContent = ''; });
+document.addEventListener('input', e => { if (e.target.id === 'answer') { syncAnswerWidth(); document.querySelector('#answer-error').textContent = ''; } });
 document.addEventListener('keydown', e => {
   if (modal.open || !activeTraining() || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
   if (training.phase === 'cards' && [' ', 'Enter', 'ArrowRight'].includes(e.key)) { e.preventDefault(); nextCard(); return; }
@@ -449,7 +462,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-90f2a5328e6d`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-d31b7eda7013`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 
@@ -466,7 +479,7 @@ try {
       const channel = new MessageChannel();
       channel.port1.onmessage = event => {
         channel.port1.close();
-        updatePending = event.data !== '90f2a5328e6d';
+        updatePending = event.data !== 'd31b7eda7013';
         if (updatePending && main.classList.contains('home-page') && !activeTraining() && !modal.open) location.reload();
       };
       controller.postMessage('release-version', [channel.port2]);

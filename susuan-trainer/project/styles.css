@@ -368,3 +368,18 @@ body:has(.result-view) .site-footer, .result-view .eyebrow { display: none; }
   body:has(.result-view) .site-header { display: none; }
   .result-view .result-actions { margin: 3px 0; }
 }
+
+.inline-answer { position: relative; display: inline-block; min-width: 2px; max-width: 100%; vertical-align: baseline; }
+#answer-width { visibility: hidden; white-space: pre; }
+#answer-width::after { content: '\200b'; }
+.inline-answer #answer { position: absolute; inset: 0; width: 100%; height: 100%; min-width: 0; padding: 0; margin: 0; border: 0; outline: 0; box-shadow: none; border-radius: 0; background: transparent; appearance: none; font: inherit; letter-spacing: inherit; color: inherit; }
+#answer-form .answer-error:empty { min-height: 0; margin: 0; }
+@media (max-width: 700px) {
+  main:has(.session-card) { padding: 8px 8px 12px; }
+  .training:has(.session-card) .training-top { margin-bottom: 6px; }
+  .session-card { padding: 12px 8px; }
+  .session-card .progress-track { margin-top: 7px; }
+  .session-card .equation { padding: 14px 0 8px; }
+  .session-card .keypad { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin-top: 10px; }
+  .session-card .keypad button { width: 100%; height: clamp(48px, 8svh, 74px); }
+}
