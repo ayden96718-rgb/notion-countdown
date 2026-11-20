@@ -149,7 +149,7 @@ function answerArea(mode, flash) {
     <div class="answer-details">${q && answerRule(q) ? `<p class="answer-rule">${answerRule(q)}</p>` : ''}
     ${thresholds(mode, training.spec.count)}
     <div id="answer-error" class="answer-error" role="status"></div></div><button type="submit" hidden tabindex="-1">提交答案</button></form>
-    ${keypad()}<div class="keypad-caption">支持触屏与实体键盘 · Enter 确定 · Backspace 退格</div>`;
+    ${keypad()}`;
 }
 
 function syncAnswerWidth() {

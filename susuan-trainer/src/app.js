@@ -149,7 +149,7 @@ function answerArea(mode, flash) {
     <div class="answer-details">${q && answerRule(q) ? `<p class="answer-rule">${answerRule(q)}</p>` : ''}
     ${thresholds(mode, training.spec.count)}
     <div id="answer-error" class="answer-error" role="status"></div></div><button type="submit" hidden tabindex="-1">提交答案</button></form>
-    ${keypad()}<div class="keypad-caption">支持触屏与实体键盘 · Enter 确定 · Backspace 退格</div>`;
+    ${keypad()}`;
 }
 
 function syncAnswerWidth() {
@@ -462,7 +462,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-3d4a18e96ef2`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-92c740ddcd97`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 
@@ -479,7 +479,7 @@ try {
       const channel = new MessageChannel();
       channel.port1.onmessage = event => {
         channel.port1.close();
-        updatePending = event.data !== '3d4a18e96ef2';
+        updatePending = event.data !== '92c740ddcd97';
         if (updatePending && main.classList.contains('home-page') && !activeTraining() && !modal.open) location.reload();
       };
       controller.postMessage('release-version', [channel.port2]);

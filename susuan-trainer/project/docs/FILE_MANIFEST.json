@@ -24,8 +24,8 @@
     "sha256": "e230591a39bf0016aaea4afce1b114d3f42c3ad5dbb448ca413370df538fc50a"
   },
   "docs/CHANGELOG.md": {
-    "size_bytes": 4922,
-    "sha256": "853530b39e889e181bdc70e37552091a2cf21412307de04cf1b50db20f75ad96"
+    "size_bytes": 5030,
+    "sha256": "60626953e7c884325ab6154abe0fa97bf7d7f9c35ec10d35b73923c3bd84dac4"
   },
   "docs/CODEX_HANDOFF.md": {
     "size_bytes": 5395,
@@ -224,8 +224,8 @@
     "sha256": "d82ad7764d4d49a8e55dd22aaec56b89ed156db0e009f80bdc137ab290156db8"
   },
   "docs/requirements.md": {
-    "size_bytes": 41218,
-    "sha256": "7220e1475d3f6907f1dd15eb5b265bd29e02ca3e8ff437e50e4b5ab70ae3befc"
+    "size_bytes": 41366,
+    "sha256": "8ce365480f1f55cfa3d1d8fe59a3b6265f39b3453ae2d62f8dbd58bf32f3a934"
   },
   "docs/screenshots/00-overview.jpg": {
     "size_bytes": 342403,
@@ -396,8 +396,8 @@
     "sha256": "97e8f9a08e681410be0d2e7409941b6c5ef23c8f58bf4ab25b96f32046297546"
   },
   "src/app.js": {
-    "size_bytes": 44063,
-    "sha256": "2a1f357d54a0ed22cf7865c4a680f211e8ec30906d7a38169e005b24c2abd814"
+    "size_bytes": 43966,
+    "sha256": "49aaac5665fc6f4b5f3de130220167369cd94f56fdd24c092c17b715622850d8"
   },
   "src/engine.js": {
     "size_bytes": 9029,
@@ -420,8 +420,8 @@
     "sha256": "f9d291ae5d06726c7f08df6d31c2d6e4fbf64c97f471ad46f08c714cb136ce48"
   },
   "styles.css": {
-    "size_bytes": 34237,
-    "sha256": "a941cf9bcfdda034c00295dcffe277b238c02e6dd65212dec19f3b78947377cd"
+    "size_bytes": 34240,
+    "sha256": "3a425d60434f78614b1e1b46b6324b04e74d154c03f6b1419e929c3df9d65ef9"
   },
   "sw.js": {
     "size_bytes": 1667,

@@ -110,7 +110,6 @@
   .keypad button:active { background: #cadfb8; }
   .keypad button.utility { color: var(--muted); background: #e2ecd9; font-size: 13px; }
   .keypad button.confirm { background: var(--green); color: #fff; font-size: 16px; border-color: var(--green); }
-  .keypad-caption { text-align: center; font-size: 10px; color: var(--muted); margin-top: 13px; }
   .training-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; gap: 18px; }
   .training-bottom p { color: var(--muted); font-size: 11px; }
   .flash-area { text-align: center; padding: 23px 0 16px; }
@@ -178,7 +177,7 @@
     .site-header { height: 75px; padding: 0 20px; } .brand { font-size: 19px; gap: 9px; } .brand-mark { width: 35px; height: 35px; font-size: 30px; } .site-header nav { gap: 17px; font-size: 12px; } .icon-button { width: 29px; height: 29px; }
     main { padding: 29px 20px 32px; } .hero { margin: 0 0 26px; gap: 0; } .hero-art { width: 95px; height: 95px; } .hero-art::before { width: 78px; height: 78px; } .art-card { width: 42px; height: 53px; left: 6px; top: 10px; font-size: 25px; border-radius: 9px; } .art-card:last-child { left: 43px; top: 34px; font-size: 23px; } .hero h1 { font-size: 30px; } .hero p { max-width: 245px; font-size: 12px; margin-top: 10px; } .eyebrow { font-size: 9px; margin-bottom: 10px; }
     .home-layout { display: flex; flex-direction: column; gap: 24px; } .training-section { width: 100%; } .training-grid { gap: 10px; } .mode-card { min-height: 103px; padding: 19px 13px 15px; gap: 9px; } .mode-card strong { font-size: 14px; } .mode-card small { font-size: 10px; } .mode-symbol { font-size: 26px; min-width: 28px; } .mode-arrow { font-size: 14px; } .practice-panel { position: static; width: 100%; padding: 21px; } .practice-panel .mode-description { min-height: 0; } .practice-panel h3 { font-size: 21px; } .panel-tip { margin-top: 12px; } .count-options button { padding: 10px 0; } .count-note { margin-bottom: 13px; } .site-footer { padding: 19px 20px max(19px, env(safe-area-inset-bottom)); flex-direction: column; gap: 5px; font-size: 10px; } details.more { margin-top: 19px; }
-    .training-top { margin-bottom: 17px; } .training-top h1 { font-size: 17px; } .training-top .quiet { font-size: 10px; } .session-card { padding: 19px 18px; border-radius: 18px; } .session-meta { font-size: 11px; } .equation { padding: 30px 0 17px; font-size: clamp(30px, 8.6vw, 45px); } .thresholds { font-size: 11px; margin-bottom: 10px; } .answer-input { height: 52px; font-size: 27px; } .keypad { gap: 7px; margin-top: 8px; } .keypad button { height: clamp(44px, 6.5svh, 55px); } .keypad-caption { margin-top: 10px; font-size: 9px; } .answer-label { margin-top: 8px; } .training-bottom p { font-size: 10px; max-width: 220px; } .training-bottom { margin-top: 8px; }
+    .training-top { margin-bottom: 17px; } .training-top h1 { font-size: 17px; } .training-top .quiet { font-size: 10px; } .session-card { padding: 19px 18px; border-radius: 18px; } .session-meta { font-size: 11px; } .equation { padding: 30px 0 17px; font-size: clamp(30px, 8.6vw, 45px); } .thresholds { font-size: 11px; margin-bottom: 10px; } .answer-input { height: 52px; font-size: 27px; } .keypad { gap: 7px; margin-top: 8px; } .keypad button { height: clamp(44px, 6.5svh, 55px); } .answer-label { margin-top: 8px; } .training-bottom p { font-size: 10px; max-width: 220px; } .training-bottom { margin-top: 8px; }
     .flash-card { font-size: 88px; height: min(38svh, 290px); } .flash-area { padding: 20px 0 12px; } .flash-instruction { margin-top: 18px; font-size: 11px; } .result-header h1 { font-size: 25px; } .result-header .quiet { font-size: 11px; } .result-hero { padding: 24px 17px; } .result-stats { gap: 23px; } .result-stats strong { font-size: 20px; } .result-hero h2 { font-size: 29px; } .review-table th { padding: 12px 8px; font-size: 10px; } .review-table td { padding: 14px 8px; font-size: 12px; } .review-index { margin-right: 7px; font-size: 9px; } .digit-review { gap: 7px; } .digit-review strong { font-size: 25px; } .history-item { padding: 16px; gap: 10px; } .history-item strong { font-size: 14px; } .history-item .score { font-size: 15px; } .result-actions { flex-wrap: wrap; } .result-actions .button { flex: 1; white-space: nowrap; }
   }
   @media (max-width: 370px) { main { padding-left: 14px; padding-right: 14px; } .site-header { padding: 0 14px; } .site-header nav { gap: 10px; } .hero-art { display: none; } .mode-card strong { font-size: 12px; } .mode-symbol { min-width: 23px; } .mode-card { gap: 7px; padding-left: 10px; padding-right: 10px; } }
@@ -334,7 +333,6 @@
     .keypad { margin-top:6px; gap:6px; }
     .keypad button { height:44px; }
     .answer-input { height:46px; }
-    .keypad-caption { display:none; }
     .training-bottom { margin-top:6px; }
   }
 }
@@ -405,7 +403,7 @@ body:has(.result-view) .site-footer, .result-view .eyebrow { display: none; }
   }
   .session-card:has(#answer-form) {
     display: grid;
-    grid-template-rows: auto auto 1fr auto auto;
+    grid-template-rows: auto auto 1fr auto;
   }
   .session-card #answer-form {
     display: grid;
@@ -421,6 +419,10 @@ body:has(.result-view) .site-footer, .result-view .eyebrow { display: none; }
   .answer-details { grid-row: 3; }
   .session-card .keypad { width: 100%; }
   .session-card .keypad button { height: clamp(44px, calc(9dvh - 6px), 74px); }
+  /* Four equal rows share the space above the full-height action keys. */
+  .session-card .keypad button:not(.utility):not(.confirm) {
+    height: clamp(44px, calc(6.75dvh - 0.15px), 59.85px);
+  }
 }
 
 @media (max-width: 700px) {
