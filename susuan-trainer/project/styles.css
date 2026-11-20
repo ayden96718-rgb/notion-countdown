@@ -422,3 +422,9 @@ body:has(.result-view) .site-footer, .result-view .eyebrow { display: none; }
   .session-card .keypad { width: 100%; }
   .session-card .keypad button { height: clamp(44px, calc(9dvh - 6px), 74px); }
 }
+
+@media (max-width: 700px) {
+  .training-bottom { flex-wrap: nowrap; gap: 6px; font-size: 12px; white-space: nowrap; }
+  .training-bottom p, .training-bottom .text-button { font-size: inherit; }
+  .training-bottom .timing-detail { display: none; }
+}
