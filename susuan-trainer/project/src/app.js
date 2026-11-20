@@ -146,9 +146,9 @@ function answerArea(mode, flash) {
   const prompt = flash ? '最终结果' : expression(q);
   return `<form id="answer-form" autocomplete="off">
     <div class="equation${q?.terms || q?.unit ? ' wide-equation' : ''}"><span class="equation-prompt">${escape(prompt)} =</span> <span class="inline-answer"><span id="answer-width" aria-hidden="true"></span><input id="answer" aria-label="${escape(prompt)}的答案" type="text" inputmode="none" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="14" aria-describedby="answer-error"></span>${q?.unit ?? ''}</div>
-    ${q && answerRule(q) ? `<p class="answer-rule">${answerRule(q)}</p>` : ''}
+    <div class="answer-details">${q && answerRule(q) ? `<p class="answer-rule">${answerRule(q)}</p>` : ''}
     ${thresholds(mode, training.spec.count)}
-    <div id="answer-error" class="answer-error" role="status"></div><button type="submit" hidden tabindex="-1">提交答案</button></form>
+    <div id="answer-error" class="answer-error" role="status"></div></div><button type="submit" hidden tabindex="-1">提交答案</button></form>
     ${keypad()}<div class="keypad-caption">支持触屏与实体键盘 · Enter 确定 · Backspace 退格</div>`;
 }
 

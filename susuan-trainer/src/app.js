@@ -146,9 +146,9 @@ function answerArea(mode, flash) {
   const prompt = flash ? '最终结果' : expression(q);
   return `<form id="answer-form" autocomplete="off">
     <div class="equation${q?.terms || q?.unit ? ' wide-equation' : ''}"><span class="equation-prompt">${escape(prompt)} =</span> <span class="inline-answer"><span id="answer-width" aria-hidden="true"></span><input id="answer" aria-label="${escape(prompt)}的答案" type="text" inputmode="none" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="14" aria-describedby="answer-error"></span>${q?.unit ?? ''}</div>
-    ${q && answerRule(q) ? `<p class="answer-rule">${answerRule(q)}</p>` : ''}
+    <div class="answer-details">${q && answerRule(q) ? `<p class="answer-rule">${answerRule(q)}</p>` : ''}
     ${thresholds(mode, training.spec.count)}
-    <div id="answer-error" class="answer-error" role="status"></div><button type="submit" hidden tabindex="-1">提交答案</button></form>
+    <div id="answer-error" class="answer-error" role="status"></div></div><button type="submit" hidden tabindex="-1">提交答案</button></form>
     ${keypad()}<div class="keypad-caption">支持触屏与实体键盘 · Enter 确定 · Backspace 退格</div>`;
 }
 
@@ -462,7 +462,7 @@ window.addEventListener('offline', updateOfflineStatus);
 async function updateOfflineStatus() {
   const node = document.querySelector('#offline-status');
   const scopeId = encodeURIComponent(new URL('../', import.meta.url).pathname);
-  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-08e906d9453b`);
+  const ready = 'serviceWorker' in navigator && await caches.has(`susuan-${scopeId}-40e2da2e4dcb`);
   node.textContent = !navigator.onLine ? '当前离线 · 成绩仅存于此设备' : ready ? '离线已就绪 · 成绩仅存于此设备' : '本机计算 · 成绩仅存于此设备';
 }
 
@@ -479,7 +479,7 @@ try {
       const channel = new MessageChannel();
       channel.port1.onmessage = event => {
         channel.port1.close();
-        updatePending = event.data !== '08e906d9453b';
+        updatePending = event.data !== '40e2da2e4dcb';
         if (updatePending && main.classList.contains('home-page') && !activeTraining() && !modal.open) location.reload();
       };
       controller.postMessage('release-version', [channel.port2]);
